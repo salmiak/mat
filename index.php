@@ -19,16 +19,21 @@
 
   <body <?php body_class(); ?>>
 
-    Content
+    <div id="content">
+      {{message}}
 
-    <script type="template" id="week">
-      <h2>Vecka <%= name %></h2>
-      <ul>
-        <% _.each(recipes, function(r) { %>
-          <li><%= r.get('title').rendered %></li>
-        <% }) %>
-      </ul>
-    </script>
+      <div v-if="weeks && weeks.length" v-for="week in weeks">
+        <h2>Vecka {{week.title.rendered}}</h2>
+        <p>
+          <em>{{week.acf.date}}</em>
+        </p>
+
+        <ul>
+          <recipe v-for="id in week.acf.recipes" :key="id"  v-bind:rid="id"></recipe>
+        </ul>
+      </div>
+
+    </div>
 
     <?php wp_footer(); ?>
 
