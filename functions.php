@@ -1,9 +1,20 @@
 <?php
 
+function reg_styles()
+{
+    wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Average|Fjalla+One');
+    wp_enqueue_style('google-fonts'); // Enqueue it!
+
+    wp_register_style('mat', get_template_directory_uri() . '/style.css');
+    wp_enqueue_style('mat'); // Enqueue it!
+}
+add_action('wp_enqueue_scripts', 'reg_styles');
+
 function mat_scripts() {
     // wp_enqueue_style( 'style-name', get_stylesheet_uri() );
     wp_enqueue_script( 'vue', 'https://unpkg.com/vue',null, null, true);
-    wp_enqueue_script( 'matjs', get_template_directory_uri() . '/script.js', array( 'wp-api','backbone','underscore','jquery','vue' ), '1.0.0', true );
+    wp_enqueue_script( 'momentjs', get_template_directory_uri() . '/js/moment.js',null, null, true);
+    wp_enqueue_script( 'matjs', get_template_directory_uri() . '/js/script.js', array( 'wp-api','underscore','jquery','vue','momentjs' ), '1.0.0', true );
 }
 add_action( 'wp_enqueue_scripts', 'mat_scripts' );
 
