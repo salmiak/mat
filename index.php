@@ -23,15 +23,42 @@
 
       <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
         <h2>Vecka {{week.weekNbr}}</h2>
-          <ul>
-            <recipe v-for="(recipe,index) in week.data" :key="index" v-bind:robj="recipes[recipe.acf.recipe[0].ID]"></recipe>
-          </ul>
+        <ul>
+          <instance class="instance" v-for="(instance,index) in week.data" :key="index" v-bind:inst="instance" v-bind:recipes="recipes"></instance>
+        </ul>
+        <form class="addArea" v-on:submit="addInstance">
+          <input type="text" name="title" placeholder="Titel" />
+          <input type="text" name="acf_comment" placeholder="Kommentar" />
+          <input type="hidden" name="acf_week" v-bind:value="week.weekNbr" />
+          <input type="submit" value="Lägg till" />
+        </form>
       </div>
 
     </div>
 
     <script>
       window.wp_root_url = "<?php bloginfo('url'); ?>";
+    </script>
+
+    <script type="text/template" id="recipeTemplate">
+      <div>
+        <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
+        <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
+        <p v-html="rec.content.rendered"></p>
+      </div>
+    </script>
+
+    <script type="text/template" id="instanceTemplate">
+      <li v-bind:class="stateClass">
+        <div @click="deleteInstance" class="removeBtn">
+          &times;
+        </div>
+        <recipe v-if="inst.acf.recipe"v-bind:rec="recipes[inst.acf.recipe[0]]"></recipe>
+        <h3 v-if="!inst.acf.recipe">{{inst.title.rendered}}</h3>
+        <p>
+          {{inst.acf.comment}}
+        </p>
+      </li>
     </script>
 
     <?php wp_footer(); ?>

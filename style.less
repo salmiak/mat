@@ -70,6 +70,31 @@ a {
       }
     }
 
+    .addArea {
+      margin-top: 1rem;
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 0.3rem;
+      border: 3px dashed rgba(0,0,0,0.2);
+      font-family: @bodyFont;
+
+      input[type=text] {
+        background: none;
+        border: none;
+        border-radius: 2px;
+        padding: 0.5rem;
+        margin: 0 0 0.2rem;
+        display: block;
+        font: 1rem/1.5 @bodyFont;
+        width: 100%;
+        .transition(background 0.5s);
+        &:hover {
+          background: rgba(255,255,255,.1);
+        }
+        &:focus {
+          background: rgba(255,255,255,0.4);
+          outline: none;
+        }
       }
     }
   }
@@ -90,5 +115,19 @@ a {
     z-index: 100;
   }
 
+  .removeBtn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    padding: 0.5rem;
+    font-size: 2rem;
+    line-height: 0.5em;
+    cursor: pointer;
+    opacity: 0.2;
+    .transition(opacity 0.2);
+    &:hover {
+      opacity: 1;
+    }
+  }
 
 }
