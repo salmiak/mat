@@ -1,0 +1,52 @@
+/*
+Theme Name: Mat
+Author: Alfred Beckman
+Description: Ett verktyg för att planera maten.
+Version: Alpha 1
+License: No license
+
+*/
+
+@import "node_modules/lesshat/lesshat.less";
+@import "node_modules/reset-css/reset.less";
+
+body {
+  background: #EA7EA7;
+  font: 14px/1.5 Average, serif;
+  color: rgba(0,0,0,0.7);
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: Fjalla One, sans-serif;
+}
+h2 {
+  text-transform: uppercase;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+#content {
+  height: 75vh;
+  padding: 0.5vw;
+
+  .display(flex);
+  .flex-wrap(nowrap);
+  .align-items(stretch);
+
+  .week {
+    flex-shrink: 0;
+    width: 15vw;
+    margin: 0.5vw;
+    padding: 1vw;
+    background: #FFF;
+    border-radius: 0.5vw;
+
+    ul {
+      padding: 0;
+      li {
+        list-style: none;
+        padding: 0;
+      }
+    }
+  }
+}
