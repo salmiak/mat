@@ -4,7 +4,7 @@ show_admin_bar( false );
 
 function reg_styles()
 {
-    wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Average|Fjalla+One');
+    wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Oswald|Open+Sans');
     wp_enqueue_style('google-fonts'); // Enqueue it!
 
     wp_register_style('mat', get_template_directory_uri() . '/style.css');
