@@ -20,20 +20,19 @@
   <body <?php body_class(); ?>>
 
     <div id="content">
-      {{message}}
 
-      <div v-if="weeks && weeks.length" v-for="week in weeks">
-        <h2>Vecka {{week.title.rendered}}</h2>
-        <p>
-          <em>{{week.acf.date}}</em>
-        </p>
-
-        <ul>
-          <recipe v-for="id in week.acf.recipes" :key="id"  v-bind:rid="id"></recipe>
-        </ul>
+      <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
+        <h2>Vecka {{week.weekNbr}}</h2>
+          <ul>
+            <recipe v-for="(recipe,index) in week.data" :key="index" v-bind:robj="recipes[recipe.acf.recipe[0].ID]"></recipe>
+          </ul>
       </div>
 
     </div>
+
+    <script>
+      window.wp_root_url = "<?php bloginfo('url'); ?>";
+    </script>
 
     <?php wp_footer(); ?>
 

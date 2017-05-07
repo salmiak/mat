@@ -1,0 +1,31 @@
+{
+  "name": "mat",
+  "version": "1.0.0",
+  "description": "Food planing tool",
+  "main": "style.css",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/salmiak/mat.git"
+  },
+  "keywords": [
+    "Wordpress",
+    "ACF",
+    "Food",
+    "Tool"
+  ],
+  "author": "Alfred Beckman (salmiak)",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/salmiak/mat/issues"
+  },
+  "homepage": "https://github.com/salmiak/mat#readme",
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-contrib-less": "^1.4.1",
+    "lesshat": "^4.1.0",
+    "reset-css": "^2.2.0"
+  }
+}
