@@ -1,5 +1,7 @@
 <?php
 
+show_admin_bar( false );
+
 function reg_styles()
 {
     wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Average|Fjalla+One');
