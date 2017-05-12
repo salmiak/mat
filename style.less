@@ -21,10 +21,11 @@ License: No license
   box-sizing: border-box;
 }
 html {
-  font-size: 16px;
+  font-size: 1.27vw;
 }
 body {
   background: @cPri;
+  background-image: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
   font: 1rem/1.5 @bodyFont;
   color: rgba(0,0,0,0.6);
 }
@@ -131,6 +132,8 @@ a {
   padding: 0.75rem;
   border-radius: 0.3rem;
   background: #FFF;
+  background-image: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  border: 1px solid rgba(255,255,255,0.7);
   .box-shadow(0 1px 2px rgba(0,0,0,0.6));
   z-index: 0;
   position: relative;
@@ -146,8 +149,9 @@ a {
   margin: 0;
   padding: 0.75rem;
   border-radius: 0.3rem;
-  background: #FFF;
+  background: rgba(255,255,255,.6);
   .box-shadow(0 1px 2px rgba(0,0,0,0.6));
+  border: 1px solid rgba(255,255,255,0.7);
   z-index: 0;
   position: relative;
   .transition(boz-shadow 0.5s);
