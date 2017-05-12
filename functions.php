@@ -43,6 +43,7 @@ function add_post_types() {
   		'supports'           => array( 'title', 'editor', 'author', 'thumbnail' )
     )
   );
+  /*
   register_post_type( 'week',
     array(
       'labels' => array(
@@ -62,19 +63,20 @@ function add_post_types() {
   		'show_in_rest'       => true,
   		'supports'           => array( 'title' )
     )
-  );
-  register_post_type( 'instances',
+  ); */
+
+  register_post_type( 'meal',
     array(
       'labels' => array(
-        'name' => __( 'Instances' ),
-        'singular_name' => __( 'Instance' )
+        'name' => __( 'Meals' ),
+        'singular_name' => __( 'Meal' )
       ),
   		'public'             => true,
   		'publicly_queryable' => true,
   		'show_ui'            => true,
   		'show_in_menu'       => true,
   		'query_var'          => true,
-  		'rewrite'            => array( 'slug' => 'instance' ),
+  		'rewrite'            => array( 'slug' => 'meals' ),
   		'capability_type'    => 'post',
   		'has_archive'        => true,
   		'hierarchical'       => false,

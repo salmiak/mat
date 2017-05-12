@@ -143,7 +143,7 @@ html {
   font-size: 16px;
 }
 body {
-  background: #EA7;
+  background: #7BCCAC;
   font: 1rem/1.5 Open Sans, serif;
   color: rgba(0, 0, 0, 0.6);
 }
@@ -164,15 +164,22 @@ h3 {
   margin-bottom: 0.5rem;
 }
 a {
-  color: #EA7EA7;
+  color: #F96A76;
   text-decoration: none;
 }
 .faded {
   opacity: 0.3;
 }
 #content {
-  height: 75vh;
-  padding: 0.5vw;
+  height: 100vh;
+}
+#weeksContainer {
+  height: 50vh;
+  width: 100vw;
+  padding: 0 0.5vw;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -187,21 +194,23 @@ a {
   -ms-flex-align: stretch;
   align-items: stretch;
 }
-#content .week {
+#weeksContainer .week {
+  overflow-x: hidden;
+  overflow-y: auto;
   flex-shrink: 0;
   width: 22rem;
-  margin: 0.25rem 0;
-  padding: 1rem 0.5rem;
+  margin: 0;
+  padding: 1rem 0.5rem 3rem;
   border-right: 1px dashed rgba(0, 0, 0, 0.2);
 }
-#content .week ul {
+#weeksContainer .week ul {
   padding: 0;
 }
-#content .week ul li {
+#weeksContainer .week ul li {
   list-style: none;
   margin: 0 0 0.3rem;
 }
-#content .week .addArea {
+#weeksContainer .week .addArea {
   margin-top: 1rem;
   text-align: center;
   padding: 0.5rem;
@@ -209,7 +218,7 @@ a {
   border: 3px dashed rgba(0, 0, 0, 0.2);
   font-family: Open Sans, serif;
 }
-#content .week .addArea input[type=text] {
+#weeksContainer .week .addArea input[type=text] {
   background: none;
   border: none;
   border-radius: 2px;
@@ -223,14 +232,50 @@ a {
   -o-transition: background 0.5s;
   transition: background 0.5s;
 }
-#content .week .addArea input[type=text]:hover {
+#weeksContainer .week .addArea input[type=text]:hover {
   background: rgba(255, 255, 255, 0.1);
 }
-#content .week .addArea input[type=text]:focus {
+#weeksContainer .week .addArea input[type=text]:focus {
   background: rgba(255, 255, 255, 0.4);
   outline: none;
 }
-.instance {
+#recipeContainer {
+  height: 50vh;
+  width: 100vw;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.25rem;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-flex-wrap: wrap;
+  -ms-flex-wrap: wrap;
+  flex-wrap: wrap;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.recipe {
+  width: 19rem;
+  margin: 0.25rem;
+  padding: 0.75rem;
+  border-radius: 0.3rem;
+  background: #FFF;
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  z-index: 0;
+  position: relative;
+  -webkit-transition: boz-shadow 0.5s;
+  -moz-transition: boz-shadow 0.5s;
+  -o-transition: boz-shadow 0.5s;
+  transition: boz-shadow 0.5s;
+}
+.recipe:hover {
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+.meal {
   margin: 0;
   padding: 0.75rem;
   border-radius: 0.3rem;
@@ -245,11 +290,11 @@ a {
   -o-transition: boz-shadow 0.5s;
   transition: boz-shadow 0.5s;
 }
-.instance:hover {
+.meal:hover {
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.1);
   z-index: 100;
 }
-.instance .removeBtn {
+.meal .removeBtn {
   position: absolute;
   top: 0;
   right: 0;
@@ -263,6 +308,6 @@ a {
   -o-transition: opacity 0.2s;
   transition: opacity 0.2s;
 }
-.instance .removeBtn:hover {
+.meal .removeBtn:hover {
   opacity: 1;
 }

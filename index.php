@@ -21,17 +21,23 @@
 
     <div id="content">
 
-      <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
-        <h2>Vecka {{week.weekNbr}}</h2>
-        <ul>
-          <instance class="instance" v-for="(instance,index) in week.data" :key="index" v-bind:inst="instance" v-bind:recipes="recipes"></instance>
-        </ul>
-        <form class="addArea" v-on:submit="addInstance">
-          <input type="text" name="title" placeholder="Titel" />
-          <input type="text" name="acf_comment" placeholder="Kommentar" />
-          <input type="hidden" name="acf_week" v-bind:value="week.weekNbr" />
-          <input type="submit" value="Lägg till" />
-        </form>
+      <div id="weeksContainer">
+        <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
+          <h2>Vecka {{week.weekNbr}}</h2>
+          <ul>
+            <meal class="meal" v-for="(meal,index) in week.data" :key="index" v-bind:meal="meal" v-bind:recipes="recipes"></meal>
+          </ul>
+          <form class="addArea" v-on:submit="addMeal">
+            <input type="text" name="title" placeholder="Titel" />
+            <input type="text" name="acf_comment" placeholder="Kommentar" />
+            <input type="hidden" name="acf_week" v-bind:value="week.weekNbr" />
+            <input type="submit" value="Lägg till" />
+          </form>
+        </div>
+      </div>
+
+      <div id="recipeContainer">
+        <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
       </div>
 
     </div>
@@ -41,22 +47,24 @@
     </script>
 
     <script type="text/template" id="recipeTemplate">
-      <div>
+      <div class="recipe">
         <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
         <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
         <p v-html="rec.content.rendered"></p>
       </div>
     </script>
 
-    <script type="text/template" id="instanceTemplate">
+    <script type="text/template" id="mealTemplate">
       <li v-bind:class="stateClass">
-        <div @click="deleteInstance" class="removeBtn">
+        <div @click="deleteMeal" class="removeBtn">
           &times;
         </div>
-        <recipe v-if="inst.acf.recipe"v-bind:rec="recipes[inst.acf.recipe[0]]"></recipe>
-        <h3 v-if="!inst.acf.recipe">{{inst.title.rendered}}</h3>
+        <h2>{{meal.title.rendered}}</h2>
+        <h4 v-if="meal.acf.recipes">Recept</h4>
+        <recipe v-for="recipeId in meal.acf.recipes" :key="recipeId" v-if="meal.acf.recipes" v-bind:rec="recipes[recipeId]"></recipe>
+        <h4 v-if="meal.acf.comment">Kommentar</h4>
         <p>
-          {{inst.acf.comment}}
+          {{meal.acf.comment}}
         </p>
       </li>
     </script>
