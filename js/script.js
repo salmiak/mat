@@ -5,9 +5,21 @@ var app = new Vue({
   data: {
     message: null,
     weeks: null,
-    recipes: null
+    recipes: null,
+    recipeBoilerPlate: {
+      acf: {
+        url: null
+      },
+      title: { rendered: null },
+      content: { rendered: null }
+    }
   },
   methods: {
+
+    addRecipe: function(){
+
+    },
+
     addMeal: function(e) {
       // Avoid reloading on submit
       e.preventDefault();
@@ -72,7 +84,64 @@ var app = new Vue({
 
 Vue.component('recipe', {
   props: ['rec'],
-  template: $('#recipeTemplate').html()
+  template: $('#recipeTemplate').html(),
+  data: function() {
+    return {
+      inEdit: this.rec.id == undefined,
+      stateClass: ''
+    }
+  },
+  methods: {
+    toggleEditRecipe: function(e) {
+      this.inEdit = !this.inEdit;
+    },
+    saveRecipe: function(e) {
+      var _this = this;
+      e.preventDefault();
+
+      this.stateClass = "saving";
+      this.inEdit = false;
+
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/recipe/" + (this.rec.id||''),
+        method: 'POST',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        data: {
+          title: _this.rec.title.rendered,
+          content: _this.rec.content.rendered,
+          status: 'publish'
+        },
+        success: function(result) {
+
+          var id = result.id;
+
+          $.ajax({
+            url: window.wp_root_url + "/wp-json/acf/v3/recipe/" + id,
+            method: 'POST',
+            beforeSend: function ( xhr ) {
+              xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+            },
+            data: { fields:_this.rec.acf },
+            success: function(data) {
+
+              $.ajax({
+                url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+id,
+                success: function(result){
+                  app.recipes[id] = result;
+                  _this.stateClass = "";
+                }
+              });
+
+            }
+          });
+
+        }
+      });
+
+    }
+  }
 })
 
 Vue.component('meal', {

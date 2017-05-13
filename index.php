@@ -38,6 +38,7 @@
       </div>
 
       <div id="recipeContainer">
+        <recipe v-bind:rec="recipeBoilerPlate"></recipe>
         <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
       </div>
 
@@ -47,11 +48,21 @@
       window.wp_root_url = "<?php bloginfo('url'); ?>";
     </script>
 
+
     <script type="text/template" id="recipeTemplate">
-      <div class="recipe" v-bind:title="rec.id">
-        <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
-        <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
-        <p v-html="rec.content.rendered"></p>
+      <div class="recipe" v-bind:class="stateClass">
+        <form v-on:submit="saveRecipe" v-if="inEdit">
+          <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />
+          <input type="text" name="acf_url" v-model="rec.acf.url" placeholder="url" />
+          <textarea name="content" v-model="rec.content.rendered"></textarea>
+          <input type="submit" value="Save" />
+        </form>
+        <div v-bind:title="rec.id" v-else>
+          <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
+          <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
+          <p v-html="rec.content.rendered"></p>
+          <span @click="toggleEditRecipe">Edit</span>
+        </div>
       </div>
     </script>
 
