@@ -23,9 +23,11 @@
   },
   "homepage": "https://github.com/salmiak/mat#readme",
   "devDependencies": {
+    "dragula": "^3.7.2",
     "grunt": "^1.0.1",
     "grunt-contrib-less": "^1.4.1",
     "lesshat": "^4.1.0",
+    "moment": "^2.18.1",
     "reset-css": "^2.2.0"
   }
 }

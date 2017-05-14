@@ -1,4 +1,34 @@
 $ = jQuery;
+var mealDrag = dragula(undefined);
+mealDrag.on('drop', function(el, target){
+
+  var mealId = $(el).data('id');
+  var meal = Meals[mealId];
+  var targetWeek = $(target).data('week');
+
+  var oldWeek = _.findWhere(app.weeks, {weekNbr: parseInt(meal.acf.week)});
+  var newWeek = _.findWhere(app.weeks, {weekNbr: parseInt(targetWeek)});
+
+  if (Meals[mealId].acf.week == targetWeek)
+    return // No change
+
+  $.ajax({
+    url: window.wp_root_url + "/wp-json/acf/v3/meal/" + mealId,
+    method: 'POST',
+    beforeSend: function ( xhr ) {
+      xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+    },
+    data: {
+      fields: {
+        week: targetWeek
+      }
+    },
+    success: function(data) {
+      oldWeek.data = _.reject(oldWeek.data, function(m) { return m.id == mealId});
+      newWeek.data.push(meal);
+    }
+  })
+})
 
 var recipeBoilerPlate = JSON.stringify({
   acf: {
@@ -17,10 +47,6 @@ var app = new Vue({
     recipeBoilerPlate: JSON.parse(recipeBoilerPlate)
   },
   methods: {
-
-    addRecipe: function(){
-
-    },
 
     addMeal: function(e) {
       // Avoid reloading on submit
@@ -278,10 +304,16 @@ $.ajax({
   url: window.wp_root_url + "/wp-json/wp/v2/meal?per_page=100",
   success: function(result){
     result.forEach(function(meal) {
+      Meals[meal.id] = meal;
       week = _.findWhere(Weeks, {weekNbr: parseInt(meal.acf.week)});
       if(week)
         week.data.push(meal);
     });
     app.weeks = Weeks;
+    setTimeout(function(){
+      $('.week > ul').each(function(i,el){
+        mealDrag.containers.push(el);
+      });
+    },300);
   }
 });

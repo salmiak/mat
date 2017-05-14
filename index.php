@@ -24,7 +24,9 @@
       <div id="weeksContainer">
         <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
           <h2>Vecka {{week.weekNbr}}</h2>
-          <ul>
+          <ul v-bind:data-week="week.weekNbr">
+            <li v-if="week.data.length==0" style="height: 120px; background:rgba(255,255,255,0.1);">
+            </li>
             <meal class="meal" v-for="(meal,index) in week.data" :key="index" v-bind:meal="meal" v-bind:recipes="recipes"></meal>
           </ul>
           <form class="addArea" v-on:submit="addMeal">
@@ -79,7 +81,7 @@
           <input type="submit" value="Spara" />
         </form>
       </li>
-      <li v-bind:class="stateClass" v-else>
+      <li v-bind:class="stateClass" v-bind:data-id="meal.id" v-else>
         <div @click="deleteMeal" class="removeBtn">
           &times;
         </div>
