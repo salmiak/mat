@@ -54,8 +54,8 @@
         <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
           <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
           <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />
-          <input type="text" name="acf_url" v-model="rec.acf.url" placeholder="url" />
-          <textarea name="content" v-model="rec.content.rendered"></textarea>
+          <input type="text" name="acf_url" v-model="rec.acf.url" placeholder="URL" />
+          <textarea name="content" v-model="rec.content.rendered" placeholder="Kommentar"></textarea>
           <input type="submit" value="Spara" />
         </form>
         <div v-bind:title="rec.id" v-else-if="rec">

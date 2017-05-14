@@ -21,7 +21,7 @@ License: No license
   box-sizing: border-box;
 }
 html {
-  font-size: 1.27vw;
+  font-size: 1.22vw;
 }
 body {
   background: @cPri;
@@ -40,6 +40,10 @@ h2 {
 h3 {
   font-size: 1.2rem;
   margin-bottom: 0.5rem;
+}
+h4 {
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
 }
 
 a {
@@ -71,6 +75,25 @@ a {
   opacity: 0.3;
 }
 
+input[type=text], textarea {
+  background: none;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  margin: 0 0 0.2rem;
+  display: block;
+  font: 1rem/1.5 @bodyFont;
+  width: 100%;
+  .transition(background 0.5s);
+  &:hover {
+    background: rgba(255,255,255,.1);
+  }
+  &:focus {
+    background: rgba(255,255,255,0.4);
+    outline: none;
+  }
+}
+
 #content {
   height: 100vh;
 }
@@ -100,33 +123,22 @@ a {
       padding: 0;
       li {
         list-style: none;
-        margin: 0 0 0.3rem;
+        margin: 0 0 0.5rem;
       }
     }
 
     .addArea {
-      margin-top: 1rem;
       padding: 0.5rem;
-      border-radius: 0.3rem;
-      border: 3px dashed rgba(0,0,0,0.2);
+      border-radius: 0.9rem;
       font-family: @bodyFont;
-
-      input[type=text] {
-        background: none;
-        border: none;
-        border-radius: 2px;
-        padding: 0.5rem;
-        margin: 0 0 0.2rem;
-        display: block;
-        font: 1rem/1.5 @bodyFont;
-        width: 100%;
-        .transition(background 0.5s);
+      background: rgba(255,255,255,0.2);
+      input[type=submit] {
+        border-color: rgba(0,0,0,0.3);
+        color: rgba(0,0,0,0.6);
         &:hover {
-          background: rgba(255,255,255,.1);
-        }
-        &:focus {
-          background: rgba(255,255,255,0.4);
-          outline: none;
+          border-color: rgba(0,0,0,0);
+          background: rgba(0,0,0,0.3);
+          color: #FFF;
         }
       }
     }
@@ -146,7 +158,7 @@ a {
 }
 
 .recipe {
-  width: 19rem;
+  width: 19.75rem;
   min-height: 7rem;
   margin: 0.25rem;
   padding: 0.75rem;
@@ -178,6 +190,10 @@ a {
   &:hover {
     box-shadow: 0 3px 8px rgba(0,0,0,0.2),0 1px 3px rgba(0,0,0,0.1);
     z-index: 100;
+  }
+
+  .recipe {
+    margin: 0.25rem -0.25rem;
   }
 
   .removeBtn {
