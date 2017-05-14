@@ -97,6 +97,16 @@ Vue.component('recipe', {
     toggleEditRecipe: function(e) {
       this.inEdit = !this.inEdit;
     },
+    loadRecipe: function(){
+      var _this = this;
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+this.rec.id,
+        success: function(result){
+          Vue.set(app.recipes, result.id, result);
+          _this.stateClass = "";
+        }
+      });
+    },
     saveRecipe: function(e) {
       var _this = this;
       e.preventDefault();
@@ -127,16 +137,8 @@ Vue.component('recipe', {
             },
             data: { fields:_this.rec.acf },
             success: function(data) {
-
-              $.ajax({
-                url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+id,
-                success: function(result){
-                  Vue.set(app.recipes, id, result);
-                  app.recipeBoilerPlate = JSON.parse(recipeBoilerPlate);
-                  _this.stateClass = "";
-                }
-              });
-
+              app.recipeBoilerPlate = JSON.parse(recipeBoilerPlate);
+              _this.loadRecipe();
             }
           });
 
@@ -175,7 +177,11 @@ Vue.component('meal', {
         if(d.name.indexOf('acf')==-1){
           postData[d.name] = d.value;
         } else if(d.name == 'acf_recipes') {
-          acfData.fields.recipes = d.value.split(',');
+          if(d.value != '') {
+            acfData.fields.recipes = d.value.split(',');
+          } else {
+            acfData.fields.recipes = [0];
+          }
         } else {
           acfData.fields[d.name.slice(4)] = d.value;
         }
