@@ -62,7 +62,7 @@
           <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
           <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
           <p v-html="rec.content.rendered"></p>
-          <span @click="toggleEditRecipe">Redigera</span>
+          <div class="editBtn" @click="toggleEditRecipe">Redigera</div>
         </div>
         <div v-else>
           Laddar...
@@ -90,7 +90,7 @@
         <p>
           {{meal.acf.comment}}
         </p>
-        <span @click="toggleEditMeal">Redigera</span>
+        <div class="editBtn" @click="toggleEditMeal">Redigera</div>
       </li>
     </script>
 
