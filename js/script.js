@@ -1,18 +1,20 @@
 $ = jQuery;
 
+var recipeBoilerPlate = JSON.stringify({
+  acf: {
+    url: null
+  },
+  title: { rendered: null },
+  content: { rendered: null }
+});
+
 var app = new Vue({
   el: '#content',
   data: {
     message: null,
     weeks: null,
-    recipes: null,
-    recipeBoilerPlate: {
-      acf: {
-        url: null
-      },
-      title: { rendered: null },
-      content: { rendered: null }
-    }
+    recipes: {},
+    recipeBoilerPlate: JSON.parse(recipeBoilerPlate)
   },
   methods: {
 
@@ -87,7 +89,7 @@ Vue.component('recipe', {
   template: $('#recipeTemplate').html(),
   data: function() {
     return {
-      inEdit: this.rec.id == undefined,
+      inEdit: this.rec!=undefined && this.rec.id == undefined,
       stateClass: ''
     }
   },
@@ -100,7 +102,7 @@ Vue.component('recipe', {
       e.preventDefault();
 
       this.stateClass = "saving";
-      this.inEdit = false;
+      this.inEdit = this.rec.id?false:true;
 
       $.ajax({
         url: window.wp_root_url + "/wp-json/wp/v2/recipe/" + (this.rec.id||''),
@@ -129,7 +131,8 @@ Vue.component('recipe', {
               $.ajax({
                 url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+id,
                 success: function(result){
-                  app.recipes[id] = result;
+                  Vue.set(app.recipes, id, result);
+                  app.recipeBoilerPlate = JSON.parse(recipeBoilerPlate);
                   _this.stateClass = "";
                 }
               });
@@ -259,17 +262,16 @@ for (var i = 2; i >= -5; i--) {
 }
 
 $.ajax({
-  url: window.wp_root_url + "/wp-json/wp/v2/recipe",
+  url: window.wp_root_url + "/wp-json/wp/v2/recipe?per_page=100",
   success: function(result){
     Recipes = _.indexBy(result, 'id');
     app.recipes = Recipes
   }
 });
 $.ajax({
-  url: window.wp_root_url + "/wp-json/wp/v2/meal",
+  url: window.wp_root_url + "/wp-json/wp/v2/meal?per_page=100",
   success: function(result){
     result.forEach(function(meal) {
-      //Meals[meal.id] = meal;
       week = _.findWhere(Weeks, {weekNbr: parseInt(meal.acf.week)});
       if(week)
         week.data.push(meal);

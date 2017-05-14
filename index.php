@@ -51,17 +51,21 @@
 
     <script type="text/template" id="recipeTemplate">
       <div class="recipe" v-bind:class="stateClass">
-        <form v-on:submit="saveRecipe" v-if="inEdit">
+        <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
+          <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
           <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />
           <input type="text" name="acf_url" v-model="rec.acf.url" placeholder="url" />
           <textarea name="content" v-model="rec.content.rendered"></textarea>
-          <input type="submit" value="Save" />
+          <input type="submit" value="Spara" />
         </form>
-        <div v-bind:title="rec.id" v-else>
+        <div v-bind:title="rec.id" v-else-if="rec">
           <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
           <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
           <p v-html="rec.content.rendered"></p>
-          <span @click="toggleEditRecipe">Edit</span>
+          <span @click="toggleEditRecipe">Redigera</span>
+        </div>
+        <div v-else>
+          Laddar...
         </div>
       </div>
     </script>
@@ -72,9 +76,8 @@
           <input type="text" name="title" placeholder="Titel" v-bind:value="meal.title.rendered" />
           <input type="text" name="acf_comment" v-bind:value="meal.acf.comment" placeholder="Kommentar" />
           <input type="text" name="acf_recipes" v-bind:value="meal.acf.recipes" placeholder="Recept IDn" />
-          <input type="submit" value="Save" />
+          <input type="submit" value="Spara" />
         </form>
-        <span @click="toggleEditMeal">Edit</span>
       </li>
       <li v-bind:class="stateClass" v-else>
         <div @click="deleteMeal" class="removeBtn">
@@ -87,7 +90,7 @@
         <p>
           {{meal.acf.comment}}
         </p>
-        <span @click="toggleEditMeal">Edit</span>
+        <span @click="toggleEditMeal">Redigera</span>
       </li>
     </script>
 
