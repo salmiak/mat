@@ -2,6 +2,8 @@
 
 show_admin_bar( false );
 
+require_once('acf.php');
+
 function reg_styles()
 {
     wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Oswald|Open+Sans');
