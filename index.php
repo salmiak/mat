@@ -85,7 +85,7 @@
         <div @click="deleteMeal" class="removeBtn">
           &times;
         </div>
-        <h2>{{meal.title.rendered}}</h2>
+        <h2>{{meal.acf.order}} {{meal.title.rendered}}</h2>
         <h4 v-if="meal.acf.recipes && meal.acf.recipes[0]!=0">Recept</h4>
         <recipe v-for="recipeId in meal.acf.recipes" :key="recipeId" v-if="meal.acf.recipes && meal.acf.recipes[0]!=0" v-bind:rec="recipes[recipeId]"></recipe>
         <h4 v-if="meal.acf.comment">Kommentar</h4>

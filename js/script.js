@@ -1,33 +1,50 @@
 $ = jQuery;
+
 var mealDrag = dragula(undefined);
-mealDrag.on('drop', function(el, target){
+mealDrag.on('drop', function(el, target, source, sibling){
 
-  var mealId = $(el).data('id');
-  var meal = Meals[mealId];
-  var targetWeek = $(target).data('week');
+  $(target).children().each(function(order, val){
 
-  var oldWeek = _.findWhere(app.weeks, {weekNbr: parseInt(meal.acf.week)});
-  var newWeek = _.findWhere(app.weeks, {weekNbr: parseInt(targetWeek)});
+    var mealId = $(this).data('id');
+    var meal = Meals[mealId];
+    var targetWeek = $(target).data('week');
 
-  if (Meals[mealId].acf.week == targetWeek)
-    return // No change
+    var oldWeek = _.findWhere(app.weeks, {weekNbr: parseInt(meal.acf.week)});
+    var newWeek = _.findWhere(app.weeks, {weekNbr: parseInt(targetWeek)});
 
-  $.ajax({
-    url: window.wp_root_url + "/wp-json/acf/v3/meal/" + mealId,
-    method: 'POST',
-    beforeSend: function ( xhr ) {
-      xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-    },
-    data: {
-      fields: {
-        week: targetWeek
+    if (Meals[mealId].acf.week == targetWeek
+        && Meals[mealId].acf.order == order)
+      return // No change
+
+    Meals[mealId].acf.order = order;
+    newWeek.data = newWeek.data.sort(function(a,b){
+      return (a.acf.order || 0) - (b.acf.order || 0);
+    })
+
+    $.ajax({
+      url: window.wp_root_url + "/wp-json/acf/v3/meal/" + mealId,
+      method: 'POST',
+      beforeSend: function ( xhr ) {
+        xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+      },
+      data: {
+        fields: {
+          week: targetWeek,
+          order: order
+        }
+      },
+      success: function(data) {
+        if (Meals[mealId].acf.week != targetWeek) {
+          oldWeek.data = _.reject(oldWeek.data, function(m) {
+            return m.id == mealId
+          });
+          newWeek.data.push(meal);
+        }
+        Meals[mealId].acf.week = targetWeek;
       }
-    },
-    success: function(data) {
-      oldWeek.data = _.reject(oldWeek.data, function(m) { return m.id == mealId});
-      newWeek.data.push(meal);
-    }
-  })
+    })
+
+  });
 })
 
 var recipeBoilerPlate = JSON.stringify({
@@ -58,7 +75,9 @@ var app = new Vue({
         status: 'publish'
       };
       var acfData = {
-        fields: {}
+        fields: {
+          order: 0
+        }
       }
       data.forEach(function(d){
         if(d.name.indexOf('acf')==-1){
@@ -197,7 +216,9 @@ Vue.component('meal', {
       // Created containers for postData (meal data) and ACF (second request) and parse the form data into these containers.
       var postData = {};
       var acfData = {
-        fields: {}
+        fields: {
+          order: this.acf.order || 0
+        }
       }
       data.forEach(function(d){
         if(d.name.indexOf('acf')==-1){

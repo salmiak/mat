@@ -2,7 +2,7 @@
 
 show_admin_bar( false );
 
-require_once('acf.php');
+// require_once('acf.php');
 
 function reg_styles()
 {
