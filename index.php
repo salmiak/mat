@@ -22,21 +22,7 @@
     <div id="content">
 
       <div id="weeksContainer">
-        <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
-          <h2>Vecka {{week.weekNbr}}</h2>
-          <ul v-bind:data-week="week.weekNbr">
-            <li v-if="week.data.length==0" style="height: 120px; background:rgba(255,255,255,0.1);">
-            </li>
-            <meal class="meal" v-for="(meal,index) in week.data" :key="index" v-bind:meal="meal" v-bind:recipes="recipes"></meal>
-          </ul>
-          <form class="addArea" v-on:submit="addMeal">
-            <input type="text" name="title" placeholder="Titel" />
-            <input type="text" name="acf_comment" placeholder="Kommentar" />
-            <input type="text" name="acf_recipes" placeholder="Recept IDn" />
-            <input type="hidden" name="acf_week" v-bind:value="week.weekNbr" />
-            <input type="submit" value="Lägg till" />
-          </form>
-        </div>
+        <week v-if="weeks!=null && recipes!=null" v-for="week in weeks" v-bind:week="week"  :key="week.weekNbr" v-bind:recipes="recipes"></week>
       </div>
 
       <div id="recipeContainer">
@@ -46,12 +32,30 @@
 
     </div>
 
+
     <script>
       window.wp_root_url = "<?php bloginfo('url'); ?>";
     </script>
 
+    <script type="text/x-template" id="weekTemplate">
+      <div class="week">
+        <h2>Vecka {{week.nbr}}</h2>
+        <ul v-bind:data-week="week.nbr">
+          <li v-if="week.meals.length==0" style="height: 120px; background:rgba(255,255,255,0.1);">
+          </li>
+          <meal class="meal" v-for="(meal,index) in week.meals" :key="index" v-bind:meal="meal" v-bind:recipes="recipes"></meal>
+        </ul>
+        <form class="addArea" v-on:submit="addMeal">
+          <input type="text" name="title" placeholder="Titel" />
+          <input type="text" name="acf_comment" placeholder="Kommentar" />
+          <input type="text" name="acf_recipes" placeholder="Recept IDn" />
+          <input type="hidden" name="acf_week" v-bind:value="week.nbr" />
+          <input type="submit" value="Lägg till" />
+        </form>
+      </div>
+    </script>
 
-    <script type="text/template" id="recipeTemplate">
+    <script type="text/x-template" id="recipeTemplate">
       <div class="recipe" v-bind:class="stateClass">
         <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
           <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
@@ -72,7 +76,7 @@
       </div>
     </script>
 
-    <script type="text/template" id="mealTemplate">
+    <script type="text/x-template" id="mealTemplate">
       <li v-if="inEdit">
         <form class="editArea" v-on:submit="saveMeal">
           <input type="text" name="title" placeholder="Titel" v-bind:value="meal.title.rendered" />
