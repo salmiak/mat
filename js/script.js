@@ -6,23 +6,15 @@ mealDrag.on('drop', function(el, target, source, sibling){
   $(target).children().each(function(order, val){
 
     var mealId = $(this).data('id');
+    if(!mealId)
+      return // Sibling not a meal
     var meal = Meals[mealId];
-    var targetWeek = $(target).data('week');
+    var oldWeekNbr = parseInt(meal.acf.week);
+    var newWeekNbr = parseInt($(target).data('week'));
 
-    var oldWeek = _.findWhere(app.weeks, {nbr: parseInt(meal.acf.week)});
-    var newWeek = _.findWhere(app.weeks, {nbr: parseInt(targetWeek)});
-
-    if (Meals[mealId].acf.week == targetWeek
-        && Meals[mealId].acf.order == order)
+    if (oldWeekNbr == newWeekNbr && Meals[mealId].acf.order == order)
       return // No change
 
-    Meals[mealId].acf.order = order;
-    Meals[mealId].acf.week = targetWeek;
-    oldWeek.meals = _.reject(oldWeek.meals, function(m) {
-      return m.id == mealId
-    });
-    newWeek.meals.push(meal);
-    newWeek.meals = _.sortBy(newWeek.meals, 'acf.order');
 
     $.ajax({
       url: window.wp_root_url + "/wp-json/acf/v3/meal/" + mealId,
@@ -32,11 +24,28 @@ mealDrag.on('drop', function(el, target, source, sibling){
       },
       data: {
         fields: {
-          week: targetWeek,
+          week: newWeekNbr,
           order: order
         }
       },
       success: function(data) {
+
+        Meals[mealId].acf = data.acf;
+
+        if(oldWeekNbr != newWeekNbr) {
+          var oldWeek = _.findWhere(app.weeks, {nbr: oldWeekNbr});
+          var newWeek = _.findWhere(app.weeks, {nbr: newWeekNbr});
+
+          //setTimeout(function(){
+            oldWeek.meals = _.reject(oldWeek.meals, function(m) {
+              return m.id == mealId
+            });
+            newWeek.meals.push(meal);
+            newWeek.meals = _.sortBy(newWeek.meals, function(m) {
+              return parseInt(m.acf.order);
+            });
+          // }, 500);
+        }
       }
     })
 
@@ -288,8 +297,12 @@ Vue.component('week', {
                 success: function(meal){
                   Meals[meal.id] = meal;
                   week = _.findWhere(Weeks, {nbr: parseInt(meal.acf.week)});
-                  if(week)
-                    week.data.push(meal);
+                  if(week) {
+                    week.meals.push(meal);
+                    week.meals = _.sortBy(week.meals, function(m) {
+                      return parseInt(m.acf.order);
+                    });
+                  }
                   // reset form
                   $(e.target).find(":input[type=text]").val('')
                 }
@@ -328,7 +341,10 @@ $.ajax({
       week = _.findWhere(Weeks, {nbr: parseInt(meal.acf.week)});
       if(week) {
         week.meals.push(meal);
-        week.meals = _.sortBy(week.meals, 'acf.order');
+        week.meals = _.sortBy(week.meals, function(a){
+          a.acf.order = a.acf ? a.acf.order || 0 : 0;
+          return parseInt(a.acf.order);
+        });
       }
     });
     app.weeks = Weeks;
