@@ -1,57 +1,5 @@
 $ = jQuery;
 
-var mealDrag = dragula(undefined);
-mealDrag.on('drop', function(el, target, source, sibling){
-
-  $(target).children().each(function(order, val){
-
-    var mealId = $(this).data('id');
-    if(!mealId)
-      return // Sibling not a meal
-    var meal = Meals[mealId];
-    var oldWeekNbr = parseInt(meal.acf.week);
-    var newWeekNbr = parseInt($(target).data('week'));
-
-    if (oldWeekNbr == newWeekNbr && Meals[mealId].acf.order == order)
-      return // No change
-
-
-    $.ajax({
-      url: window.wp_root_url + "/wp-json/acf/v3/meal/" + mealId,
-      method: 'POST',
-      beforeSend: function ( xhr ) {
-        xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-      },
-      data: {
-        fields: {
-          week: newWeekNbr,
-          order: order
-        }
-      },
-      success: function(data) {
-
-        Meals[mealId].acf = data.acf;
-
-        if(oldWeekNbr != newWeekNbr) {
-          var oldWeek = _.findWhere(app.weeks, {nbr: oldWeekNbr});
-          var newWeek = _.findWhere(app.weeks, {nbr: newWeekNbr});
-
-          //setTimeout(function(){
-            oldWeek.meals = _.reject(oldWeek.meals, function(m) {
-              return m.id == mealId
-            });
-            newWeek.meals.push(meal);
-            newWeek.meals = _.sortBy(newWeek.meals, function(m) {
-              return parseInt(m.acf.order);
-            });
-          // }, 500);
-        }
-      }
-    })
-
-  });
-})
-
 var recipeBoilerPlate = JSON.stringify({
   acf: {
     url: null
@@ -348,10 +296,5 @@ $.ajax({
       }
     });
     app.weeks = Weeks;
-    setTimeout(function(){
-      $('.week > ul').each(function(i,el){
-        mealDrag.containers.push(el);
-      });
-    },300);
   }
 });

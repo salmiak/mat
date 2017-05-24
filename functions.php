@@ -17,9 +17,14 @@ add_action('wp_enqueue_scripts', 'reg_styles');
 function mat_scripts() {
     // wp_enqueue_style( 'style-name', get_stylesheet_uri() );
     wp_enqueue_script( 'vue', 'https://unpkg.com/vue',null, null, true);
+
     wp_enqueue_script( 'momentjs', get_template_directory_uri() . '/node_modules/moment/min/moment.min.js',null, null, true);
-    wp_enqueue_script( 'dragula', get_template_directory_uri() . '/node_modules/dragula/dist/dragula.min.js',null, null, true);
-    wp_enqueue_script( 'matjs', get_template_directory_uri() . '/js/script.js', array( 'wp-api','underscore','jquery','vue','momentjs','dragula' ), '1.0.0', true );
+
+    wp_enqueue_script( 'sortable', get_template_directory_uri() . '/node_modules/sortablejs/Sortable.min.js',null, null, true);
+
+    wp_enqueue_script( 'vuedraggable', get_template_directory_uri() . '/node_modules/vuedraggable/dist/vuedraggable.js',array('vue','sortable'), null, true);
+
+    wp_enqueue_script( 'matjs', get_template_directory_uri() . '/js/script.js', array( 'wp-api','underscore','jquery','vue','momentjs','vuedraggable' ), '1.0.0', true );
 }
 add_action( 'wp_enqueue_scripts', 'mat_scripts' );
 
