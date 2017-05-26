@@ -41,24 +41,50 @@
       <div class="week">
         <h2>Vecka {{week.nbr}}</h2>
 
-        <ul v-bind:data-week="week.nbr">
+        <draggable
+          element="ul"
+          class="meal-container"
+          v-model="week.meals"
+          :options="{group:'weeks'}"
+          @start="drag=true"
+          @end="drag=false"
+          @sort="saveWeeksMeals">
 
-          <li v-if="week.meals.length==0" style="height: 60px; background:rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem;"></li>
+          <meal
+            class="meal"
+            v-for="(meal,index) in week.meals"
+            :key="index"
+            v-bind:meal="meal"
+            v-bind:recipes="recipes"></meal>
 
-          <!--<li v-for="(meal,index) in week.meals" :key="meal.acf.order">
-            {{index}} - {{meal.acf.order}} - {{meal.slug}}
-          </li>-->
-          <meal class="meal" v-for="(meal,index) in week.meals" :key="index" v-bind:meal="meal" v-bind:recipes="recipes"></meal>
+          <li
+            v-if="week.meals.length==0"
+            style="height: 60px; background:rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem;"></li>
 
-        </ul>
+        </draggable>
 
         <form class="addArea" v-on:submit="addMeal">
-          <input type="text" name="title" placeholder="Titel" />
-          <input type="text" name="acf_comment" placeholder="Kommentar" />
-          <input type="text" name="acf_recipes" placeholder="Recept IDn" />
-          <input type="hidden" name="acf_week" v-bind:value="week.nbr" />
-          <input type="submit" value="Lägg till" />
+          <input
+            type="text"
+            name="title"
+            placeholder="Titel" />
+          <input
+            type="text"
+            name="acf_comment"
+            placeholder="Kommentar" />
+          <input
+            type="text"
+            name="acf_recipes"
+            placeholder="Recept IDn" />
+          <input
+            type="hidden"
+            name="acf_week" 
+            v-bind:value="week.nbr" />
+          <input
+            type="submit"
+            value="Lägg till" />
         </form>
+
       </div>
     </script>
 
@@ -75,7 +101,7 @@
         <div @click="deleteMeal" class="removeBtn">
           &times;
         </div>
-        <h2>{{meal.acf.order}} : {{meal.title.rendered}}</h2>
+        <h2>{{meal.title.rendered}}</h2>
         <h4 v-if="meal.acf.recipes && meal.acf.recipes[0]!=0">Recept</h4>
         <recipe v-for="recipeId in meal.acf.recipes" :key="recipeId" v-if="meal.acf.recipes && meal.acf.recipes[0]!=0" v-bind:rec="recipes[recipeId]"></recipe>
         <h4 v-if="meal.acf.comment">Kommentar</h4>

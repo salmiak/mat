@@ -195,6 +195,30 @@ Vue.component('week', {
   template: '#weekTemplate',
   methods: {
 
+    saveWeeksMeals: function(){
+      var _this = this;
+      _.each(this.week.meals, function(element, index, list){
+        element.saving = true;
+        $.ajax({
+          url: window.wp_root_url + "/wp-json/wp/v2/meal/"+element.id,
+          method: 'POST',
+          beforeSend: function ( xhr ) {
+            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+          },
+          data: {
+            fields: {
+              order: index,
+              week: _this.week.nbr
+            }
+          },
+          success: function(data){
+            _this.week.meals.splice(index, 1, data);
+            console.log('order saved on server');
+          }
+        })
+      })
+    },
+
     addMeal: function(e) {
       // Avoid reloading on submit
       e.preventDefault();
