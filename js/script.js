@@ -215,15 +215,44 @@ Vue.component('meal', {
 });
 
 Vue.component('week', {
-  props: ['week','recipes'],
+  props: ['week','recipes','dragingRecipe'],
   template: '#weekTemplate',
   data: function(){
     return {
       drag: false,
-      trash: []
+      trash: [],
+      addMealList: []
     }
   },
   methods: {
+
+    addMealFromRecipe: function(){
+      var _this = this;
+      app.isSaving.push(1);
+      var recipeId = this.addMealList.pop();
+      var recipe = _.findWhere(this.recipes, {id:recipeId});
+      var data = {
+        title: recipe.title.rendered,
+        status: "publish",
+        fields: {
+          recipes: [recipeId]
+        }
+      }
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/meal/",
+        method: 'POST',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        data: data,
+        success: function(data){
+          app.isSaving.pop();
+          data.acf.recipes = [data.acf.recipes];
+          _this.week.meals.unshift(data);
+          _this.saveWeeksMeals();
+        }
+      })
+    },
 
     deleteMeal: function(){
       app.isSaving.push(1);
@@ -340,6 +369,7 @@ Vue.component('week', {
 var app = new Vue({
   el: '#content',
   data: {
+    dragingRecipe: false,
     drag: false,
     isSaving: [],
     message: null,
@@ -371,6 +401,7 @@ $.ajax({
   url: window.wp_root_url + "/wp-json/wp/v2/meal?per_page=100",
   success: function(result){
     result.forEach(function(meal) {
+      meal.acf.recipes = meal.acf.recipes==""?[]:meal.acf.recipes;
       Meals[meal.id] = meal;
       week = _.findWhere(Weeks, {nbr: parseInt(meal.acf.week)});
       if(week) {

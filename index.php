@@ -24,7 +24,13 @@
       <div id="savingIndicator" v-bind:class="isSaving.length?'':'hidden'"></div>
 
       <div id="weeksContainer">
-        <week v-if="weeks!=null && recipes!=null" v-for="week in weeks" v-bind:week="week"  :key="week.nbr" v-bind:recipes="recipes"></week>
+        <week
+          v-if="weeks!=null && recipes!=null"
+          v-for="week in weeks"
+          v-bind:week="week"
+          :key="week.nbr"
+          v-bind:recipes="recipes"
+          v-bind:draging-recipe="dragingRecipe"></week>
       </div>
 
       <div id="recipeContainer">
@@ -32,6 +38,8 @@
 
         <draggable
           :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
+          @start = "dragingRecipe=true"
+          @end = "dragingRecipe=false"
           :list="_.pluck(recipes,'id')">
 
           <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
@@ -55,6 +63,16 @@
           :options="{group:'weeks'}"
           :list="trash"
           @sort="deleteMeal">Ta bort måltid</draggable>
+
+        <draggable
+          class="addMealDropper"
+          v-if="dragingRecipe"
+          :options="{group:'mealRecipes'}"
+          :list="addMealList"
+          @sort="addMealFromRecipe">Skapa ny måltid</draggable>
+
+
+
         <h2>Vecka {{week.nbr}}</h2>
 
         <draggable

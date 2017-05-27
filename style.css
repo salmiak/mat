@@ -395,3 +395,19 @@ textarea:focus {
 .trash * {
   display: none;
 }
+.addMealDropper {
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  height: 1.5rem;
+  background: #F96A76;
+  color: #FFF;
+  line-height: 1.5rem;
+  float: right;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  text-align: right;
+  background: #56be95;
+}
+.addMealDropper * {
+  display: none;
+}
