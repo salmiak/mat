@@ -59,10 +59,6 @@
             v-bind:meal="meal"
             v-bind:recipes="recipes"></meal>
 
-          <li
-            v-if="week.meals.length==0"
-            style="height: 60px; background:rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); border-radius: 0.5rem;"></li>
-
         </draggable>
 
         <form class="addArea" v-on:submit="addMeal">
