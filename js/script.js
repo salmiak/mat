@@ -228,7 +228,29 @@ Vue.component('meal', {
 Vue.component('week', {
   props: ['week','recipes'],
   template: '#weekTemplate',
+  data: function(){
+    return {
+      drag: false,
+      trash: []
+    }
+  },
   methods: {
+
+    deleteMeal: function(){
+      app.isSaving.push(1);
+      var meal = this.trash.pop();
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/meal/"+meal.id,
+        method: 'DELETE',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        success: function(data){
+          console.log('meal removed');
+          app.isSaving.pop();
+        }
+      })
+    },
 
     saveWeeksMeals: function(){
       var _this = this;

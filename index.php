@@ -41,12 +41,19 @@
 
     <script type="text/x-template" id="weekTemplate">
       <div class="week">
+
+        <draggable
+          class="trash"
+          v-if="drag"
+          :options="{group:'weeks'}"
+          :list="trash"
+          @sort="deleteMeal">Ta bort måltid</draggable>
         <h2>Vecka {{week.nbr}}</h2>
 
         <draggable
           element="ul"
           class="meal-container"
-          v-model="week.meals"
+          :list="week.meals"
           :options="{group:'weeks'}"
           @start="drag=true"
           @end="drag=false"
@@ -87,6 +94,7 @@
     </script>
 
     <script type="text/x-template" id="mealTemplate">
+
       <li v-if="inEdit">
         <form class="editArea" v-on:submit="saveMeal">
           <input type="text" name="title" placeholder="Titel" v-bind:value="meal.title.rendered" />
