@@ -87,13 +87,47 @@ Vue.component('recipe', {
 Vue.component('meal', {
   props: ['meal','recipes'],
   data: function(){
+
+    // Make sure the recipes container is an array to make Vue.Draggable work
+    if (typeof this.meal.acf.recipes != 'object')
+      this.meal.acf.recipes = [];
+
     return {
       stateClass: '',
-      inEdit: false
+      inEdit: false,
+      drag: false,
+      trash: []
     }
   },
   template: '#mealTemplate',
   methods: {
+
+    saveRecipes: function() {
+      var _this = this;
+      app.isSaving.push(1);
+
+      var saveData = _.without(this.meal.acf.recipes,0);
+      if( !saveData.length ) {
+        saveData = null;
+      }
+
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/meal/" + this.meal.id,
+        method: 'POST',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        data: {
+          fields:{
+            recipes: saveData
+          }
+        },
+        success: function(data) {
+          app.isSaving.pop(1);
+        }
+      })
+    },
+
     toggleEditMeal: function() {
       this.inEdit = !this.inEdit;
     },

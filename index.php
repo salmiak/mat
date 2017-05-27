@@ -95,13 +95,38 @@
           <input type="submit" value="Spara" />
         </form>
       </li>
+
       <li v-bind:class="stateClass" v-bind:data-id="meal.id" v-else>
         <div @click="deleteMeal" class="removeBtn">
           &times;
         </div>
         <h2>{{meal.title.rendered}}</h2>
-        <h4 v-if="meal.acf.recipes && meal.acf.recipes[0]!=0">Recept</h4>
-        <recipe v-for="recipeId in meal.acf.recipes" :key="recipeId" v-if="meal.acf.recipes && meal.acf.recipes[0]!=0" v-bind:rec="recipes[recipeId]"></recipe>
+
+        <draggable
+          class="trash"
+          v-if="drag"
+          :options="{group:'mealRecipes'}"
+          :list="trash">Ta bort recept</draggable>
+
+        <h4>Recept</h4>
+
+        <draggable
+          element="div"
+          class="recipe-container"
+          :list="meal.acf.recipes"
+          :options="{group:'mealRecipes'}"
+          @start="drag=true"
+          @end="drag=false"
+          @sort="saveRecipes">
+
+          <recipe
+            v-for="recipeId in meal.acf.recipes"
+            :key="recipeId"
+            v-bind:rec="recipes[recipeId]"></recipe>
+
+        </draggable>
+
+
         <h4 v-if="meal.acf.comment">Kommentar</h4>
         <p>
           {{meal.acf.comment}}
@@ -111,7 +136,7 @@
     </script>
 
     <script type="text/x-template" id="recipeTemplate">
-      <div class="recipe" v-bind:class="stateClass">
+      <div class="recipe" v-bind:class="stateClass" v-if="rec&&rec.id!=0">
         <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
           <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
           <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />

@@ -21,7 +21,7 @@ License: No license
   box-sizing: border-box;
 }
 html {
-  font-size: 0.7vw;
+  font-size: 12px;
 }
 body {
   background: @cPri;
@@ -209,7 +209,13 @@ input[type=text], textarea {
   }
 
   .recipe {
-    margin: 0.25rem -0.25rem;
+    margin: 0.25rem 0;
+    &-container {
+      margin: 0.25rem -0.25rem;
+      min-height: 3rem;
+      background: rgba(0,0,0,0.03);
+      border-radius: 0.5rem;
+    }
   }
 
   .removeBtn {
@@ -225,5 +231,21 @@ input[type=text], textarea {
     &:hover {
       opacity: 1;
     }
+  }
+}
+
+.trash {
+  font-family: @headerFont;
+  text-transform: uppercase;
+  height: 1.5rem;
+  background: @cSec;
+  color: #FFF;
+  line-height: 1.5rem;
+  float: right;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  text-align: right;
+  * {
+    display: none;
   }
 }

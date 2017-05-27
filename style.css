@@ -140,7 +140,7 @@ table {
   box-sizing: border-box;
 }
 html {
-  font-size: 0.7vw;
+  font-size: 12px;
 }
 body {
   background: #7BCCAC;
@@ -355,7 +355,13 @@ textarea:focus {
   z-index: 100;
 }
 .meal .recipe {
+  margin: 0.25rem 0;
+}
+.meal .recipe-container {
   margin: 0.25rem -0.25rem;
+  min-height: 3rem;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 0.5rem;
 }
 .meal .removeBtn {
   position: absolute;
@@ -373,4 +379,19 @@ textarea:focus {
 }
 .meal .removeBtn:hover {
   opacity: 1;
+}
+.trash {
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  height: 1.5rem;
+  background: #F96A76;
+  color: #FFF;
+  line-height: 1.5rem;
+  float: right;
+  padding: 0 1rem;
+  border-radius: 1rem;
+  text-align: right;
+}
+.trash * {
+  display: none;
 }
