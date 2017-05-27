@@ -109,12 +109,17 @@ input[type=text], textarea {
 }
 
 #weeksContainer {
-  height: 50vh;
-  width: 100vw;
+  height: 100vh;
+  width: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 20.75rem;
+  bottom: 0;
   padding: 0 0.5vw;
   overflow-x: auto;
   overflow-y: hidden;
-  border-bottom: 1px solid rgba(0,0,0,0.2);
+  border-right: 1px solid rgba(0,0,0,0.2);
 
   .display(flex);
   .flex-wrap(nowrap);
@@ -161,15 +166,16 @@ input[type=text], textarea {
 }
 
 #recipeContainer {
-  height: 50vh;
-  width: 100vw;
+  height: 100vh;
+  width: 20.75rem;
   background: rgba(255,255,255,0.2);
   padding: 0.25rem;
-  .display(flex);
-  .flex-wrap(wrap);
-  .align-content(flex-start);
   overflow-x: hidden;
   overflow-y: auto;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
 }
 
 .recipe {

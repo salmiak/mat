@@ -237,12 +237,17 @@ textarea:focus {
   display: none;
 }
 #weeksContainer {
-  height: 50vh;
-  width: 100vw;
+  height: 100vh;
+  width: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 20.75rem;
+  bottom: 0;
   padding: 0 0.5vw;
   overflow-x: auto;
   overflow-y: hidden;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+  border-right: 1px solid rgba(0, 0, 0, 0.2);
   display: -webkit-box;
   display: -moz-box;
   display: -webkit-flex;
@@ -293,23 +298,16 @@ textarea:focus {
   color: #FFF;
 }
 #recipeContainer {
-  height: 50vh;
-  width: 100vw;
+  height: 100vh;
+  width: 20.75rem;
   background: rgba(255, 255, 255, 0.2);
   padding: 0.25rem;
-  display: -webkit-box;
-  display: -moz-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-flex-wrap: wrap;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  -webkit-align-content: flex-start;
-  -ms-flex-line-pack: start;
-  align-content: flex-start;
   overflow-x: hidden;
   overflow-y: auto;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  right: 0;
 }
 .recipe {
   width: 19.75rem;

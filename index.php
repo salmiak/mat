@@ -34,7 +34,7 @@
       </div>
 
       <div id="recipeContainer">
-        <!-- <recipe v-bind:rec="recipeBoilerPlate"></recipe> -->
+        <recipe v-bind:rec="recipeBoilerPlate"></recipe>
 
         <draggable
           :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
@@ -191,22 +191,3 @@
 
   </body>
 </html>
-
-<!--
-
-recipe
-  url:
-  img:
-  img_url:
-  summary:
-  tags:
-  weeks: []
-
-week
-  [{
-    recepie: recipe
-    day:
-    comment:
-  }]
-
--->
