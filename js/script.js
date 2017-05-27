@@ -184,32 +184,6 @@ Vue.component('meal', {
           })
         }
       })
-    },
-    deleteMeal: function(e){
-
-      // Limits click on remove to one
-      if(this.stateClass == 'faded')
-        return false;
-
-      // Fade out item to remove
-      this.stateClass = 'faded';
-
-      var _this = this;
-      var week = _.findWhere(Weeks, {nbr: parseInt(this.meal.acf.week)});
-
-      $.ajax({
-        url: window.wp_root_url + "/wp-json/wp/v2/meal/" + this.meal.id,
-        method: 'DELETE',
-        beforeSend: function ( xhr ) {
-          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-        },
-        success: function(data) {
-          week.data = _.reject(week.meals, function(i){
-            return i.id == data.id
-          });
-          _this.stateClass = '';
-        }
-      });
     }
   }
 });

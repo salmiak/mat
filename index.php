@@ -130,9 +130,7 @@
       </li>
 
       <li v-bind:class="stateClass" v-bind:data-id="meal.id" v-else>
-        <div @click="deleteMeal" class="removeBtn">
-          &times;
-        </div>
+
         <h2>{{meal.title.rendered}}</h2>
 
         <draggable
