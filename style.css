@@ -225,6 +225,17 @@ textarea:focus {
 #content {
   height: 100vh;
 }
+#savingIndicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #F96A76;
+}
+#savingIndicator.hidden {
+  display: none;
+}
 #weeksContainer {
   height: 50vh;
   width: 100vw;

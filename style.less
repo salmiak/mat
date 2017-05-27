@@ -98,6 +98,16 @@ input[type=text], textarea {
   height: 100vh;
 }
 
+#savingIndicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: @cSec;
+  &.hidden { display: none; }
+}
+
 #weeksContainer {
   height: 50vh;
   width: 100vw;

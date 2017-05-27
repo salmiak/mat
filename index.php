@@ -21,6 +21,8 @@
 
     <div id="content">
 
+      <div id="savingIndicator" v-bind:class="isSaving.length?'':'hidden'"></div>
+
       <div id="weeksContainer">
         <week v-if="weeks!=null && recipes!=null" v-for="week in weeks" v-bind:week="week"  :key="week.nbr" v-bind:recipes="recipes"></week>
       </div>
@@ -78,7 +80,7 @@
             placeholder="Recept IDn" />
           <input
             type="hidden"
-            name="acf_week" 
+            name="acf_week"
             v-bind:value="week.nbr" />
           <input
             type="submit"

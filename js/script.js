@@ -11,6 +11,7 @@ var recipeBoilerPlate = JSON.stringify({
 var app = new Vue({
   el: '#content',
   data: {
+    isSaving: [],
     message: null,
     weeks: null,
     recipes: {},
@@ -199,6 +200,7 @@ Vue.component('week', {
       var _this = this;
       _.each(this.week.meals, function(element, index, list){
         element.saving = true;
+        app.isSaving.push(1);
         $.ajax({
           url: window.wp_root_url + "/wp-json/wp/v2/meal/"+element.id,
           method: 'POST',
@@ -214,6 +216,7 @@ Vue.component('week', {
           success: function(data){
             _this.week.meals.splice(index, 1, data);
             console.log('order saved on server');
+            app.isSaving.pop();
           }
         })
       })
