@@ -8,17 +8,6 @@ var recipeBoilerPlate = JSON.stringify({
   content: { rendered: null }
 });
 
-var app = new Vue({
-  el: '#content',
-  data: {
-    isSaving: [],
-    message: null,
-    weeks: null,
-    recipes: {},
-    recipeBoilerPlate: JSON.parse(recipeBoilerPlate)
-  }
-})
-
 Vue.component('recipe', {
   props: ['rec'],
   template: '#recipeTemplate',
@@ -37,7 +26,7 @@ Vue.component('recipe', {
       $.ajax({
         url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+this.rec.id,
         success: function(result){
-          Vue.set(app.recipes, result.id, result);
+          this.rec = result;
           _this.stateClass = "";
         }
       });
@@ -151,7 +140,7 @@ Vue.component('meal', {
           if(d.value != '') {
             acfData.fields.recipes = d.value.split(',');
           } else {
-            acfData.fields.recipes = [0];
+            acfData.fields.recipes = null;
           }
         } else {
           acfData.fields[d.name.slice(4)] = d.value;
@@ -346,6 +335,20 @@ Vue.component('week', {
   }
 });
 
+
+
+var app = new Vue({
+  el: '#content',
+  data: {
+    drag: false,
+    isSaving: [],
+    message: null,
+    weeks: null,
+    recipes: [],
+    recipeBoilerPlate: JSON.parse(recipeBoilerPlate)
+  }
+})
+
 var Recipes = {},
   Meals = {},
   Weeks = [];
@@ -361,7 +364,7 @@ $.ajax({
   url: window.wp_root_url + "/wp-json/wp/v2/recipe?per_page=100",
   success: function(result){
     Recipes = _.indexBy(result, 'id');
-    app.recipes = Recipes
+    app.recipes = result;
   }
 });
 $.ajax({

@@ -28,8 +28,15 @@
       </div>
 
       <div id="recipeContainer">
-        <recipe v-bind:rec="recipeBoilerPlate"></recipe>
-        <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+        <!-- <recipe v-bind:rec="recipeBoilerPlate"></recipe> -->
+
+        <draggable
+          :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
+          :list="_.pluck(recipes,'id')">
+
+          <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+
+        </draggable>
       </div>
 
     </div>
@@ -130,7 +137,7 @@
           <recipe
             v-for="recipeId in meal.acf.recipes"
             :key="recipeId"
-            v-bind:rec="recipes[recipeId]"></recipe>
+            v-bind:rec="_.findWhere(recipes,{id:recipeId})"></recipe>
 
         </draggable>
 
