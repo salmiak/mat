@@ -157,11 +157,14 @@ h5 {
 h2 {
   text-transform: uppercase;
   font-size: 1.5rem;
+  line-height: 2rem;
   margin-bottom: 1rem;
 }
 h3 {
-  font-size: 1.2rem;
+  font-size: 1.3rem;
+  line-height: 2rem;
   margin-bottom: 0.5rem;
+  font-weight: 400;
 }
 h4 {
   text-transform: uppercase;
@@ -171,7 +174,6 @@ a {
   color: #F96A76;
   text-decoration: none;
 }
-.editBtn,
 input[type=submit] {
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -190,10 +192,35 @@ input[type=submit] {
   -o-transition: all 0.3s;
   transition: all 0.3s;
 }
-.editBtn:hover,
 input[type=submit]:hover {
   background: #F96A76;
   color: #FFF;
+}
+.editBtn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.5rem;
+  color: #F96A76;
+  cursor: pointer;
+  width: 1.75rem;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F96A76;
+  box-sizing: content-box;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s;
+  -moz-transition: opacity 0.3s;
+  -o-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+.editBtn .fa {
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+:hover > .editBtn {
+  opacity: 0.8;
 }
 .faded {
   opacity: 0.3;

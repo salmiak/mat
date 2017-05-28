@@ -12,6 +12,7 @@
     <meta charset="<?php bloginfo( 'charset' ); ?>" />
 
     <title>Matplanering</title>
+    <script src="https://use.fontawesome.com/20d70f523f.js"></script>
 
     <?php wp_head(); ?>
 
@@ -71,8 +72,6 @@
           :list="addMealList"
           @sort="addMealFromRecipe">Skapa ny måltid</draggable>
 
-
-
         <h2>Vecka {{week.nbr}}</h2>
 
         <draggable
@@ -103,10 +102,6 @@
             name="acf_comment"
             placeholder="Kommentar" />
           <input
-            type="text"
-            name="acf_recipes"
-            placeholder="Recept IDn" />
-          <input
             type="hidden"
             name="acf_week"
             v-bind:value="week.nbr" />
@@ -130,6 +125,10 @@
       </li>
 
       <li v-bind:class="stateClass" v-bind:data-id="meal.id" v-else>
+
+        <div class="editBtn" @click="toggleEditMeal">
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+        </div>
 
         <h2>{{meal.title.rendered}}</h2>
 
@@ -162,12 +161,15 @@
         <p>
           {{meal.acf.comment}}
         </p>
-        <div class="editBtn" @click="toggleEditMeal">Redigera</div>
       </li>
     </script>
 
     <script type="text/x-template" id="recipeTemplate">
       <div class="recipe" v-bind:class="stateClass" v-if="rec&&rec.id!=0">
+        <div class="editBtn" @click="toggleEditMeal">
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+        </div>
+
         <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
           <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
           <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />
@@ -175,11 +177,13 @@
           <textarea name="content" v-model="rec.content.rendered" placeholder="Kommentar"></textarea>
           <input type="submit" value="Spara" />
         </form>
+
         <div v-bind:title="rec.id" v-else-if="rec">
+
           <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
           <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
           <p v-html="rec.content.rendered"></p>
-          <div class="editBtn" @click="toggleEditRecipe">Redigera</div>
+
         </div>
         <div v-else>
           Laddar...
