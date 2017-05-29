@@ -167,7 +167,7 @@
 
     <script type="text/x-template" id="recipeTemplate">
       <div class="recipe" v-bind:class="stateClass" v-if="rec&&rec.id!=0">
-        <div class="editBtn" @click="toggleEditMeal">
+        <div class="editBtn" @click="toggleEditRecipe">
           <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
 
