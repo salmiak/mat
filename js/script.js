@@ -159,10 +159,49 @@ Vue.component('week', {
     return {
       drag: false,
       trash: [],
-      addMealList: []
+      addMealList: [],
+      newMeal: this._resetNewMeal()
     }
   },
   methods: {
+
+    _resetNewMeal: function(){
+      this.newMeal = {
+        status: 'publish',
+        fields: {
+          week: week.nbr,
+          recipes: [0]
+        }
+      }
+      return this.newMeal;
+    },
+
+    createNewMeal: function(e){
+
+      // Avoid reloading on submit
+      e.preventDefault();
+
+      var _this = this;
+      app.isSaving.push(1);
+
+      var data = this.newMeal;
+
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/meal/",
+        method: 'POST',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        data: data,
+        success: function(data){
+          app.isSaving.pop();
+          _this.week.meals.unshift(data);
+          _this.saveWeeksMeals();
+          _this._resetNewMeal();
+        }
+      })
+
+    },
 
     addMealFromRecipe: function(){
       var _this = this;

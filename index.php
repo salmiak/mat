@@ -92,19 +92,17 @@
 
         </draggable>
 
-        <form class="addArea" v-on:submit="addMeal">
+        <form class="addArea" v-on:submit="createNewMeal">
           <input
             type="text"
             name="title"
-            placeholder="Titel" />
-          <input
+            placeholder="Titel"
+            v-model= "newMeal.title" />
+          <textarea
             type="text"
             name="acf_comment"
-            placeholder="Kommentar" />
-          <input
-            type="hidden"
-            name="acf_week"
-            v-bind:value="week.nbr" />
+            placeholder="Kommentar"
+            v-model= "newMeal.fields.comment"></textarea>
           <input
             type="submit"
             value="Lägg till" />
