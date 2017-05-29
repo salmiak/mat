@@ -91,6 +91,10 @@ Vue.component('meal', {
   template: '#mealTemplate',
   methods: {
 
+    toggleEditMeal: function() {
+      this.inEdit = !this.inEdit;
+    },
+
     saveRecipes: function() {
       var _this = this;
       app.isSaving.push(1);
@@ -117,71 +121,31 @@ Vue.component('meal', {
       })
     },
 
-    toggleEditMeal: function() {
-      this.inEdit = !this.inEdit;
-    },
     saveMeal: function(e) {
-      var _this = this;
+
       // Avoid reloading on submit
       e.preventDefault();
-      // Get data from form
-      var data = $(e.target).find(":input").serializeArray();
-      // Created containers for postData (meal data) and ACF (second request) and parse the form data into these containers.
-      var postData = {};
-      var acfData = {
-        fields: {
-          order: this.acf.order || 0
-        }
-      }
-      data.forEach(function(d){
-        if(d.name.indexOf('acf')==-1){
-          postData[d.name] = d.value;
-        } else if(d.name == 'acf_recipes') {
-          if(d.value != '') {
-            acfData.fields.recipes = d.value.split(',');
-          } else {
-            acfData.fields.recipes = null;
-          }
-        } else {
-          acfData.fields[d.name.slice(4)] = d.value;
-        }
-      });
 
-      // First call - create meal
+      var _this = this;
+      app.isSaving.push(1);
+
+      // prep data
+      var data = this.meal;
+      data.fields = this.meal.acf;
+      data.title = this.meal.title.rendered;
+
       $.ajax({
         url: window.wp_root_url + "/wp-json/wp/v2/meal/" + this.meal.id,
         method: 'POST',
         beforeSend: function ( xhr ) {
           xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
         },
-        data: postData,
-        success: function(data) {
-          // Fetch id of the new meal.
-          var postId = data.id;
-          // Second call - add ACF-data
-          $.ajax({
-            url: window.wp_root_url + "/wp-json/acf/v3/meal/" + postId,
-            method: 'POST',
-            beforeSend: function ( xhr ) {
-              xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-            },
-            data: acfData,
-            success: function(data) {
-              // Successfully saved the meal, now lets get the whole thing and add it to our list of meals in the Vue app.
-              $.ajax({
-                url: window.wp_root_url + "/wp-json/wp/v2/meal/"+postId,
-                success: function(meal){
-                  Meals[meal.id] = meal;
-                  week = _.findWhere(app.weeks, {nbr: parseInt(meal.acf.week)});
-                  if(week)
-                    data = _.reject(week.meals, function(weekMeal){ return weekMeal.id == meal.id})
-                  data.push(meal);
-                  week.meals = data;
-                  _this.inEdit = false;
-                }
-              });
-            }
-          })
+        data: data,
+        success: function(meal) {
+          Meals[meal.id] = meal;
+          _this.meal = meal;
+          _this.inEdit = false;
+          app.isSaving.pop(1);
         }
       })
     }

@@ -115,52 +115,55 @@
 
     <script type="text/x-template" id="mealTemplate">
 
-      <li v-if="inEdit">
-        <form class="editArea" v-on:submit="saveMeal">
-          <input type="text" name="title" placeholder="Titel" v-bind:value="meal.title.rendered" />
-          <input type="text" name="acf_comment" v-bind:value="meal.acf.comment" placeholder="Kommentar" />
-          <input type="text" name="acf_recipes" v-bind:value="meal.acf.recipes" placeholder="Recept IDn" />
-          <input type="submit" value="Spara" />
-        </form>
-      </li>
-
-      <li v-bind:class="stateClass" v-bind:data-id="meal.id" v-else>
+      <li v-bind:class="stateClass" v-bind:data-id="meal.id">
 
         <div class="editBtn" @click="toggleEditMeal">
           <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
 
-        <h2>{{meal.title.rendered}}</h2>
+        <form class="editArea" v-on:submit="saveMeal">
 
-        <draggable
-          class="trash"
-          v-if="drag"
-          :options="{group:'mealRecipes'}"
-          :list="trash">Ta bort recept</draggable>
+          <input
+            type="text"
+            placeholder="Titel"
+            v-model="meal.title.rendered"
+            v-if="inEdit" />
+          <h2 v-else>{{meal.title.rendered}}</h2>
 
-        <h4>Recept</h4>
+          <draggable
+            class="trash"
+            v-if="drag"
+            :options="{group:'mealRecipes'}"
+            :list="trash">Ta bort recept</draggable>
 
-        <draggable
-          element="div"
-          class="recipe-container"
-          :list="meal.acf.recipes"
-          :options="{group:'mealRecipes'}"
-          @start="drag=true"
-          @end="drag=false"
-          @sort="saveRecipes">
+          <h4>Recept</h4>
 
-          <recipe
-            v-for="recipeId in meal.acf.recipes"
-            :key="recipeId"
-            v-bind:rec="_.findWhere(recipes,{id:recipeId})"></recipe>
+          <draggable
+            element="div"
+            class="recipe-container"
+            :list="meal.acf.recipes"
+            :options="{group:'mealRecipes'}"
+            @start="drag=true"
+            @end="drag=false"
+            @sort="saveRecipes">
 
-        </draggable>
+            <recipe
+              v-for="recipeId in meal.acf.recipes"
+              :key="recipeId"
+              v-bind:rec="_.findWhere(recipes,{id:recipeId})"></recipe>
 
+          </draggable>
 
-        <h4 v-if="meal.acf.comment">Kommentar</h4>
-        <p>
-          {{meal.acf.comment}}
-        </p>
+          <h4 v-if="meal.acf.comment || inEdit">Kommentar</h4>
+          <textarea
+            type="text"
+            v-model="meal.acf.comment"
+            placeholder="Kommentar"
+            v-if="inEdit"></textarea>
+          <p v-else v-html="meal.acf.comment"></p>
+
+          <input type="submit" value="Spara" v-if="inEdit" />
+        </form>
       </li>
     </script>
 
