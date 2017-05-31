@@ -12,6 +12,7 @@
     <meta charset="<?php bloginfo( 'charset' ); ?>" />
 
     <title>Matplanering</title>
+    <script src="https://use.fontawesome.com/20d70f523f.js"></script>
 
     <?php wp_head(); ?>
 
@@ -21,38 +22,155 @@
 
     <div id="content">
 
+      <div id="savingIndicator" v-bind:class="isSaving.length?'':'hidden'"></div>
+
       <div id="weeksContainer">
-        <div class="week" v-if="weeks!=null && recipes!=null" v-for="week in weeks">
-          <h2>Vecka {{week.weekNbr}}</h2>
-          <ul v-bind:data-week="week.weekNbr">
-            <li v-if="week.data.length==0" style="height: 120px; background:rgba(255,255,255,0.1);">
-            </li>
-            <meal class="meal" v-for="(meal,index) in week.data" :key="index" v-bind:meal="meal" v-bind:recipes="recipes"></meal>
-          </ul>
-          <form class="addArea" v-on:submit="addMeal">
-            <input type="text" name="title" placeholder="Titel" />
-            <input type="text" name="acf_comment" placeholder="Kommentar" />
-            <input type="text" name="acf_recipes" placeholder="Recept IDn" />
-            <input type="hidden" name="acf_week" v-bind:value="week.weekNbr" />
-            <input type="submit" value="Lägg till" />
-          </form>
-        </div>
+        <week
+          v-if="weeks!=null && recipes!=null"
+          v-for="week in weeks"
+          v-bind:week="week"
+          :key="week.nbr"
+          v-bind:recipes="recipes"
+          v-bind:draging-recipe="dragingRecipe"></week>
       </div>
 
       <div id="recipeContainer">
         <recipe v-bind:rec="recipeBoilerPlate"></recipe>
-        <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+
+        <draggable
+          :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
+          @start = "dragingRecipe=true"
+          @end = "dragingRecipe=false"
+          :list="_.pluck(recipes,'id')">
+
+          <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+
+        </draggable>
       </div>
 
     </div>
+
 
     <script>
       window.wp_root_url = "<?php bloginfo('url'); ?>";
     </script>
 
+    <script type="text/x-template" id="weekTemplate">
+      <div class="week">
 
-    <script type="text/template" id="recipeTemplate">
-      <div class="recipe" v-bind:class="stateClass">
+        <draggable
+          class="trash"
+          v-if="drag"
+          :options="{group:'weeks'}"
+          :list="trash"
+          @sort="deleteMeal">Ta bort måltid</draggable>
+
+        <draggable
+          class="addMealDropper"
+          v-if="dragingRecipe"
+          :options="{group:'mealRecipes'}"
+          :list="addMealList"
+          @sort="addMealFromRecipe">Skapa ny måltid</draggable>
+
+        <h2>Vecka {{week.nbr}}</h2>
+
+        <draggable
+          element="ul"
+          class="meal-container"
+          :list="week.meals"
+          :options="{group:'weeks'}"
+          @start="drag=true"
+          @end="drag=false"
+          @sort="saveWeeksMeals">
+
+          <meal
+            class="meal"
+            v-for="(meal,index) in week.meals"
+            :key="index"
+            v-bind:meal="meal"
+            v-bind:recipes="recipes"></meal>
+
+        </draggable>
+
+        <form class="addArea" v-on:submit="createNewMeal">
+          <input
+            type="text"
+            name="title"
+            placeholder="Titel"
+            v-model= "newMeal.title" />
+          <textarea
+            type="text"
+            name="acf_comment"
+            placeholder="Kommentar"
+            v-model= "newMeal.fields.comment"></textarea>
+          <input
+            type="submit"
+            value="Lägg till" />
+        </form>
+
+      </div>
+    </script>
+
+    <script type="text/x-template" id="mealTemplate">
+
+      <li v-bind:class="stateClass" v-bind:data-id="meal.id">
+
+        <div class="editBtn" @click="toggleEditMeal">
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+        </div>
+
+        <form class="editArea" v-on:submit="saveMeal">
+
+          <input
+            type="text"
+            placeholder="Titel"
+            v-model="meal.title.rendered"
+            v-if="inEdit" />
+          <h2 v-else>{{meal.title.rendered}}</h2>
+
+          <draggable
+            class="trash"
+            v-if="drag"
+            :options="{group:'mealRecipes'}"
+            :list="trash">Ta bort recept</draggable>
+
+          <h4>Recept</h4>
+
+          <draggable
+            element="div"
+            class="recipe-container"
+            :list="meal.acf.recipes"
+            :options="{group:'mealRecipes'}"
+            @start="drag=true"
+            @end="drag=false"
+            @sort="saveRecipes">
+
+            <recipe
+              v-for="recipeId in meal.acf.recipes"
+              :key="recipeId"
+              v-bind:rec="_.findWhere(recipes,{id:recipeId})"></recipe>
+
+          </draggable>
+
+          <h4 v-if="meal.acf.comment || inEdit">Kommentar</h4>
+          <textarea
+            type="text"
+            v-model="meal.acf.comment"
+            placeholder="Kommentar"
+            v-if="inEdit"></textarea>
+          <p v-else v-html="meal.acf.comment"></p>
+
+          <input type="submit" value="Spara" v-if="inEdit" />
+        </form>
+      </li>
+    </script>
+
+    <script type="text/x-template" id="recipeTemplate">
+      <div class="recipe" v-bind:class="stateClass" v-if="rec&&rec.id!=0">
+        <div class="editBtn" @click="toggleEditRecipe">
+          <i class="fa fa-pencil" aria-hidden="true"></i>
+        </div>
+
         <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
           <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
           <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />
@@ -60,11 +178,13 @@
           <textarea name="content" v-model="rec.content.rendered" placeholder="Kommentar"></textarea>
           <input type="submit" value="Spara" />
         </form>
+
         <div v-bind:title="rec.id" v-else-if="rec">
+
           <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
           <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
           <p v-html="rec.content.rendered"></p>
-          <div class="editBtn" @click="toggleEditRecipe">Redigera</div>
+
         </div>
         <div v-else>
           Laddar...
@@ -72,50 +192,7 @@
       </div>
     </script>
 
-    <script type="text/template" id="mealTemplate">
-      <li v-if="inEdit">
-        <form class="editArea" v-on:submit="saveMeal">
-          <input type="text" name="title" placeholder="Titel" v-bind:value="meal.title.rendered" />
-          <input type="text" name="acf_comment" v-bind:value="meal.acf.comment" placeholder="Kommentar" />
-          <input type="text" name="acf_recipes" v-bind:value="meal.acf.recipes" placeholder="Recept IDn" />
-          <input type="submit" value="Spara" />
-        </form>
-      </li>
-      <li v-bind:class="stateClass" v-bind:data-id="meal.id" v-else>
-        <div @click="deleteMeal" class="removeBtn">
-          &times;
-        </div>
-        <h2>{{meal.acf.order}} {{meal.title.rendered}}</h2>
-        <h4 v-if="meal.acf.recipes && meal.acf.recipes[0]!=0">Recept</h4>
-        <recipe v-for="recipeId in meal.acf.recipes" :key="recipeId" v-if="meal.acf.recipes && meal.acf.recipes[0]!=0" v-bind:rec="recipes[recipeId]"></recipe>
-        <h4 v-if="meal.acf.comment">Kommentar</h4>
-        <p>
-          {{meal.acf.comment}}
-        </p>
-        <div class="editBtn" @click="toggleEditMeal">Redigera</div>
-      </li>
-    </script>
-
     <?php wp_footer(); ?>
 
   </body>
 </html>
-
-<!--
-
-recipe
-  url:
-  img:
-  img_url:
-  summary:
-  tags:
-  weeks: []
-
-week
-  [{
-    recepie: recipe
-    day:
-    comment:
-  }]
-
--->
