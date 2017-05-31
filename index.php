@@ -182,7 +182,7 @@
         <div v-bind:title="rec.id" v-else-if="rec">
 
           <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
-          <h3 v-if="rec.acf.url"><a :href="rec.acf.url">{{rec.title.rendered}}</a></h3>
+          <h3 v-if="rec.acf.url"><a :href="rec.acf.url" target="_blank">{{rec.title.rendered}}</a></h3>
           <p v-html="rec.content.rendered"></p>
 
         </div>
