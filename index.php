@@ -179,10 +179,26 @@
           <input type="submit" value="Spara" />
         </form>
 
-        <div v-bind:title="rec.id" v-else-if="rec">
+        <div v-else-if="rec">
 
           <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
           <h3 v-if="rec.acf.url"><a :href="rec.acf.url" target="_blank">{{rec.title.rendered}}</a></h3>
+          <div v-if="avgRating !== undefined">
+            <i class="fa fa-star"
+              v-for="n in avgRating"
+              aria-hidden="true"
+              style="margin-right: 2px;">
+            </i><i class="fa fa-star-o"
+              v-for="n in (5-avgRating)"
+              aria-hidden="true"
+              style="margin-right: 2px;"></i>
+          </div>
+          <div v-else style="opacity: 0.5">
+            <i class="fa fa-star-o"
+              v-for="n in 5"
+              aria-hidden="true"
+              style="margin-right: 2px;"></i>
+          </div>
           <p v-html="rec.content.rendered"></p>
 
         </div>
