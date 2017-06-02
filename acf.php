@@ -1,5 +1,4 @@
 <?php
-
 if(function_exists("register_field_group"))
 {
 	register_field_group(array (
@@ -61,6 +60,20 @@ if(function_exists("register_field_group"))
 				'rows' => 4,
 				'formatting' => 'br',
 			),
+			array (
+				'key' => 'field_5922c1fceaaef',
+				'label' => 'Order',
+				'name' => 'order',
+				'type' => 'number',
+				'required' => 1,
+				'default_value' => 0,
+				'placeholder' => '',
+				'prepend' => '',
+				'append' => '',
+				'min' => '',
+				'max' => '',
+				'step' => 1,
+			),
 		),
 		'location' => array (
 			array (
@@ -96,6 +109,24 @@ if(function_exists("register_field_group"))
 				'append' => '',
 				'formatting' => 'none',
 				'maxlength' => '',
+			),
+			array (
+				'key' => 'field_592f2b090d70f',
+				'label' => 'Rating JSON',
+				'name' => 'rating_json',
+				'type' => 'textarea',
+				'instructions' => 'A json containing rating data:
+	{
+		 "170531" : 4,
+		 "170615" : 3
+		 "[date]" : rating (1-5)
+	}',
+				'default_value' => '{
+	}',
+				'placeholder' => '',
+				'maxlength' => '',
+				'rows' => '',
+				'formatting' => 'none',
 			),
 		),
 		'location' => array (
