@@ -9,30 +9,26 @@ var recipeBoilerPlate = JSON.stringify({
 });
 
 Vue.component('recipe', {
-  props: ['rec','week'],
+  props: ['rec'],
   template: '#recipeTemplate',
   data: function() {
-
-    var ratingObj = undefined;
-    if (this.rec!=undefined && this.rec.acf.rating_json){
-      var ratingObj = JSON.parse(this.rec.acf.rating_json.replace(/\&quot\;/gi, '"'));
-      if(!_.size(ratingObj))
-        ratingObj = undefined;
-    }
-
     return {
       inEdit: this.rec!=undefined && this.rec.id == undefined,
-      stateClass: '',
-      ratingObj: ratingObj
+      stateClass: ''
     }
   },
   computed: {
     avgRating: function(){
 
-      if(!this.ratingObj)
+      //return this.rec.acf.rating_json.replace(/\&quot\;/gi, '"');
+      if (!this.rec.acf.rating_json)
+        return undefined
+
+      var ratingObj = JSON.parse(this.rec.acf.rating_json.replace(/\&quot\;/gi, '"'));
+      if(!_.size(ratingObj))
         return undefined;
 
-      var ratings = _.values(this.ratingObj);
+      var ratings = _.values(ratingObj);
 
       var average = 1/ratings.length * ratings.reduce(function(total, num) {
         return total + num;
@@ -40,45 +36,9 @@ Vue.component('recipe', {
 
       return Math.round(average);
 
-    },
-    rating: {
-      get: function(){
-        if(!this.week || !this.ratingObj)
-          return false;
-        return this.ratingObj[this.week] || false;
-      },
-      set: function(a){
-        this.ratingObj[this.week] = a;
-        console.log('rate changed to ' + this.ratingObj[this.week]);
-        console.log(this.avgRating);
-        this.$set(this.rec.acf, 'rating_json', JSON.stringify(this.ratingObj));
-
-        app.isSaving.push(1);
-
-        $.ajax({
-          url: window.wp_root_url + "/wp-json/wp/v2/recipe/" + (this.rec.id||''),
-          method: 'POST',
-          data: {
-            fields: {
-              rating_json: this.rec.acf.rating_json
-            }
-          },
-          beforeSend: function ( xhr ) {
-            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-          },
-          success: function(){
-            app.isSaving.pop(1);
-          }
-        });
-      }
     }
   },
   methods: {
-    /*rate: function(a){
-      console.log(a);
-      this.ratingObj[this.week] = a;
-      this.rec.acf.ratingObj = JSON.stringify(this.ratingObj);
-    },*/
     toggleEditRecipe: function(e) {
       this.inEdit = !this.inEdit;
     },
