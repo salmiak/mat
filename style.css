@@ -143,7 +143,7 @@ html {
   font-size: 12px;
 }
 body {
-  background: #BED;
+  background: #7BCCAC;
   font: 1rem/1.5 Open Sans, serif;
   color: rgba(0, 0, 0, 0.6);
 }
@@ -171,7 +171,7 @@ h4 {
   margin-bottom: 0.25rem;
 }
 a {
-  color: #F17;
+  color: #F96A76;
   text-decoration: none;
 }
 input[type=submit] {
@@ -180,8 +180,8 @@ input[type=submit] {
   font-size: 0.7rem;
   line-height: 1.5rem;
   padding: 0 0.8rem;
-  border: 1px solid #F17;
-  color: #F17;
+  border: 1px solid #F96A76;
+  color: #F96A76;
   border-radius: 1rem;
   display: inline-block;
   margin: 0.8rem 0 0;
@@ -193,21 +193,21 @@ input[type=submit] {
   transition: all 0.3s;
 }
 input[type=submit]:hover {
-  background: #F17;
+  background: #F96A76;
   color: #FFF;
 }
 .editBtn {
   position: absolute;
   top: 0.75rem;
   right: 0.5rem;
-  color: #F17;
+  color: #F96A76;
   cursor: pointer;
   width: 1.75rem;
   height: 1.75rem;
   line-height: 1.75rem;
   text-align: center;
   border-radius: 1.75rem;
-  border: 1px solid #F17;
+  border: 1px solid #F96A76;
   box-sizing: content-box;
   opacity: 0;
   -webkit-transition: opacity 0.3s;
@@ -258,7 +258,7 @@ textarea:focus {
   left: 0;
   right: 0;
   height: 2px;
-  background: #F17;
+  background: #F96A76;
 }
 #savingIndicator.hidden {
   display: none;
@@ -409,7 +409,7 @@ textarea:focus {
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
   height: 1.5rem;
-  background: #F17;
+  background: #F96A76;
   color: #FFF;
   line-height: 1.5rem;
   float: right;
@@ -424,14 +424,14 @@ textarea:focus {
   font-family: Oswald, sans-serif;
   text-transform: uppercase;
   height: 1.5rem;
-  background: #F17;
+  background: #F96A76;
   color: #FFF;
   line-height: 1.5rem;
   float: right;
   padding: 0 1rem;
   border-radius: 1rem;
   text-align: right;
-  background: #92e4c9;
+  background: #56be95;
 }
 .addMealDropper * {
   display: none;
