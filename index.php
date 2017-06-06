@@ -26,7 +26,7 @@
 
       <div id="weeksContainer">
         <week
-          v-if="weeks!=null && recipes!=null"
+          v-if="weeks!=undefined && recipes!=undefined"
           v-for="week in weeks"
           v-bind:week="week"
           :key="week.nbr"
