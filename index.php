@@ -1,3 +1,10 @@
+<?php
+if( !is_user_logged_in() ) {
+  header( sprintf( "Location: %s/wp-admin", get_bloginfo('url') ) );
+  die();
+};
+?>
+
 <!DOCTYPE html>
   <html <?php language_attributes(); ?>>
   <head>

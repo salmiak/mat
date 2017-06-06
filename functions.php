@@ -2,6 +2,7 @@
 
 show_admin_bar( false );
 
+// Use acf.php if in production
 $whitelist = array(
   '127.0.0.1',
   '::1'
@@ -10,6 +11,14 @@ if(!in_array($_SERVER['REMOTE_ADDR'], $whitelist)){
   require_once('acf.php');
 }
 
+// Redirect to home after login
+function admin_default_page() {
+  return get_bloginfo('url');
+}
+add_filter('login_redirect', 'admin_default_page');
+
+
+// Register styles and scripts
 function reg_styles()
 {
     wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Oswald|Open+Sans');
