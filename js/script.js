@@ -17,27 +17,6 @@ Vue.component('recipe', {
       stateClass: ''
     }
   },
-  computed: {
-    avgRating: function(){
-
-      //return this.rec.acf.rating_json.replace(/\&quot\;/gi, '"');
-      if (!this.rec.acf.rating_json)
-        return undefined
-
-      var ratingObj = JSON.parse(this.rec.acf.rating_json.replace(/\&quot\;/gi, '"'));
-      if(!_.size(ratingObj))
-        return undefined;
-
-      var ratings = _.values(ratingObj);
-
-      var average = 1/ratings.length * ratings.reduce(function(total, num) {
-        return total + num;
-      });
-
-      return Math.round(average);
-
-    }
-  },
   methods: {
     toggleEditRecipe: function(e) {
       this.inEdit = !this.inEdit;
