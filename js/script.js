@@ -1,11 +1,24 @@
 $ = jQuery;
 
+var processWPContent = function(r) {
+  r.fields = JSON.parse(JSON.stringify(r.acf));
+  r.title = r.title.rendered;
+  if(r.content) r.content = r.content.rendered;
+
+  if(r.type == 'meal') {
+    if (typeof r.fields.recipes != 'object' || r.fields.recipes == "" || !r.fields.recipes) {
+      r.fields.recipes = [];
+    }
+  }
+}
+
 var recipeBoilerPlate = JSON.stringify({
-  acf: {
+  fields: {
     url: null
   },
-  title: { rendered: null },
-  content: { rendered: null }
+  title:  null,
+  content:  null,
+  status: 'publish'
 });
 
 Vue.component('recipe', {
@@ -13,29 +26,14 @@ Vue.component('recipe', {
   template: '#recipeTemplate',
   data: function() {
     return {
-      inEdit: this.rec!=undefined && this.rec.id == undefined,
-      stateClass: ''
+      inEdit: this.rec && !this.rec.id,
     }
   },
   methods: {
-    toggleEditRecipe: function(e) {
-      this.inEdit = !this.inEdit;
-    },
-    loadRecipe: function(){
-      var _this = this;
-      $.ajax({
-        url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+this.rec.id,
-        success: function(result){
-          this.rec = result;
-          _this.stateClass = "";
-        }
-      });
-    },
     saveRecipe: function(e) {
       var _this = this;
       e.preventDefault();
 
-      this.stateClass = "saving";
       this.inEdit = this.rec.id?false:true;
 
       $.ajax({
@@ -44,31 +42,15 @@ Vue.component('recipe', {
         beforeSend: function ( xhr ) {
           xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
         },
-        data: {
-          title: _this.rec.title.rendered,
-          content: _this.rec.content.rendered,
-          status: 'publish'
-        },
+        data: this.rec,
         success: function(result) {
-
-          var id = result.id;
-
-          $.ajax({
-            url: window.wp_root_url + "/wp-json/acf/v3/recipe/" + id,
-            method: 'POST',
-            beforeSend: function ( xhr ) {
-              xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-            },
-            data: { fields:_this.rec.acf },
-            success: function(data) {
-              app.recipeBoilerPlate = JSON.parse(recipeBoilerPlate);
-              _this.loadRecipe();
-            }
-          });
-
+          processWPContent(result);
+          if(_this.rec.id == undefined) {
+            app.recipeBoilerPlate = JSON.parse(recipeBoilerPlate);
+            app.recipes.unshift(result);
+          }
         }
       });
-
     }
   }
 })
@@ -76,11 +58,6 @@ Vue.component('recipe', {
 Vue.component('meal', {
   props: ['meal','recipes'],
   data: function(){
-
-    // Make sure the recipes container is an array to make Vue.Draggable work
-    if (typeof this.meal.acf.recipes != 'object')
-      this.meal.acf.recipes = [];
-
     return {
       stateClass: '',
       inEdit: false,
@@ -90,49 +67,17 @@ Vue.component('meal', {
   },
   template: '#mealTemplate',
   methods: {
-
-    toggleEditMeal: function() {
-      this.inEdit = !this.inEdit;
-    },
-
-    saveRecipes: function() {
-      var _this = this;
-      app.isSaving.push(1);
-
-      var saveData = _.without(this.meal.acf.recipes,0);
-      if( !saveData.length ) {
-        saveData = null;
-      }
-
-      $.ajax({
-        url: window.wp_root_url + "/wp-json/wp/v2/meal/" + this.meal.id,
-        method: 'POST',
-        beforeSend: function ( xhr ) {
-          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-        },
-        data: {
-          fields:{
-            recipes: saveData
-          }
-        },
-        success: function(data) {
-          app.isSaving.pop(1);
-        }
-      })
-    },
-
     saveMeal: function(e) {
 
       // Avoid reloading on submit
-      e.preventDefault();
+      if(e && e.type == 'submit')
+        e.preventDefault();
 
       var _this = this;
+      this.inEdit = false;
       app.isSaving.push(1);
 
-      // prep data
-      var data = this.meal;
-      data.fields = this.meal.acf;
-      data.title = this.meal.title.rendered;
+      if( !this.meal.fields.recipes.length ) this.meal.fields.recipes = null;
 
       $.ajax({
         url: window.wp_root_url + "/wp-json/wp/v2/meal/" + this.meal.id,
@@ -140,11 +85,8 @@ Vue.component('meal', {
         beforeSend: function ( xhr ) {
           xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
         },
-        data: data,
+        data: this.meal,
         success: function(meal) {
-          Meals[meal.id] = meal;
-          _this.meal = meal;
-          _this.inEdit = false;
           app.isSaving.pop(1);
         }
       })
@@ -169,7 +111,7 @@ Vue.component('week', {
       this.newMeal = {
         status: 'publish',
         fields: {
-          week: week.nbr,
+          week: this.week.nbr,
           recipes: [0]
         }
       }
@@ -177,7 +119,6 @@ Vue.component('week', {
     },
 
     createNewMeal: function(e){
-
       // Avoid reloading on submit
       e.preventDefault();
 
@@ -194,22 +135,22 @@ Vue.component('week', {
         },
         data: data,
         success: function(data){
+          processWPContent(data);
           app.isSaving.pop();
           _this.week.meals.unshift(data);
           _this.saveWeeksMeals();
           _this._resetNewMeal();
         }
       })
-
     },
 
-    addMealFromRecipe: function(){
+    createMealFromRecipe: function(){
       var _this = this;
       app.isSaving.push(1);
       var recipeId = this.addMealList.pop();
       var recipe = _.findWhere(this.recipes, {id:recipeId});
       var data = {
-        title: recipe.title.rendered,
+        title: recipe.title,
         status: "publish",
         fields: {
           recipes: [recipeId]
@@ -223,8 +164,8 @@ Vue.component('week', {
         },
         data: data,
         success: function(data){
+          processWPContent(data);
           app.isSaving.pop();
-          data.acf.recipes = [data.acf.recipes];
           _this.week.meals.unshift(data);
           _this.saveWeeksMeals();
         }
@@ -241,7 +182,6 @@ Vue.component('week', {
           xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
         },
         success: function(data){
-          console.log('meal removed');
           app.isSaving.pop();
         }
       })
@@ -250,7 +190,6 @@ Vue.component('week', {
     saveWeeksMeals: function(){
       var _this = this;
       _.each(this.week.meals, function(element, index, list){
-        element.saving = true;
         app.isSaving.push(1);
         $.ajax({
           url: window.wp_root_url + "/wp-json/wp/v2/meal/"+element.id,
@@ -265,82 +204,16 @@ Vue.component('week', {
             }
           },
           success: function(data){
+            processWPContent(data);
             _this.week.meals.splice(index, 1, data);
-            console.log('order saved on server');
             app.isSaving.pop();
           }
         })
       })
-    },
-
-    addMeal: function(e) {
-      // Avoid reloading on submit
-      e.preventDefault();
-      // Get data from form
-      var data = $(e.target).find(":input").serializeArray();
-      // Created containers for postData (meal data) and ACF (second request) and parse the form data into these containers.
-      var postData = {
-        status: 'publish'
-      };
-      var acfData = {
-        fields: {
-          order: 0
-        }
-      }
-      data.forEach(function(d){
-        if(d.name.indexOf('acf')==-1){
-          postData[d.name] = d.value;
-        } else if(d.name == 'acf_recipes') {
-          acfData.fields.recipes = d.value.split(',');
-        } else {
-          acfData.fields[d.name.slice(4)] = d.value;
-        }
-      });
-
-      // First call - create meal
-      $.ajax({
-        url: window.wp_root_url + "/wp-json/wp/v2/meal",
-        method: 'POST',
-        beforeSend: function ( xhr ) {
-          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-        },
-        data: postData,
-        success: function(data) {
-          // Fetch id of the new meal.
-          var postId = data.id;
-          // Second call - add ACF-data
-          $.ajax({
-            url: window.wp_root_url + "/wp-json/acf/v3/meal/" + postId,
-            method: 'POST',
-            beforeSend: function ( xhr ) {
-              xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-            },
-            data: acfData,
-            success: function(data) {
-              // Successfully created meal, now lets get the whole thing and add it to our list of meals in the Vue app.
-              $.ajax({
-                url: window.wp_root_url + "/wp-json/wp/v2/meal/"+postId,
-                success: function(meal){
-                  Meals[meal.id] = meal;
-                  week = _.findWhere(Weeks, {nbr: parseInt(meal.acf.week)});
-                  if(week) {
-                    week.meals.push(meal);
-                    week.meals = _.sortBy(week.meals, function(m) {
-                      return parseInt(m.acf.order);
-                    });
-                  }
-                  // reset form
-                  $(e.target).find(":input[type=text]").val('')
-                }
-              });
-            }
-          })
-        }
-      })
     }
+
   }
 });
-
 
 
 var app = new Vue({
@@ -349,46 +222,34 @@ var app = new Vue({
     dragingRecipe: false,
     drag: false,
     isSaving: [],
-    message: null,
-    weeks: null,
+    weeks: [],
     recipes: [],
     recipeBoilerPlate: JSON.parse(recipeBoilerPlate)
   }
-})
-
-var Recipes = {},
-  Meals = {},
-  Weeks = [];
-
-for (var i = 2; i >= -5; i--) {
-  Weeks.push({
-    nbr: moment().startOf('week').isoWeekday(1).add(i, 'w').week(),
-    meals: []
-  });
-}
+});
 
 $.ajax({
   url: window.wp_root_url + "/wp-json/wp/v2/recipe?per_page=100",
   success: function(result){
-    Recipes = _.indexBy(result, 'id');
+    _.each(result, processWPContent);
     app.recipes = result;
   }
 });
 $.ajax({
   url: window.wp_root_url + "/wp-json/wp/v2/meal?per_page=100",
   success: function(result){
-    result.forEach(function(meal) {
-      meal.acf.recipes = meal.acf.recipes==""?[]:meal.acf.recipes;
-      Meals[meal.id] = meal;
-      week = _.findWhere(Weeks, {nbr: parseInt(meal.acf.week)});
-      if(week) {
-        week.meals.push(meal);
-        week.meals = _.sortBy(week.meals, function(a){
-          a.acf.order = a.acf ? a.acf.order || 0 : 0;
-          return parseInt(a.acf.order);
-        });
-      }
-    });
-    app.weeks = Weeks;
+    _.each(result, processWPContent);
+    weekData = _.groupBy(result, function(m){ return parseInt(m.fields.week) });
+
+    for (var i = 2; i >= -5; i--) {
+      var weekNbr = moment().startOf('week').isoWeekday(1).add(i, 'w').week();
+      app.weeks.push({
+        nbr: weekNbr,
+        meals: _.sortBy(weekData[weekNbr],function(a){
+            a.acf.order = a.acf ? a.acf.order || 0 : 0;
+            return parseInt(a.acf.order);
+        })
+      });
+    }
   }
 });

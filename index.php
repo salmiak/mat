@@ -77,7 +77,7 @@ if( !is_user_logged_in() ) {
           v-if="dragingRecipe"
           :options="{group:'mealRecipes'}"
           :list="addMealList"
-          @sort="addMealFromRecipe">Skapa ny måltid</draggable>
+          @sort="createMealFromRecipe">Skapa ny måltid</draggable>
 
         <h2>Vecka {{week.nbr}}</h2>
 
@@ -102,12 +102,10 @@ if( !is_user_logged_in() ) {
         <form class="addArea" v-on:submit="createNewMeal">
           <input
             type="text"
-            name="title"
             placeholder="Titel"
             v-model= "newMeal.title" />
           <textarea
             type="text"
-            name="acf_comment"
             placeholder="Kommentar"
             v-model= "newMeal.fields.comment"></textarea>
           <input
@@ -122,7 +120,7 @@ if( !is_user_logged_in() ) {
 
       <li v-bind:class="stateClass" v-bind:data-id="meal.id">
 
-        <div class="editBtn" @click="toggleEditMeal">
+        <div class="editBtn" @click="inEdit = !inEdit">
           <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
 
@@ -131,9 +129,9 @@ if( !is_user_logged_in() ) {
           <input
             type="text"
             placeholder="Titel"
-            v-model="meal.title.rendered"
+            v-model="meal.title"
             v-if="inEdit" />
-          <h2 v-else>{{meal.title.rendered}}</h2>
+          <h2 v-else>{{meal.title}}</h2>
 
           <draggable
             class="trash"
@@ -146,26 +144,26 @@ if( !is_user_logged_in() ) {
           <draggable
             element="div"
             class="recipe-container"
-            :list="meal.acf.recipes"
+            :list="meal.fields.recipes"
             :options="{group:'mealRecipes'}"
             @start="drag=true"
             @end="drag=false"
-            @sort="saveRecipes">
+            @sort="saveMeal">
 
             <recipe
-              v-for="recipeId in meal.acf.recipes"
+              v-for="recipeId in meal.fields.recipes"
               :key="recipeId"
               v-bind:rec="_.findWhere(recipes,{id:recipeId})"></recipe>
 
           </draggable>
 
-          <h4 v-if="meal.acf.comment || inEdit">Kommentar</h4>
+          <h4 v-if="meal.fields.comment || inEdit">Kommentar</h4>
           <textarea
             type="text"
-            v-model="meal.acf.comment"
+            v-model="meal.fields.comment"
             placeholder="Kommentar"
             v-if="inEdit"></textarea>
-          <p v-else v-html="meal.acf.comment"></p>
+          <p v-else v-html="meal.fields.comment"></p>
 
           <input type="submit" value="Spara" v-if="inEdit" />
         </form>
@@ -173,24 +171,24 @@ if( !is_user_logged_in() ) {
     </script>
 
     <script type="text/x-template" id="recipeTemplate">
-      <div class="recipe" v-bind:class="stateClass" v-if="rec&&rec.id!=0">
-        <div class="editBtn" @click="toggleEditRecipe">
+      <div class="recipe" v-if="rec&&rec.id!=0">
+        <div class="editBtn" @click="inEdit = !inEdit" v-if="rec.id">
           <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
 
         <form v-on:submit="saveRecipe" v-if="inEdit&&rec">
-          <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title.rendered}}</h3>
-          <input type="text" name="title" placeholder="Titel" v-model="rec.title.rendered" />
-          <input type="text" name="acf_url" v-model="rec.acf.url" placeholder="URL" />
-          <textarea name="content" v-model="rec.content.rendered" placeholder="Kommentar"></textarea>
+          <h3>{{rec.id?'Redigera':'Lägg till recept'}}: {{rec.title}}</h3>
+          <input type="text" placeholder="Titel" v-model="rec.title" />
+          <input type="text" v-model="rec.fields.url" placeholder="URL" />
+          <textarea name="content" v-model="rec.content" placeholder="Kommentar"></textarea>
           <input type="submit" value="Spara" />
         </form>
 
         <div v-bind:title="rec.id" v-else-if="rec">
 
-          <h3 v-if="!rec.acf.url">{{rec.title.rendered}}</h3>
-          <h3 v-if="rec.acf.url"><a :href="rec.acf.url" target="_blank">{{rec.title.rendered}}</a></h3>
-          <p v-html="rec.content.rendered"></p>
+          <h3 v-if="!rec.fields.url">{{rec.title}}</h3>
+          <h3 v-if="rec.fields.url"><a :href="rec.fields.url" target="_blank">{{rec.title}}</a></h3>
+          <p v-html="rec.content"></p>
 
         </div>
         <div v-else>
