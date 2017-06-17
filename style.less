@@ -95,6 +95,15 @@ input[type=submit] {
   }
   opacity: 0;
   .transition(opacity 0.3s);
+  &.deleteBtn {
+    bottom: 0.75rem;
+    top: auto;
+    opacity: 1;
+  }
+  &.inverted {
+    background: @cSec;
+    color: #FFF;
+  }
 }
 :hover > .editBtn {
   opacity: 0.8;

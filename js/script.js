@@ -27,6 +27,7 @@ Vue.component('recipe', {
   data: function() {
     return {
       inEdit: this.rec && !this.rec.id,
+      confirmingDelete: false
     }
   },
   methods: {
@@ -51,6 +52,29 @@ Vue.component('recipe', {
           }
         }
       });
+    },
+    confirmDelete: function(){
+      this.confirmingDelete = true;
+      var _this = this;
+      setTimeout(function(){
+        _this.confirmingDelete = false;
+      },3000);
+    },
+    deleteRecipe: function(){
+      app.isSaving.push(1);
+      var recipe = this.rec;
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/recipe/"+this.rec.id,
+        method: 'DELETE',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        success: function(data){
+          var index = app.recipes.indexOf(recipe)
+          app.recipes.splice(index, 1);
+          app.isSaving.pop();
+        }
+      })
     }
   }
 })

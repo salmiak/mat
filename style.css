@@ -220,6 +220,15 @@ input[type=submit]:hover {
   font-size: 1rem;
   line-height: 1.75rem;
 }
+.editBtn.deleteBtn {
+  bottom: 0.75rem;
+  top: auto;
+  opacity: 1;
+}
+.editBtn.inverted {
+  background: #F17;
+  color: #FFF;
+}
 :hover > .editBtn {
   opacity: 0.8;
 }
