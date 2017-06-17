@@ -175,6 +175,11 @@ a {
   color: #F17;
   text-decoration: none;
 }
+hr {
+  border: none;
+  border-top: 1px dashed rgba(0, 0, 0, 0.2);
+  margin: 0.75rem -0.25rem 0.5rem;
+}
 input[type=submit] {
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -345,6 +350,9 @@ textarea:focus {
   top: 0;
   bottom: 0;
   right: 0;
+}
+#recipeContainer h2 {
+  padding: 0.75rem 0.25rem 0;
 }
 .recipe {
   width: 19.75rem;

@@ -47,6 +47,7 @@ Vue.component('recipe', {
         success: function(result) {
           processWPContent(result);
           if(_this.rec.id == undefined) {
+            app.showAddRecipe = false;
             app.recipeBoilerPlate = JSON.parse(recipeBoilerPlate);
             app.recipes.unshift(result);
           }
@@ -264,6 +265,7 @@ var app = new Vue({
     isSaving: [],
     weeks: [],
     recipes: [],
+    showAddRecipe: false,
     recipeBoilerPlate: JSON.parse(recipeBoilerPlate)
   }
 });

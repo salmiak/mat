@@ -42,7 +42,14 @@ if( !is_user_logged_in() ) {
       </div>
 
       <div id="recipeContainer">
-        <recipe v-bind:rec="recipeBoilerPlate"></recipe>
+        <h2>Recept</h2>
+        <div class="editBtn" @click="showAddRecipe=!showAddRecipe">
+          <i class="fa fa-plus"></i>
+        </div>
+
+        <recipe v-bind:rec="recipeBoilerPlate" v-if="showAddRecipe"></recipe>
+
+        <hr v-if="showAddRecipe" />
 
         <draggable
           :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
