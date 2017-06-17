@@ -112,7 +112,8 @@ Vue.component('week', {
         status: 'publish',
         fields: {
           week: this.week.nbr,
-          recipes: [0]
+          recipes: [0],
+          made: false
         }
       }
       return this.newMeal;
@@ -166,7 +167,7 @@ Vue.component('week', {
         success: function(data){
           processWPContent(data);
           app.isSaving.pop();
-          _this.week.meals.unshift(data);
+          _this.week.meals.planned.unshift(data);
           _this.saveWeeksMeals();
         }
       })
@@ -187,29 +188,44 @@ Vue.component('week', {
       })
     },
 
-    saveWeeksMeals: function(){
+    _storeMeals: function(element, index, list, made){
       var _this = this;
-      _.each(this.week.meals, function(element, index, list){
-        app.isSaving.push(1);
-        $.ajax({
-          url: window.wp_root_url + "/wp-json/wp/v2/meal/"+element.id,
-          method: 'POST',
-          beforeSend: function ( xhr ) {
-            xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
-          },
-          data: {
-            fields: {
-              order: index,
-              week: _this.week.nbr
-            }
-          },
-          success: function(data){
-            processWPContent(data);
-            _this.week.meals.splice(index, 1, data);
-            app.isSaving.pop();
+      app.isSaving.push(1);
+      $.ajax({
+        url: window.wp_root_url + "/wp-json/wp/v2/meal/"+element.id,
+        method: 'POST',
+        beforeSend: function ( xhr ) {
+          xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+        },
+        data: {
+          fields: {
+            order: index,
+            week: _this.week.nbr,
+            made: made?1:0
           }
-        })
+        },
+        success: function(data){
+          processWPContent(data);
+          _this.week.meals[made?'made':'planned'].splice(index, 1, data);
+          app.isSaving.pop();
+        }
       })
+    },
+    saveWeeksPlannedMeals: function(){
+      var _this = this;
+      _.each(this.week.meals.planned, function(element, index, list){
+        _this._storeMeals(element, index,list, false);
+      });
+    },
+    saveWeeksMadeMeals: function(){
+      var _this = this;
+      _.each(this.week.meals.made, function(element, index, list){
+        _this._storeMeals(element, index,list, true);
+      });
+    },
+    saveWeeksMeals: function(){
+      this.saveWeeksPlannedMeals();
+      this.saveWeeksMadeMeals();
     }
 
   }
@@ -240,15 +256,21 @@ $.ajax({
   success: function(result){
     _.each(result, processWPContent);
     weekData = _.groupBy(result, function(m){ return parseInt(m.fields.week) });
+    for (var week in weekData) {
+      weekData[week] = _.sortBy(weekData[week],function(a){
+          a.fields.order = a.fields ? a.fields.order || 0 : 0;
+          return parseInt(a.fields.order);
+      })
+      weekData[week] = _.groupBy(weekData[week], function(m){
+        return m.fields.made?'made':'planned';
+      });
+    }
 
     for (var i = 2; i >= -5; i--) {
       var weekNbr = moment().startOf('week').isoWeekday(1).add(i, 'w').week();
       app.weeks.push({
         nbr: weekNbr,
-        meals: _.sortBy(weekData[weekNbr],function(a){
-            a.acf.order = a.acf ? a.acf.order || 0 : 0;
-            return parseInt(a.acf.order);
-        })
+        meals: _.defaults(weekData[weekNbr], {planned:[], made: []}) || {planned:[], made: []} // If weekData[weekNbr] is undefined, return empty object
       });
     }
   }

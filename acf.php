@@ -74,6 +74,14 @@ if(function_exists("register_field_group"))
 				'max' => '',
 				'step' => 1,
 			),
+			array (
+				'key' => 'field_5940d4fa76514',
+				'label' => 'Made',
+				'name' => 'made',
+				'type' => 'true_false',
+				'message' => '',
+				'default_value' => 0,
+			),
 		),
 		'location' => array (
 			array (

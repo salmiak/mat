@@ -81,18 +81,38 @@ if( !is_user_logged_in() ) {
 
         <h2>Vecka {{week.nbr}}</h2>
 
+        <h4>Planerat</h4>
         <draggable
           element="ul"
           class="meal-container"
-          :list="week.meals"
+          :list="week.meals.planned"
           :options="{group:'weeks'}"
           @start="drag=true"
           @end="drag=false"
-          @sort="saveWeeksMeals">
+          @sort="saveWeeksPlannedMeals">
 
           <meal
             class="meal"
-            v-for="(meal,index) in week.meals"
+            v-for="(meal,index) in week.meals.planned"
+            :key="index"
+            v-bind:meal="meal"
+            v-bind:recipes="recipes"></meal>
+
+        </draggable>
+
+        <h4>Lagat</h4>
+        <draggable
+          element="ul"
+          class="meal-container"
+          :list="week.meals.made"
+          :options="{group:'weeks'}"
+          @start="drag=true"
+          @end="drag=false"
+          @sort="saveWeeksMadeMeals">
+
+          <meal
+            class="meal"
+            v-for="(meal,index) in week.meals.made"
             :key="index"
             v-bind:meal="meal"
             v-bind:recipes="recipes"></meal>
@@ -131,7 +151,9 @@ if( !is_user_logged_in() ) {
             placeholder="Titel"
             v-model="meal.title"
             v-if="inEdit" />
-          <h2 v-else>{{meal.title}}</h2>
+          <h2 v-else>
+            {{meal.title}}
+          </h2>
 
           <draggable
             class="trash"
