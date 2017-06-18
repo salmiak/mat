@@ -180,15 +180,200 @@ hr {
   border-top: 1px dashed rgba(0, 0, 0, 0.2);
   margin: 0.75rem -0.25rem 0.5rem;
 }
-input[type=submit] {
+.pill {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-size: 0.7rem;
-  line-height: 1.5rem;
-  padding: 0 0.8rem;
-  border: 1px solid #F17;
   color: #F17;
-  border-radius: 1rem;
+  cursor: pointer;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
+}
+.pill.small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
+.trash {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  color: #F17;
+  cursor: pointer;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
+  background: #F17;
+  color: #FFF;
+  float: right;
+}
+.trash.small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
+.trash * {
+  display: none;
+}
+.addMealDropper {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  color: #F17;
+  cursor: pointer;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
+  background: #F17;
+  color: #FFF;
+  float: right;
+  background: #92e4c9;
+  border-color: #92e4c9;
+}
+.addMealDropper.small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
+.addMealDropper * {
+  display: none;
+}
+.addBtn {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  padding: 0;
+  position: absolute;
+  top: 1rem;
+  right: 0.5rem;
+  color: #F17;
+  cursor: pointer;
+  width: 1.75rem;
+}
+.addBtn.small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
+.addBtn .fa {
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+.addBtn.inverted {
+  background: #F17;
+  color: #FFF;
+}
+.deleteBtn {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  padding: 0;
+  position: absolute;
+  top: 1rem;
+  right: 0.5rem;
+  color: #F17;
+  cursor: pointer;
+  width: 1.75rem;
+  bottom: 0.75rem;
+  top: auto;
+  opacity: 1;
+}
+.deleteBtn.small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
+.deleteBtn .fa {
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+.deleteBtn.inverted {
+  background: #F17;
+  color: #FFF;
+}
+.editBtn {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
+  font-size: 0.875rem;
+  padding: 0;
+  position: absolute;
+  top: 1rem;
+  right: 0.5rem;
+  color: #F17;
+  cursor: pointer;
+  width: 1.75rem;
+  top: 0.75rem;
+  opacity: 0;
+  -webkit-transition: opacity 0.3s;
+  -moz-transition: opacity 0.3s;
+  -o-transition: opacity 0.3s;
+  transition: opacity 0.3s;
+}
+.editBtn.small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
+.editBtn .fa {
+  font-size: 1rem;
+  line-height: 1.75rem;
+}
+.editBtn.inverted {
+  background: #F17;
+  color: #FFF;
+}
+:hover > .editBtn {
+  opacity: 0.8;
+}
+input[type=submit] {
+  font-size: 1.05rem;
+  font-family: Oswald, sans-serif;
+  text-transform: uppercase;
+  color: #F17;
+  height: 1.75rem;
+  line-height: 1.75rem;
+  text-align: center;
+  border-radius: 1.75rem;
+  border: 1px solid #F17;
+  box-sizing: content-box;
+  padding: 0 1rem;
   display: inline-block;
   margin: 0.8rem 0 0;
   cursor: pointer;
@@ -198,47 +383,14 @@ input[type=submit] {
   -o-transition: all 0.3s;
   transition: all 0.3s;
 }
+input[type=submit].small {
+  height: 1.225rem;
+  line-height: 1.225rem;
+  font-size: 0.875rem;
+}
 input[type=submit]:hover {
   background: #F17;
   color: #FFF;
-}
-.editBtn {
-  position: absolute;
-  top: 0.75rem;
-  right: 0.5rem;
-  color: #F17;
-  cursor: pointer;
-  width: 1.75rem;
-  height: 1.75rem;
-  line-height: 1.75rem;
-  text-align: center;
-  border-radius: 1.75rem;
-  border: 1px solid #F17;
-  box-sizing: content-box;
-  opacity: 0;
-  -webkit-transition: opacity 0.3s;
-  -moz-transition: opacity 0.3s;
-  -o-transition: opacity 0.3s;
-  transition: opacity 0.3s;
-}
-.editBtn .fa {
-  font-size: 1rem;
-  line-height: 1.75rem;
-}
-.editBtn.deleteBtn {
-  bottom: 0.75rem;
-  top: auto;
-  opacity: 1;
-}
-.editBtn.inverted {
-  background: #F17;
-  color: #FFF;
-}
-:hover > .editBtn {
-  opacity: 0.8;
-}
-.faded {
-  opacity: 0.3;
 }
 input[type=text],
 textarea {
@@ -305,6 +457,7 @@ textarea:focus {
   align-items: stretch;
 }
 #weeksContainer .week {
+  position: relative;
   overflow-x: hidden;
   overflow-y: auto;
   flex-shrink: 0;
@@ -325,19 +478,19 @@ textarea:focus {
   margin: 0 0 0.5rem;
 }
 #weeksContainer .week .addArea {
-  padding: 0.5rem;
-  border-radius: 0.9rem;
-  font-family: Open Sans, serif;
-  background: rgba(255, 255, 255, 0.2);
-}
-#weeksContainer .week .addArea input[type=submit] {
-  border-color: rgba(0, 0, 0, 0.3);
-  color: rgba(0, 0, 0, 0.6);
-}
-#weeksContainer .week .addArea input[type=submit]:hover {
-  border-color: rgba(0, 0, 0, 0);
-  background: rgba(0, 0, 0, 0.3);
-  color: #FFF;
+  padding: 0.75rem;
+  border-radius: 0.3rem;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  z-index: 0;
+  position: relative;
+  -webkit-transition: boz-shadow 0.5s;
+  -moz-transition: boz-shadow 0.5s;
+  -o-transition: boz-shadow 0.5s;
+  transition: boz-shadow 0.5s;
 }
 #recipeContainer {
   height: 100vh;
@@ -405,52 +558,4 @@ textarea:focus {
   min-height: 3rem;
   background: rgba(0, 0, 0, 0.03);
   border-radius: 0.5rem;
-}
-.meal .removeBtn {
-  position: absolute;
-  top: 0;
-  right: 0;
-  padding: 0.5rem;
-  font-size: 2rem;
-  line-height: 0.5em;
-  cursor: pointer;
-  opacity: 0.2;
-  -webkit-transition: opacity 0.2s;
-  -moz-transition: opacity 0.2s;
-  -o-transition: opacity 0.2s;
-  transition: opacity 0.2s;
-}
-.meal .removeBtn:hover {
-  opacity: 1;
-}
-.trash {
-  font-family: Oswald, sans-serif;
-  text-transform: uppercase;
-  height: 1.5rem;
-  background: #F17;
-  color: #FFF;
-  line-height: 1.5rem;
-  float: right;
-  padding: 0 1rem;
-  border-radius: 1rem;
-  text-align: right;
-}
-.trash * {
-  display: none;
-}
-.addMealDropper {
-  font-family: Oswald, sans-serif;
-  text-transform: uppercase;
-  height: 1.5rem;
-  background: #F17;
-  color: #FFF;
-  line-height: 1.5rem;
-  float: right;
-  padding: 0 1rem;
-  border-radius: 1rem;
-  text-align: right;
-  background: #92e4c9;
-}
-.addMealDropper * {
-  display: none;
 }

@@ -60,15 +60,84 @@ hr {
   margin: 0.75rem -0.25rem 0.5rem;
 }
 
-input[type=submit] {
+
+@pillSize: 1.75rem;
+.pill {
+  @pillSize: 1.75rem;
+  font-size: @pillSize*0.6;
+  font-family: @headerFont;
   text-transform: uppercase;
-  letter-spacing: 0.07em;
-  font-size: 0.7rem;
-  line-height: 1.5rem;
-  padding: 0 0.8rem;
-  border: 1px solid @cSec;
   color: @cSec;
-  border-radius: 1rem;
+  cursor: pointer;
+  height: @pillSize;
+  line-height: @pillSize;
+  text-align: center;
+  border-radius: @pillSize;
+  border: 1px solid @cSec;
+  box-sizing: content-box;
+  padding: 0 1rem;
+  &.small {
+  height: @pillSize*0.7;
+  line-height: @pillSize*0.7;
+  font-size: @pillSize*0.5;
+  }
+}
+
+.trash {
+  .pill;
+  background: @cSec;
+  color: #FFF;
+  float: right;
+  * {
+    display: none;
+  }
+}
+
+.addMealDropper {
+  .trash;
+  background: darken(@cPri, 10);
+  border-color: darken(@cPri, 10);
+}
+
+
+.addBtn {
+  .pill;
+  font-size: @pillSize*0.5;
+  padding: 0;
+  position: absolute;
+  top: 1rem;
+  right: 0.5rem;
+  color: @cSec;
+  cursor: pointer;
+  width: @pillSize;
+  .fa {
+    font-size: 1rem;
+    line-height: @pillSize;
+  }
+  &.inverted {
+    background: @cSec;
+    color: #FFF;
+  }
+}
+.deleteBtn {
+  .addBtn;
+  bottom: 0.75rem;
+  top: auto;
+  opacity: 1;
+}
+.editBtn {
+  .addBtn;
+  top: 0.75rem;
+  opacity: 0;
+  .transition(opacity 0.3s);
+}
+:hover > .editBtn {
+  opacity: 0.8;
+}
+
+
+input[type=submit] {
+  .pill;
   display: inline-block;
   margin: 0.8rem 0 0;
   cursor: pointer;
@@ -78,44 +147,6 @@ input[type=submit] {
     background: @cSec;
     color: #FFF;
   }
-}
-
-.editBtn {
-  @size: 1.75rem;
-  position: absolute;
-  top: 0.75rem;
-  right: 0.5rem;
-  color: @cSec;
-  cursor: pointer;
-  width: @size;
-  height: @size;
-  line-height: @size;
-  text-align: center;
-  border-radius: @size;
-  border: 1px solid @cSec;
-  box-sizing: content-box;
-  .fa {
-    font-size: 1rem;
-    line-height: @size;
-  }
-  opacity: 0;
-  .transition(opacity 0.3s);
-  &.deleteBtn {
-    bottom: 0.75rem;
-    top: auto;
-    opacity: 1;
-  }
-  &.inverted {
-    background: @cSec;
-    color: #FFF;
-  }
-}
-:hover > .editBtn {
-  opacity: 0.8;
-}
-
-.faded {
-  opacity: 0.3;
 }
 
 input[type=text], textarea {
@@ -169,6 +200,7 @@ input[type=text], textarea {
   .align-items(stretch);
 
   .week {
+    position: relative;
     overflow-x: hidden;
     overflow-y: auto;
     flex-shrink: 0;
@@ -191,19 +223,14 @@ input[type=text], textarea {
     }
 
     .addArea {
-      padding: 0.5rem;
-      border-radius: 0.9rem;
-      font-family: @bodyFont;
-      background: rgba(255,255,255,0.2);
-      input[type=submit] {
-        border-color: rgba(0,0,0,0.3);
-        color: rgba(0,0,0,0.6);
-        &:hover {
-          border-color: rgba(0,0,0,0);
-          background: rgba(0,0,0,0.3);
-          color: #FFF;
-        }
-      }
+      padding: 0.75rem;
+      border-radius: 0.3rem;
+      background: rgba(255,255,255,0.7);
+      .box-shadow(0 1px 2px rgba(0,0,0,0.6));
+      border: 1px solid rgba(255,255,255,0.7);
+      z-index: 0;
+      position: relative;
+      .transition(boz-shadow 0.5s);
     }
   }
 }
@@ -269,40 +296,4 @@ input[type=text], textarea {
       border-radius: 0.5rem;
     }
   }
-
-  .removeBtn {
-    position: absolute;
-    top: 0;
-    right: 0;
-    padding: 0.5rem;
-    font-size: 2rem;
-    line-height: 0.5em;
-    cursor: pointer;
-    opacity: 0.2;
-    .transition(opacity 0.2);
-    &:hover {
-      opacity: 1;
-    }
-  }
-}
-
-.trash {
-  font-family: @headerFont;
-  text-transform: uppercase;
-  height: 1.5rem;
-  background: @cSec;
-  color: #FFF;
-  line-height: 1.5rem;
-  float: right;
-  padding: 0 1rem;
-  border-radius: 1rem;
-  text-align: right;
-  * {
-    display: none;
-  }
-}
-
-.addMealDropper {
-  .trash;
-  background: darken(@cPri, 10);
 }

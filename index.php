@@ -43,7 +43,7 @@ if( !is_user_logged_in() ) {
 
       <div id="recipeContainer">
         <h2>Recept</h2>
-        <div class="editBtn" @click="showAddRecipe=!showAddRecipe">
+        <div class="addBtn" @click="showAddRecipe=!showAddRecipe">
           <i class="fa fa-plus"></i>
         </div>
 
@@ -86,7 +86,29 @@ if( !is_user_logged_in() ) {
           :list="addMealList"
           @sort="createMealFromRecipe">Skapa ny måltid</draggable>
 
+
+        <div class="addBtn" @click="showAddMeal=!showAddMeal" v-if="!dragingRecipe && !drag">
+          <i class="fa fa-plus"></i>
+        </div>
+
         <h2>Vecka {{week.nbr}}</h2>
+
+        <form class="addArea" v-on:submit="createNewMeal" v-if="showAddMeal">
+          <h3>Lägg till måltid:</h3>
+          <input
+            type="text"
+            placeholder="Titel"
+            v-model= "newMeal.title" />
+          <textarea
+            type="text"
+            placeholder="Kommentar"
+            v-model= "newMeal.fields.comment"></textarea>
+          <input
+            type="submit"
+            value="Lägg till" />
+        </form>
+
+        <hr v-if="showAddMeal" />
 
         <h4>Planerat</h4>
         <draggable
@@ -126,20 +148,6 @@ if( !is_user_logged_in() ) {
 
         </draggable>
 
-        <form class="addArea" v-on:submit="createNewMeal">
-          <input
-            type="text"
-            placeholder="Titel"
-            v-model= "newMeal.title" />
-          <textarea
-            type="text"
-            placeholder="Kommentar"
-            v-model= "newMeal.fields.comment"></textarea>
-          <input
-            type="submit"
-            value="Lägg till" />
-        </form>
-
       </div>
     </script>
 
@@ -163,7 +171,7 @@ if( !is_user_logged_in() ) {
           </h2>
 
           <draggable
-            class="trash"
+            class="trash small"
             v-if="drag"
             :options="{group:'mealRecipes'}"
             :list="trash">Ta bort recept</draggable>

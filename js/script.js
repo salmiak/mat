@@ -127,6 +127,7 @@ Vue.component('week', {
       drag: false,
       trash: [],
       addMealList: [],
+      showAddMeal: false,
       newMeal: this._resetNewMeal()
     }
   },
@@ -163,7 +164,7 @@ Vue.component('week', {
         success: function(data){
           processWPContent(data);
           app.isSaving.pop();
-          _this.week.meals.unshift(data);
+          _this.week.meals.planned.unshift(data);
           _this.saveWeeksMeals();
           _this._resetNewMeal();
         }
