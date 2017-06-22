@@ -153,7 +153,11 @@ if( !is_user_logged_in() ) {
 
     <script type="text/x-template" id="mealTemplate">
 
-      <li v-bind:class="stateClass" v-bind:data-id="meal.id">
+      <li v-if="collapsed">
+        <h2 style="margin-bottom: 0" @click="collapsed=false">{{meal.title}}</h2>
+      </li>
+
+      <li v-else-if="!collapsed" v-bind:data-id="meal.id">
 
         <div class="editBtn" @click="inEdit = !inEdit">
           <i class="fa fa-pencil" aria-hidden="true"></i>
@@ -166,7 +170,7 @@ if( !is_user_logged_in() ) {
             placeholder="Titel"
             v-model="meal.title"
             v-if="inEdit" />
-          <h2 v-else>
+          <h2 v-else @click="collapsed=true">
             {{meal.title}}
           </h2>
 

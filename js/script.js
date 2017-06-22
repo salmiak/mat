@@ -84,7 +84,7 @@ Vue.component('meal', {
   props: ['meal','recipes'],
   data: function(){
     return {
-      stateClass: '',
+      collapsed: true,
       inEdit: false,
       drag: false,
       trash: []
