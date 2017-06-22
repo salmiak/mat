@@ -141,6 +141,7 @@ table {
 }
 html {
   font-size: 12px;
+  overflow: hidden;
 }
 body {
   background: #BED;
