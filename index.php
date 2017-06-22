@@ -110,7 +110,7 @@ if( !is_user_logged_in() ) {
 
         <hr v-if="showAddMeal" />
 
-        <h4>Planerat</h4>
+        <h4 v-bind:class="{ hidden: !drag && !week.meals.planned.length && week.meals.made.length }">Planerat</h4>
         <draggable
           element="ul"
           class="meal-container"
@@ -118,7 +118,8 @@ if( !is_user_logged_in() ) {
           :options="{group:'weeks'}"
           @start="drag=true"
           @end="drag=false"
-          @sort="saveWeeksPlannedMeals">
+          @sort="saveWeeksPlannedMeals"
+          v-bind:class="{ emptyWeek: !week.meals.made.length && !week.meals.planned.length, dragging: drag }">
 
           <meal
             class="meal"
@@ -129,7 +130,7 @@ if( !is_user_logged_in() ) {
 
         </draggable>
 
-        <h4>Lagat</h4>
+        <h4 v-bind:class="{ hidden: !drag && !week.meals.made.length }">Lagat</h4>
         <draggable
           element="ul"
           class="meal-container"
@@ -137,7 +138,8 @@ if( !is_user_logged_in() ) {
           :options="{group:'weeks'}"
           @start="drag=true"
           @end="drag=false"
-          @sort="saveWeeksMadeMeals">
+          @sort="saveWeeksMadeMeals"
+          v-bind:class="{ dragging: drag }">
 
           <meal
             class="meal"

@@ -59,6 +59,9 @@ hr {
   border-top: 1px dashed rgba(0,0,0,0.2);
   margin: 0.75rem -0.25rem 0.5rem;
 }
+.hidden {
+  display: none;
+}
 
 
 @pillSize: 1.75rem;
@@ -179,7 +182,6 @@ input[type=text], textarea {
   right: 0;
   height: 2px;
   background: @cSec;
-  &.hidden { display: none; }
 }
 
 #weeksContainer {
@@ -212,13 +214,18 @@ input[type=text], textarea {
     ul {
       padding: 0;
       margin-bottom: 0.5rem;
-      min-height: 30px;
+      min-height: 0px;
       background: rgba(255, 255, 255, 0.1);
       border-radius: 0.5rem;
+      .transition(min-height 0.2s);
 
       li {
         list-style: none;
         margin: 0 0 0.5rem;
+      }
+
+      &.dragging, &.emptyWeek {
+        min-height: calc(~'3.5rem + 2px');
       }
     }
 

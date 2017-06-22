@@ -180,6 +180,9 @@ hr {
   border-top: 1px dashed rgba(0, 0, 0, 0.2);
   margin: 0.75rem -0.25rem 0.5rem;
 }
+.hidden {
+  display: none;
+}
 .pill {
   font-size: 1.05rem;
   font-family: Oswald, sans-serif;
@@ -427,9 +430,6 @@ textarea:focus {
   height: 2px;
   background: #F17;
 }
-#savingIndicator.hidden {
-  display: none;
-}
 #weeksContainer {
   height: 100vh;
   width: auto;
@@ -469,13 +469,21 @@ textarea:focus {
 #weeksContainer .week ul {
   padding: 0;
   margin-bottom: 0.5rem;
-  min-height: 30px;
+  min-height: 0px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
+  -webkit-transition: min-height 0.2s;
+  -moz-transition: min-height 0.2s;
+  -o-transition: min-height 0.2s;
+  transition: min-height 0.2s;
 }
 #weeksContainer .week ul li {
   list-style: none;
   margin: 0 0 0.5rem;
+}
+#weeksContainer .week ul.dragging,
+#weeksContainer .week ul.emptyWeek {
+  min-height: calc(3.5rem + 2px);
 }
 #weeksContainer .week .addArea {
   padding: 0.75rem;
