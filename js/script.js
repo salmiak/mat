@@ -129,7 +129,8 @@ Vue.component('week', {
       trash: [],
       addMealList: [],
       showAddMeal: false,
-      newMeal: this._resetNewMeal()
+      newMeal: this._resetNewMeal(),
+      iPhone: app.iPhone
     }
   },
   methods: {

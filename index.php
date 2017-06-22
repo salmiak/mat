@@ -124,7 +124,16 @@ if( !is_user_logged_in() ) {
         <hr v-if="showAddMeal" />
 
         <h4 v-bind:class="{ hidden: !drag && !week.meals.planned.length && week.meals.made.length }">Planerat</h4>
+        <ul v-if="iPhone">
+          <meal
+            class="meal"
+            v-for="(meal,index) in week.meals.planned"
+            :key="index"
+            v-bind:meal="meal"
+            v-bind:recipes="recipes"></meal>
+        </ul>
         <draggable
+          v-else
           element="ul"
           class="meal-container"
           :list="week.meals.planned"
@@ -144,7 +153,16 @@ if( !is_user_logged_in() ) {
         </draggable>
 
         <h4 v-bind:class="{ hidden: !drag && !week.meals.made.length }">Lagat</h4>
+        <ul v-if="iPhone">
+          <meal
+            class="meal"
+            v-for="(meal,index) in week.meals.made"
+            :key="index"
+            v-bind:meal="meal"
+            v-bind:recipes="recipes"></meal>
+        </ul>
         <draggable
+          v-else
           element="ul"
           class="meal-container"
           :list="week.meals.made"
@@ -197,7 +215,14 @@ if( !is_user_logged_in() ) {
 
           <h4>Recept</h4>
 
+          <div v-if="iPhone" class="recipe-container">
+            <recipe
+              v-for="recipeId in meal.fields.recipes"
+              :key="recipeId"
+              v-bind:rec="_.findWhere(recipes,{id:recipeId})"></recipe>
+          </div>
           <draggable
+            v-else
             element="div"
             class="recipe-container"
             :list="meal.fields.recipes"
