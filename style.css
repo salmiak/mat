@@ -463,10 +463,20 @@ textarea:focus {
   flex-shrink: 0;
   width: 22rem;
   margin: 0;
-  padding: 1rem 0.5rem 3rem;
   border-right: 1px dashed rgba(0, 0, 0, 0.2);
 }
-#weeksContainer .week ul {
+#weeksContainer .week.thisWeek {
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-box-shadow: 0 0 5rem #92e4c9;
+  -moz-box-shadow: 0 0 5rem #92e4c9;
+  box-shadow: 0 0 5rem #92e4c9;
+  z-index: 100;
+  position: relative;
+}
+.week {
+  padding: 1rem 0.5rem 3rem;
+}
+.week ul {
   padding: 0;
   margin-bottom: 0.5rem;
   min-height: 0px;
@@ -477,23 +487,15 @@ textarea:focus {
   -o-transition: min-height 0.2s;
   transition: min-height 0.2s;
 }
-#weeksContainer .week ul li {
+.week ul li {
   list-style: none;
   margin: 0 0 0.5rem;
 }
-#weeksContainer .week ul.dragging,
-#weeksContainer .week ul.emptyWeek {
+.week ul.dragging,
+.week ul.emptyWeek {
   min-height: calc(3.5rem + 2px);
 }
-#weeksContainer .week.thisWeek {
-  background: rgba(255, 255, 255, 0.4);
-  -webkit-box-shadow: 0 0 5rem #92e4c9;
-  -moz-box-shadow: 0 0 5rem #92e4c9;
-  box-shadow: 0 0 5rem #92e4c9;
-  z-index: 100;
-  position: relative;
-}
-#weeksContainer .week .addArea {
+.week .addArea {
   padding: 0.75rem;
   border-radius: 0.3rem;
   background: rgba(255, 255, 255, 0.7);
@@ -524,7 +526,7 @@ textarea:focus {
   padding: 0.75rem 0.25rem 0;
 }
 .recipe {
-  width: 19.75rem;
+  min-width: 19.75rem;
   min-height: 5rem;
   margin: 0.25rem;
   padding: 0.75rem;

@@ -17,6 +17,7 @@ if( !is_user_logged_in() ) {
     -->
 
     <meta charset="<?php bloginfo( 'charset' ); ?>" />
+    <meta name="viewport" content="width=device-width">
 
     <title>Matplanering</title>
     <script src="https://use.fontawesome.com/20d70f523f.js"></script>
@@ -31,35 +32,46 @@ if( !is_user_logged_in() ) {
 
       <div id="savingIndicator" v-bind:class="isSaving.length?'':'hidden'"></div>
 
-      <div id="weeksContainer">
+      <div v-if="iPhone">
         <week
-          v-if="weeks!=undefined && recipes!=undefined"
-          v-for="week in weeks"
-          v-bind:week="week"
-          :key="week.nbr"
-          v-bind:recipes="recipes"
-          v-bind:draging-recipe="dragingRecipe"></week>
+          v-if="weeks!=undefined && recipes!=undefined && weeks[1]"
+          v-bind:week="weeks[1]"
+          v-bind:recipes="recipes"></week>
       </div>
 
-      <div id="recipeContainer">
-        <h2>Recept</h2>
-        <div class="addBtn" @click="showAddRecipe=!showAddRecipe">
-          <i class="fa fa-plus"></i>
+      <div v-else>
+
+        <div id="weeksContainer">
+          <week
+            v-if="weeks!=undefined && recipes!=undefined"
+            v-for="week in weeks"
+            v-bind:week="week"
+            :key="week.nbr"
+            v-bind:recipes="recipes"
+            v-bind:draging-recipe="dragingRecipe"></week>
         </div>
 
-        <recipe v-bind:rec="recipeBoilerPlate" v-if="showAddRecipe"></recipe>
+        <div id="recipeContainer">
+          <h2>Recept</h2>
+          <div class="addBtn" @click="showAddRecipe=!showAddRecipe">
+            <i class="fa fa-plus"></i>
+          </div>
 
-        <hr v-if="showAddRecipe" />
+          <recipe v-bind:rec="recipeBoilerPlate" v-if="showAddRecipe"></recipe>
 
-        <draggable
-          :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
-          @start = "dragingRecipe=true"
-          @end = "dragingRecipe=false"
-          :list="_.pluck(recipes,'id')">
+          <hr v-if="showAddRecipe" />
 
-          <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+          <draggable
+            :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
+            @start = "dragingRecipe=true"
+            @end = "dragingRecipe=false"
+            :list="_.pluck(recipes,'id')">
 
-        </draggable>
+            <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+
+          </draggable>
+        </div>
+
       </div>
 
     </div>
@@ -156,11 +168,11 @@ if( !is_user_logged_in() ) {
 
     <script type="text/x-template" id="mealTemplate">
 
-      <li v-if="collapsed">
+      <li v-if="collapsed && !iPhone">
         <h2 style="margin-bottom: 0" @click="collapsed=false">{{meal.title}}</h2>
       </li>
 
-      <li v-else-if="!collapsed" v-bind:data-id="meal.id">
+      <li v-else-if="!collapsed || iPhone" v-bind:data-id="meal.id">
 
         <div class="editBtn" @click="inEdit = !inEdit">
           <i class="fa fa-pencil" aria-hidden="true"></i>
