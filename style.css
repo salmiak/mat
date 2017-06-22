@@ -485,6 +485,14 @@ textarea:focus {
 #weeksContainer .week ul.emptyWeek {
   min-height: calc(3.5rem + 2px);
 }
+#weeksContainer .week.thisWeek {
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-box-shadow: 0 0 5rem #92e4c9;
+  -moz-box-shadow: 0 0 5rem #92e4c9;
+  box-shadow: 0 0 5rem #92e4c9;
+  z-index: 100;
+  position: relative;
+}
 #weeksContainer .week .addArea {
   padding: 0.75rem;
   border-radius: 0.3rem;

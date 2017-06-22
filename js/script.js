@@ -293,10 +293,11 @@ $.ajax({
       });
     }
 
-    for (var i = 2; i >= -5; i--) {
-      var weekNbr = moment().startOf('week').isoWeekday(1).add(i, 'w').week();
+    for (var i = 1; i >= -10; i--) {
+      var weekNbr = moment().startOf('week').add(i, 'w').week();
       app.weeks.push({
         nbr: weekNbr,
+        isThisWeek: i==0,
         meals: _.defaults(weekData[weekNbr], {planned:[], made: []}) || {planned:[], made: []} // If weekData[weekNbr] is undefined, return empty object
       });
     }

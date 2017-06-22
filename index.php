@@ -70,7 +70,7 @@ if( !is_user_logged_in() ) {
     </script>
 
     <script type="text/x-template" id="weekTemplate">
-      <div class="week">
+      <div class="week" v-bind:class="{thisWeek: week.isThisWeek}">
 
         <draggable
           class="trash"
@@ -91,7 +91,8 @@ if( !is_user_logged_in() ) {
           <i class="fa fa-plus"></i>
         </div>
 
-        <h2>Vecka {{week.nbr}}</h2>
+        <h2 v-if="week.isThisWeek">Denna vecka</h2>
+        <h2 v-else>Vecka {{week.nbr}}</h2>
 
         <form class="addArea" v-on:submit="createNewMeal" v-if="showAddMeal">
           <h3>Lägg till måltid:</h3>
@@ -233,7 +234,7 @@ if( !is_user_logged_in() ) {
           </div>
         </form>
 
-        <div v-bind:title="rec.id" v-else-if="rec">
+        <div v-else-if="rec">
 
           <h3 v-if="!rec.fields.url">{{rec.title}}</h3>
           <h3 v-if="rec.fields.url"><a :href="rec.fields.url" target="_blank">{{rec.title}}</a></h3>
