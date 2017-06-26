@@ -61,13 +61,19 @@ if( !is_user_logged_in() ) {
 
           <hr v-if="showAddRecipe" />
 
+          <vue-fuse
+            :keys='["title","acf.url","content"]'
+            :list="recipes"
+            :default-all="true"
+            event-name="recipeSearched"></vue-fuse>
+
           <draggable
             :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
             @start = "dragingRecipe=true"
             @end = "dragingRecipe=false"
-            :list="_.pluck(recipes,'id')">
+            :list="_.pluck(recipeSearchResults,'id')">
 
-            <recipe v-for="recipe in recipes" :key="recipe.id" v-bind:rec="recipe"></recipe>
+            <recipe v-for="recipe in recipeSearchResults" :key="recipe.id" v-bind:rec="recipe"></recipe>
 
           </draggable>
         </div>
@@ -79,6 +85,11 @@ if( !is_user_logged_in() ) {
 
     <script>
       window.wp_root_url = "<?php bloginfo('url'); ?>";
+    </script>
+
+
+    <script type="text/x-template" id="fuseTemplate">
+      <input type="search" v-model="search" placeholder="Sök recept">
     </script>
 
     <script type="text/x-template" id="weekTemplate">
