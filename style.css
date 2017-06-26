@@ -141,6 +141,7 @@ table {
 }
 html {
   font-size: 12px;
+  overflow: hidden;
 }
 body {
   background: #BED;
@@ -396,6 +397,7 @@ input[type=submit]:hover {
   color: #FFF;
 }
 input[type=text],
+input[type=search],
 textarea {
   background: none;
   border: 1px solid rgba(0, 0, 0, 0.1);
@@ -411,10 +413,12 @@ textarea {
   transition: background 0.5s;
 }
 input[type=text]:hover,
+input[type=search]:hover,
 textarea:hover {
   background: rgba(255, 255, 255, 0.1);
 }
 input[type=text]:focus,
+input[type=search]:focus,
 textarea:focus {
   background: rgba(255, 255, 255, 0.4);
   outline: none;
@@ -524,6 +528,10 @@ textarea:focus {
 }
 #recipeContainer h2 {
   padding: 0.75rem 0.25rem 0;
+}
+#recipeContainer > input {
+  margin: 0 0.25rem 0.5rem;
+  width: calc(100% - 0.5rem);
 }
 .recipe {
   min-width: 19.75rem;
