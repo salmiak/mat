@@ -418,6 +418,11 @@ function detectmob() {
     return false;
   }
 }
+function isSmallMode() {
+  if( detectmob() && window.innerWidth < window.innerHeight )
+    return true;
+  return false;
+}
 
 var app = new Vue({
   el: '#content',
@@ -430,7 +435,7 @@ var app = new Vue({
     recipeSearchResults: [],
     showAddRecipe: false,
     recipeBoilerPlate: JSON.parse(recipeBoilerPlate),
-    iPhone: detectmob()
+    iPhone: isSmallMode()
   },
   created: function() {
     _this = this
@@ -439,6 +444,10 @@ var app = new Vue({
     });
   }
 });
+
+window.onresize = function(){
+  app.iPhone = isSmallMode();
+};
 
 $.ajax({
   url: window.wp_root_url + "/wp-json/wp/v2/recipe?per_page=100",

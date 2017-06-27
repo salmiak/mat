@@ -143,6 +143,11 @@ html {
   font-size: 12px;
   overflow: hidden;
 }
+@media (min-width: 1100px) and (min-height: 800px) {
+  html {
+    font-size: 14px;
+  }
+}
 body {
   background: #BED;
   font: 1rem/1.5 Open Sans, serif;
