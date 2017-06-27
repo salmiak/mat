@@ -274,10 +274,10 @@ if( !is_user_logged_in() ) {
           <input type="text" v-model="rec.fields.url" placeholder="URL" />
           <textarea name="content" v-model="rec.content" placeholder="Kommentar"></textarea>
           <input type="submit" value="Spara" />
-          <div class="editBtn deleteBtn" @click="confirmDelete" v-if="inEdit && rec.id && !confirmingDelete">
+          <div class="deleteBtn" @click="confirmDelete" v-if="inEdit && rec.id && !confirmingDelete">
             <i class="fa fa-trash" aria-hidden="true"></i>
           </div>
-          <div class="editBtn deleteBtn inverted" @click="deleteRecipe" v-if="inEdit && rec.id && confirmingDelete">
+          <div class="deleteBtn inverted" @click="deleteRecipe" v-if="inEdit && rec.id && confirmingDelete">
             <i class="fa fa-trash" aria-hidden="true"></i>
           </div>
         </form>

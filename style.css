@@ -471,13 +471,12 @@ textarea:focus {
 }
 #weeksContainer .week.thisWeek {
   background: rgba(255, 255, 255, 0.4);
-  -webkit-box-shadow: 0 0 5rem #92e4c9;
-  -moz-box-shadow: 0 0 5rem #92e4c9;
-  box-shadow: 0 0 5rem #92e4c9;
   z-index: 100;
   position: relative;
 }
 .week {
+  max-height: 100vh;
+  overflow: auto;
   padding: 1rem 0.5rem 3rem;
 }
 .week ul {

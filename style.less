@@ -213,13 +213,14 @@ input[type=text], input[type=search], textarea {
 
     &.thisWeek {
       background: rgba(255,255,255,.4);
-      .box-shadow(0 0 5rem darken(@cPri, 10%));
       z-index: 100;
       position: relative;
     }
   }
 }
 .week {
+  max-height: 100vh;
+  overflow: auto;
   padding: 1rem 0.5rem 3rem;
   ul {
     padding: 0;
