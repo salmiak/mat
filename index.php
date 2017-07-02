@@ -206,7 +206,7 @@ if( !is_user_logged_in() ) {
 
       <li v-else-if="!collapsed || iPhone" v-bind:data-id="meal.id">
 
-        <div class="editBtn" @click="inEdit = !inEdit">
+        <div class="editBtn" @click="inEdit = !inEdit" v-if="!iPhone">
           <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
 
@@ -262,12 +262,21 @@ if( !is_user_logged_in() ) {
 
           <input type="submit" value="Spara" v-if="inEdit" />
         </form>
+        <div v-if="iPhone" class="mealFooter">
+          <div class="pullRight" @click="inEdit = !inEdit">
+            Redigera <i class="fa fa-pencil"></i>
+          </div>
+          <div @click="toggleMade">
+            <i class="fa fa-check-square-o" v-if="meal.fields.made"></i>
+            <i class="fa fa-square-o" v-else></i> Lagat
+          </div>
+        </div>
       </li>
     </script>
 
     <script type="text/x-template" id="recipeTemplate">
       <div class="recipe" v-if="rec&&rec.id!=0">
-        <div class="editBtn" @click="inEdit = !inEdit" v-if="rec.id">
+        <div class="editBtn" @click="inEdit = !inEdit" v-if="rec.id && !iPhone">
           <i class="fa fa-pencil" aria-hidden="true"></i>
         </div>
 

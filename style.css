@@ -190,6 +190,13 @@ hr {
 .hidden {
   display: none;
 }
+.pullRight {
+  float: right;
+}
+.capitals {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
 .pill {
   font-size: 1.05rem;
   font-family: Oswald, sans-serif;
@@ -617,4 +624,15 @@ textarea:focus {
   min-height: 3rem;
   background: rgba(0, 0, 0, 0.03);
   border-radius: 0.5rem;
+}
+.mealFooter {
+  margin: 0.75rem -0.75rem -0.75rem;
+  height: 2rem;
+  line-height: 2rem;
+  padding: 0 0.75rem;
+  border-top: 1px dashed rgba(0, 0, 0, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8em;
+  color: #F17;
 }

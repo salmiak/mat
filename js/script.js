@@ -169,7 +169,8 @@ Vue.component('recipe', {
   data: function() {
     return {
       inEdit: this.rec && !this.rec.id,
-      confirmingDelete: false
+      confirmingDelete: false,
+      iPhone: app.iPhone
     }
   },
   methods: {
@@ -258,6 +259,10 @@ Vue.component('meal', {
           app.isSaving.pop(1);
         }
       })
+    },
+    toggleMade: function(){
+      this.meal.fields.made = this.meal.fields.made?0:1;
+      this.saveMeal();
     }
   }
 });
