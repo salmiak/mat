@@ -51,7 +51,7 @@ if( !is_user_logged_in() ) {
             v-bind:draging-recipe="dragingRecipe"></week>
         </div>
 
-        <div id="recipeContainer">
+        <div id="recipeContainer" v-bind:class="{addingRecipe: showAddRecipe}">
           <h2>Recept</h2>
           <div class="addBtn" @click="showAddRecipe=!showAddRecipe">
             <i class="fa fa-plus"></i>
@@ -68,6 +68,7 @@ if( !is_user_logged_in() ) {
             event-name="recipeSearched"></vue-fuse>
 
           <draggable
+            class="recipeList"
             :options="{group:{ name: 'mealRecipes', pull: 'clone', put: false}, sort: false}"
             @start = "dragingRecipe=true"
             @end = "dragingRecipe=false"
@@ -93,7 +94,7 @@ if( !is_user_logged_in() ) {
     </script>
 
     <script type="text/x-template" id="weekTemplate">
-      <div class="week" v-bind:class="{thisWeek: week.isThisWeek}">
+      <div class="week" v-bind:class="{thisWeek: week.isThisWeek, addingMeal: showAddMeal}">
 
         <draggable
           class="trash"
@@ -132,65 +133,67 @@ if( !is_user_logged_in() ) {
             value="Lägg till" />
         </form>
 
-        <hr v-if="showAddMeal" />
+        <div class="weekList">
 
-        <h4 v-bind:class="{ hidden: !drag && !week.meals.planned.length && week.meals.made.length }">Planerat</h4>
-        <ul v-if="iPhone">
-          <meal
-            class="meal"
-            v-for="(meal,index) in week.meals.planned"
-            :key="index"
-            v-bind:meal="meal"
-            v-bind:recipes="recipes"></meal>
-        </ul>
-        <draggable
-          v-else
-          element="ul"
-          class="meal-container"
-          :list="week.meals.planned"
-          :options="{group:'weeks'}"
-          @start="drag=true"
-          @end="drag=false"
-          @sort="saveWeeksPlannedMeals"
-          v-bind:class="{ emptyWeek: !week.meals.made.length && !week.meals.planned.length, dragging: drag }">
+          <h4 v-bind:class="{ hidden: !drag && !week.meals.planned.length && week.meals.made.length }">Planerat</h4>
+          <ul v-if="iPhone">
+            <meal
+              class="meal"
+              v-for="(meal,index) in week.meals.planned"
+              :key="index"
+              v-bind:meal="meal"
+              v-bind:recipes="recipes"></meal>
+          </ul>
+          <draggable
+            v-else
+            element="ul"
+            class="meal-container"
+            :list="week.meals.planned"
+            :options="{group:'weeks'}"
+            @start="drag=true"
+            @end="drag=false"
+            @sort="saveWeeksPlannedMeals"
+            v-bind:class="{ emptyWeek: !week.meals.made.length && !week.meals.planned.length, dragging: drag }">
 
-          <meal
-            class="meal"
-            v-for="(meal,index) in week.meals.planned"
-            :key="index"
-            v-bind:meal="meal"
-            v-bind:recipes="recipes"></meal>
+            <meal
+              class="meal"
+              v-for="(meal,index) in week.meals.planned"
+              :key="index"
+              v-bind:meal="meal"
+              v-bind:recipes="recipes"></meal>
 
-        </draggable>
+          </draggable>
 
-        <h4 v-bind:class="{ hidden: !drag && !week.meals.made.length }">Lagat</h4>
-        <ul v-if="iPhone">
-          <meal
-            class="meal"
-            v-for="(meal,index) in week.meals.made"
-            :key="index"
-            v-bind:meal="meal"
-            v-bind:recipes="recipes"></meal>
-        </ul>
-        <draggable
-          v-else
-          element="ul"
-          class="meal-container"
-          :list="week.meals.made"
-          :options="{group:'weeks'}"
-          @start="drag=true"
-          @end="drag=false"
-          @sort="saveWeeksMadeMeals"
-          v-bind:class="{ dragging: drag }">
+          <h4 v-bind:class="{ hidden: !drag && !week.meals.made.length }">Lagat</h4>
+          <ul v-if="iPhone">
+            <meal
+              class="meal"
+              v-for="(meal,index) in week.meals.made"
+              :key="index"
+              v-bind:meal="meal"
+              v-bind:recipes="recipes"></meal>
+          </ul>
+          <draggable
+            v-else
+            element="ul"
+            class="meal-container"
+            :list="week.meals.made"
+            :options="{group:'weeks'}"
+            @start="drag=true"
+            @end="drag=false"
+            @sort="saveWeeksMadeMeals"
+            v-bind:class="{ dragging: drag }">
 
-          <meal
-            class="meal"
-            v-for="(meal,index) in week.meals.made"
-            :key="index"
-            v-bind:meal="meal"
-            v-bind:recipes="recipes"></meal>
+            <meal
+              class="meal"
+              v-for="(meal,index) in week.meals.made"
+              :key="index"
+              v-bind:meal="meal"
+              v-bind:recipes="recipes"></meal>
 
-        </draggable>
+          </draggable>
+
+        </div>
 
       </div>
     </script>

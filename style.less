@@ -26,6 +26,7 @@ html {
     font-size: 14px;
   }
   overflow: hidden;
+  min-height: 100vh;
 }
 body {
   background: @cPri;
@@ -222,9 +223,25 @@ input[type=text], input[type=search], textarea {
   }
 }
 .week {
-  max-height: 100vh;
-  overflow: auto;
-  padding: 1rem 0.5rem 3rem;
+  height: 100vh;
+  padding: 1rem 0.5rem 0;
+  position: relative;
+
+  .weekList {
+    position: absolute;
+    padding: 0 0.5rem 3rem;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: auto;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+
+  &.addingMeal .weekList {
+    top: 18.8rem;
+  }
+
   ul {
     padding: 0;
     margin-bottom: 0.5rem;
@@ -260,8 +277,6 @@ input[type=text], input[type=search], textarea {
   width: 20.75rem;
   background: rgba(255,255,255,0.2);
   padding: 0.25rem;
-  overflow-x: hidden;
-  overflow-y: auto;
   position: fixed;
   top: 0;
   bottom: 0;
@@ -272,6 +287,22 @@ input[type=text], input[type=search], textarea {
   > input {
     margin: 0 0.25rem 0.5rem;
     width: calc(~'100% - 0.5rem');
+  }
+
+  .recipeList {
+    padding: 0.25rem;
+    border-top: 1px solid rgba(0,0,0,0.1);
+    position: absolute;
+    overflow-x: hidden;
+    overflow-y: auto;
+    top: 7rem;
+    bottom: 0;
+    right: 0;
+    left: 0;
+  }
+
+  &.addingRecipe .recipeList {
+    top: 25.25rem;
   }
 }
 
