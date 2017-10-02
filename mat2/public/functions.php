@@ -26,6 +26,11 @@ function reg_styles()
 }
 add_action('wp_enqueue_scripts', 'reg_styles');
 
+function mat_scripts() {
+    wp_enqueue_script( 'wp-api');
+}
+add_action( 'wp_enqueue_scripts', 'mat_scripts' );
+
 function add_post_types() {
   register_post_type( 'recipe',
     array(

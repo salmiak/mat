@@ -27,8 +27,13 @@ if( !is_user_logged_in() ) {
 
     <div id="app"></div>
     <!-- built files will be auto injected -->
+    
+    <script>
+      window.wp_root_url = "<?php bloginfo('url'); ?>";
+    </script>
 
     <?php wp_footer(); ?>
 
-  <script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/static/js/manifest.9f49aaab7723c5cba73c.js"></script><script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/static/js/vendor.448f2d15e3f6731dd22b.js"></script><script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/static/js/app.826c417112b191bd7a56.js"></script></body>
+
+  <script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/static/js/manifest.95633d06d7c58f9ca7ae.js"></script><script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/static/js/vendor.79430da14f2564cd6178.js"></script><script type="text/javascript" src="<?php echo get_template_directory_uri(); ?>/static/js/app.9b2fa1bfdd79db333005.js"></script></body>
 </html>
