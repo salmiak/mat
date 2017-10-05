@@ -29,7 +29,6 @@
 ul {
   margin: 0 auto 40px;
   padding: 0;
-  width: 300px;
 }
 li {
   list-style: none;

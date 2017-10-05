@@ -30,14 +30,20 @@ export default {
 #app {
   font-family: 'Nunito', Helvetica, Arial, sans-serif;
   font-weight: 700;
+  font-size: 20px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
+  text-align: left;
   color: @colorPrimary;
-  margin-top: 60px;
+  width: 95%;
+  max-width: 400px;
+  margin: 60px auto;
 }
 h1 {
   font-weight: 900;
   color: @colorSecondary;
+  font-size: 3em;
+  line-height: 1em;
+  margin: 1em 0 .3em;
 }
 </style>
