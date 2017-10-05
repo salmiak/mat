@@ -19,13 +19,23 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less">
+@import url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
+
+@colorPrimary: #457;
+@colorSecondary: #F35;
+
 #app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Nunito', Helvetica, Arial, sans-serif;
+  font-weight: 700;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+  color: @colorPrimary;
   margin-top: 60px;
+}
+h1 {
+  font-weight: 900;
+  color: @colorSecondary;
 }
 </style>
