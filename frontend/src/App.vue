@@ -6,6 +6,7 @@
     </div>
   -->
   <div id="app">
+    <week v-bind:number="23"></week>
     <h1>Recept</h1>
     <recipe-list></recipe-list>
   </div>
@@ -13,9 +14,10 @@
 
 <script>
 import RecipeList from './components/RecipeList'
+import Week from './components/Week'
 export default {
   name: 'app',
-  components:{ RecipeList }
+  components:{ RecipeList,Week }
 }
 </script>
 
