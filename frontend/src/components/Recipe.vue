@@ -10,7 +10,7 @@
     name: "Recipe",
     props: ['id'],
     data() {
-      let recipeData = _.find(this.$store.state.recipes, {id: this.id})
+      let recipeData = this.$store.getters.recipeById(this.id)
       delete recipeData.id
       return recipeData
     }

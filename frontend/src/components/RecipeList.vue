@@ -7,20 +7,33 @@
 </template>
 
 <script>
-  import { mapState } from 'vuex'
+  import { mapState,mapGetters } from 'vuex'
   import { mapMutations } from 'vuex'
   import Recipe from './Recipe'
 
   export default {
     name: "RecipeList",
-    components: {Recipe},
+    components: { Recipe },
     computed: {
-      ...mapState([
-        'recipes'
-      ])
+      ...mapGetters({
+        'recipes': 'allRecipes'
+      })
     },
     created() {
-      this.$store.dispatch('loadRecipes')
+      this.$store.dispatch('getAllRecipes')
     }
   }
 </script>
+
+<style scoped>
+ul {
+  margin: 0 auto 40px;
+  padding: 0;
+  width: 300px;
+}
+li {
+  list-style: none;
+  text-align: left;
+  margin-bottom: 0.5em;
+}
+</style>

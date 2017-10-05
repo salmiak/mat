@@ -1,13 +1,21 @@
 <template>
+  <!--
+    <div id="app">
+      <img src="./assets/logo.png">
+      <router-view></router-view>
+    </div>
+  -->
   <div id="app">
-    <img src="./assets/logo.png">
-    <router-view></router-view>
+    <h1>Recept</h1>
+    <recipe-list></recipe-list>
   </div>
 </template>
 
 <script>
+import RecipeList from './components/RecipeList'
 export default {
-  name: 'app'
+  name: 'app',
+  components:{ RecipeList }
 }
 </script>
 
