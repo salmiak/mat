@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import * as global from '../const'
+import * as global from '../utils'
 
 // initial state
 const state = {
@@ -14,7 +14,7 @@ const getters = {
     return state.all.find(meal => meal.id === id)
   },
   mealsByWeek: (state,getters) => (week) => {
-    return state.all.filter(meal => meal.acf.week == week)
+    return state.all.filter(meal => meal.fields.week == week)
   }
 }
 
@@ -31,14 +31,16 @@ const actions = {
         }
 
         response.body.forEach(function(meal){
-          meal.title = meal.title.rendered
-          // meal.content = meal.content.rendered
+          meal = global.wpProcess(meal);
           commit('addMeal',{meal: meal})
         })
 
       })
     }
     requestPage(page)
+  },
+  updateMeal ({ commit,state }, { id }) {
+    Vue.http.post(global.apiUri+'/meal/'+id, state.all.find(meal => meal.id == id)).then(response => console.log(response))
   }
 }
 

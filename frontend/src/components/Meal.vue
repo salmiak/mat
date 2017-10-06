@@ -1,7 +1,13 @@
 <template>
   <div class="meal">
-    <h2>{{title}}</h2>
-    <p v-html="acf.comment" v-if="acf.comment"></p>
+    <div class="madeIcon" @click="toggleMade()">
+      <icon name="check-square-o" v-if="fields.made"></icon>
+      <icon name="square-o" v-else></icon>
+    </div>
+    <h2>
+      {{title}}
+    </h2>
+    <p v-html="fields.comment" v-if="fields.comment"></p>
     <ul>
       <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
     </ul>
@@ -19,7 +25,13 @@
     },
     computed: {
       verifiedRecipes() {
-        return this.acf.recipes && this.acf.recipes.filter(id => this.$store.getters.verifyRecipe(id))
+        return this.fields.recipes && this.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
+      }
+    },
+    methods: {
+      toggleMade() {
+        this.fields.made = !this.fields.made
+        this.$store.dispatch('updateMeal',{id: this.id});
       }
     }
   }
@@ -28,6 +40,7 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
+  position: relative;
   margin: 0;
   padding: 1em .3em;
   border-bottom: 1px solid fade(@colorPrimary, 12%);
@@ -37,6 +50,11 @@
   &:hover {
     background: fade(@colorPrimary, 3%);
   }
+}
+.madeIcon {
+  position: absolute;
+  top: 1.95em;
+  left: -1.3em;
 }
 h2 {
   font-size: 1.2em;

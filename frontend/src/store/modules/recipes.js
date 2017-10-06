@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
-import * as global from '../const'
+import * as global from '../utils'
 
 // initial state
 const state = {
