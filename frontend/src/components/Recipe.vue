@@ -1,18 +1,16 @@
 <template>
-  <div>
-    {{title}}
-  </div>
+  <li>
+    <a v-bind:href="acf.url" v-if="acf.url">{{title}}</a>
+    <span v-else>{{title}}</span>
+  </li>
 </template>
 
 <script>
-  import _ from 'lodash'
   export default {
     name: "Recipe",
-    props: ['id'],
+    props: ['recipeId'],
     data() {
-      let recipeData = this.$store.getters.recipeById(this.id)
-      delete recipeData.id
-      return recipeData
+      return this.$store.getters.recipeById(this.recipeId)
     }
   }
 </script>

@@ -1,21 +1,21 @@
 <template>
   <div>
-    <h1>Week {{number}}</h1>
+    <h1>Vecka {{number}}</h1>
     <p>
-      Add meal
+      Lägg till måltid
     </p>
-    <div v-for="meal in meals" @key="meal.id">{{meal.id}}</div>
+    <meal v-for="meal in meals" :key="meal.id" v-bind:mealId="meal.id"></meal>
   </div>
 </template>
 
 <script>
+  import Meal from './Meal'
   export default {
     name: "Week",
     props: ['number'],
-    data() {
-      return {
-        meals: [{id: 0}]
-      }
+    components: { Meal },
+    computed: {
+      meals() {return this.$store.getters.mealsByWeek(this.number)}
     }
   }
 </script>

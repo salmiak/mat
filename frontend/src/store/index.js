@@ -1,11 +1,13 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import recipes from './modules/recipes'
+import meals from './modules/meals'
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
-    recipes
+    recipes,
+    meals
   }
 })

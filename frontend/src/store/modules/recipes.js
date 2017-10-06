@@ -11,13 +11,22 @@ const state = {
 const getters = {
   allRecipes: state => state.all,
   recipeById: (state, getters) => (id) => {
-    return state.all.find(recipe => recipe.id === id)
+    // Make sure to only look for existing recipes
+    if (getters.verifyRecipe(id)) {
+      return state.all.find(recipe => recipe.id == id)
+    } else {
+      return false
+    }
+  },
+  // Check if recipe id exists
+  verifyRecipe: state => (id) => {
+    return state.all.map(recipe => recipe.id).indexOf(id) != -1
   }
 }
 
 // actions
 const actions = {
-  getAllRecipes ({ commit }) {
+  requestAllRecipes ({ commit }) {
     var page = 1
     var requestPage = (page) => {
       Vue.http.get(global.apiUri+'/recipe/?page='+page).then(response => {

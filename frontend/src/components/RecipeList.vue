@@ -1,6 +1,6 @@
 <template>
   <ul>
-    <li v-for="recipe in recipes">
+    <li v-for="recipe in recipes" :key="recipe.id">
       <recipe v-bind:id="recipe.id"></recipe>
     </li>
   </ul>
@@ -18,9 +18,6 @@
       ...mapGetters({
         'recipes': 'allRecipes'
       })
-    },
-    created() {
-      this.$store.dispatch('getAllRecipes')
     }
   }
 </script>
