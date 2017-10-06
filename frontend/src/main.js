@@ -3,12 +3,17 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
+import 'vue-awesome/icons'
+import Icon from 'vue-awesome/components/Icon'
 import App from './App'
 import router from './router'
 import store from './store'
 
 Vue.config.productionTip = false
 Vue.use(VueResource)
+
+// Register Font Awesome icon component globaly
+Vue.component('icon', Icon)
 
 new Vue({
   el: '#app',
