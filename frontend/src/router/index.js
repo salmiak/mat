@@ -8,13 +8,16 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
+      path: '/',
+      redirect: '/week'
+    },
+    {
       path: '/week',
-      alias: '/',
-      name: 'Week',
+      name: 'Home',
       component: Home
     },
     {
-      path: '/week/:week',
+      path: '/week/:year/:week',
       name: 'Week',
       component: Home
     },

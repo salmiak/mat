@@ -2,7 +2,7 @@
 
   <div id="app">
     <div id="nav">
-      <router-link to="/">Planering</router-link>
+      <router-link to="/week">Planering</router-link>
       <router-link to="/recipes">Recept</router-link>
     </div>
     <router-view/>
@@ -63,7 +63,7 @@ export default {
     &:hover {
         background-color: fade(@colorPrimary, 12%);
     }
-    &.router-link-exact-active {
+    &.router-link-active {
       background-color: @colorPrimary;
       color: #FFF;
     }
