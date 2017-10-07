@@ -1,9 +1,12 @@
 <template>
-  <ul>
-    <li v-for="recipe in recipes" :key="recipe.id">
-      <recipe v-bind:id="recipe.id"></recipe>
-    </li>
-  </ul>
+  <div id="recipeList">
+    <h1>Recept</h1>
+    <ul>
+      <li v-for="recipe in recipes" :key="recipe.id">
+        <recipe v-bind:recipeId="recipe.id"></recipe>
+      </li>
+    </ul>
+  </div>
 </template>
 
 <script>

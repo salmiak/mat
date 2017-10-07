@@ -37,8 +37,7 @@ const actions = {
         }
 
         response.body.forEach(function(recipe){
-          recipe.title = recipe.title.rendered
-          recipe.content = recipe.content.rendered
+          recipe = global.wpProcess(recipe);
           commit('addRecipe',{recipe: recipe})
         })
 

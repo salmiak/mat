@@ -1,51 +1,21 @@
 <template>
-  <!--
-    <div id="app">
-      <img src="./assets/logo.png">
-      <router-view></router-view>
-    </div>
-  -->
+
   <div id="app">
-    <button @click="goToPrevWeek()">Förra veckan</button>
-    <button @click="goToThisWeek()">Idag</button>
-    <button @click="goToNextWeek()">Nästa vecka</button>
-    <week v-bind:number="showWeek"></week>
-    <!--<h1>Recept</h1>
-    <recipe-list></recipe-list>-->
+    <div id="nav">
+      <router-link to="/">Planering</router-link>
+      <router-link to="/recipes">Recept</router-link>
+    </div>
+    <router-view/>
   </div>
+
 </template>
 
 <script>
-import RecipeList from './components/RecipeList'
-import Week from './components/Week'
-
-// Calculate week of year: https://stackoverflow.com/questions/7765767/show-week-number-with-javascript
-Date.prototype.getWeek = function() {
-  var onejan = new Date(this.getFullYear(), 0, 1);
-  return Math.ceil((((this - onejan) / 86400000) + onejan.getDay() + 1) / 7);
-}
-
 export default {
   name: 'app',
-  components:{ RecipeList,Week },
-  data() {
-    return {
-      currentWeek: (new Date()).getWeek(),
-      weekOffset: 0
-    }
-  },
   created() {
     this.$store.dispatch('requestAllRecipes')
     this.$store.dispatch('requestAllMeals')
-  },
-  computed: {
-    showWeek() { return this.currentWeek + this.weekOffset }
-  },
-  methods: {
-    goToNextWeek() { this.weekOffset++ },
-    goToPrevWeek() { this.weekOffset-- },
-    goToThisWeek() { this.weekOffset = 0 },
-    /* DEBUG */ goToSpecificWeek(nbr) { this.weekOffset = nbr - this.currentWeek}
   }
 }
 </script>
@@ -66,6 +36,40 @@ export default {
   max-width: 400px;
   margin: 60px auto;
 }
+
+#nav {
+  display: inline-block;
+  border: 1px solid @colorPrimary;
+  border-radius: 8px;
+  width: auto;
+  font-size: 0;
+  margin-bottom: 10px;
+  a {
+    font-size: 1rem;
+    display: inline-block;
+    padding: 0 12px;
+    line-height: 2em;
+    border-left: 1px solid @colorPrimary;
+    color: fade(@colorPrimary, 54%);
+    &:first-child {
+      border-left: none;
+      padding-left: 14px;
+      border-radius: 7px 0 0 7px;
+    }
+    &:last-child {
+      padding-right: 14px;
+      border-radius: 0 7px 7px 0;
+    }
+    &:hover {
+        background-color: fade(@colorPrimary, 12%);
+    }
+    &.router-link-exact-active {
+      background-color: @colorPrimary;
+      color: #FFF;
+    }
+  }
+}
+
 h1 {
   font-weight: 900;
   color: @colorSecondary;
