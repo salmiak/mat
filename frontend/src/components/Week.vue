@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h1>Vecka {{number}}</h1>
+    <h1>Vecka {{week}}</h1>
     <p>
       Lägg till måltid
     </p>
@@ -12,10 +12,10 @@
   import Meal from './Meal'
   export default {
     name: "Week",
-    props: ['number'],
+    props: ['year','week'],
     components: { Meal },
     computed: {
-      meals() {return this.$store.getters.mealsByWeek(this.number)}
+      meals() {return this.$store.getters.mealsByWeek(this.year, this.week)}
     }
   }
 </script>

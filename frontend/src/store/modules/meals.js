@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueResource from 'vue-resource'
+import moment from 'moment'
 import * as global from '../utils'
 
 // initial state
@@ -13,8 +14,11 @@ const getters = {
   mealById: (state, getters) => (id) => {
     return state.all.find(meal => meal.id === id)
   },
-  mealsByWeek: (state,getters) => (week) => {
-    return state.all.filter(meal => meal.fields.week == week)
+  mealsByWeek: (state,getters) => (year, week) => {
+    return state.all.filter(meal => {
+      let mom = moment(meal.date)
+      return mom.isoWeek() == week && mom.isoWeekYear() == year
+    })
   }
 }
 
