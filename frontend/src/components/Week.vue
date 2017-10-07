@@ -1,9 +1,6 @@
 <template>
   <div>
-    <h1>Vecka {{week}}</h1>
-    <p>
-      Lägg till måltid
-    </p>
+    <p>Lägg till måltid</p>
     <meal v-for="meal in meals" :key="meal.id" v-bind:mealId="meal.id"></meal>
   </div>
 </template>
