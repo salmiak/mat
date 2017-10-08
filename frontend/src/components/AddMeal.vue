@@ -8,7 +8,7 @@
       <h2>Lägg till måltid</h2>
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
-      Recept?
+      <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
       <p>
         <span class="pull-right btn" @click="toggleForm()">Stäng</span>
         <span class="btn btn-primary" @click="saveMeal()">Spara</span>
@@ -22,23 +22,33 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   import Recipe from './Recipe'
   import moment from 'moment'
+  import Multiselect from 'vue-multiselect'
 
   var emptyMeal = {
-    fields: {},
+    fields: {
+      made: false
+    },
     status: 'publish'
   }
 
   export default {
     name: "AddMeal",
-    components: { Recipe },
+    components: { Recipe, Multiselect },
     props: ['year','week'],
     data() {
       return {
         showForm: false,
-        mealData: JSON.parse(JSON.stringify(emptyMeal))
+        mealData: JSON.parse(JSON.stringify(emptyMeal)),
+        selectedRecipes: []
       }
+    },
+    computed: {
+      ...mapGetters({
+        'recipes': 'allRecipes'
+      })
     },
     methods: {
       toggleForm() {
@@ -46,8 +56,10 @@
       },
       saveMeal() {
         this.mealData.fields.date = moment().isoWeekYear( this.year ).isoWeek( this.week )
+        this.mealData.fields.recipes = this.selectedRecipes.map(recipe => recipe.id)
         this.$store.dispatch('updateMeal',{payload: this.mealData})
         this.mealData = JSON.parse(JSON.stringify(emptyMeal))
+        this.selectedRecipes = []
       }
     }
   }
@@ -84,5 +96,25 @@ h2 {
   left: -2em;
   cursor: pointer;
   padding: .5em .5em .25em;
+}
+
+@import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
+input, textarea {
+  box-sizing: border-box;
+  display: block;
+  width: calc(100% - .6em);
+  margin: 0 0 1em;
+  font-size: 1em;
+  line-height: 1.5em;
+  padding: .3em;
+  border: none;
+  border-bottom: 1px solid fade(@colorPrimary, 12%);
+  background: none;
+  border-radius: 4px 4px 0 0;
+  &:focus {
+    background: #FFF;
+    outline: none;
+    border-bottom-color: @colorSecondary;
+  }
 }
 </style>
