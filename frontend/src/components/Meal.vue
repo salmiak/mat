@@ -53,8 +53,10 @@
 }
 .madeIcon {
   position: absolute;
-  top: 1.95em;
-  left: -1.3em;
+  top: 1.15em;
+  left: -2em;
+  cursor: pointer;
+  padding: .5em .5em .25em;
 }
 h2 {
   font-size: 1.2em;

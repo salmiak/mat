@@ -42,21 +42,31 @@ const actions = {
 
         response.body.forEach(function(meal){
           meal = global.wpProcess(meal);
-          commit('addMeal',{meal: meal})
+          commit('pushMeal',{meal: meal})
         })
 
       })
     }
     requestPage(page)
   },
-  updateMeal ({ commit,state }, { id }) {
-    Vue.http.post(global.apiUri+'/meal/'+id, state.all.find(meal => meal.id == id)).then(response => console.log(response))
+  updateMeal ({ commit,state }, { id, payload }) {
+    if ( id ) {
+      Vue.http.post(global.apiUri+'/meal/'+id, state.all.find(meal => meal.id == id)).then(response => console.log(response))
+    } else if ( payload ) {
+      Vue.http.post(global.apiUri+'/meal/', payload).then(response => {
+        let meal = global.wpProcess(response.body);
+        commit('unshiftMeal', {meal:meal})
+      })
+    } else {
+      console.error('You should not see this message...');
+    }
   }
 }
 
 // mutations
 const mutations = {
-  addMeal (state, payload) { state.all.push(payload.meal) }
+  pushMeal (state, payload) { state.all.push(payload.meal) },
+  unshiftMeal (state, payload) { state.all.unshift(payload.meal) }
 }
 
 export default {

@@ -1,3 +1,57 @@
+@import '../../node_modules/reset-css/reset';
 
 @colorPrimary: #334;
 @colorSecondary: #F38;
+
+.pull-right {
+  float: right;
+}
+
+h1 {
+  font-size: 3em;
+  font-weight: 900;
+  margin: .3em 0 .5em;
+}
+
+input, textarea {
+  box-sizing: border-box;
+  display: block;
+  width: calc(100% - .6em);
+  margin: 0 0 1em;
+  font-size: 1em;
+  line-height: 1.5em;
+  padding: .3em;
+  border: none;
+  border-bottom: 1px solid fade(@colorPrimary, 12%);
+  background: none;
+  border-radius: 4px 4px 0 0;
+  &:focus {
+    background: #FFF;
+    outline: none;
+    border-bottom-color: @colorSecondary;
+  }
+}
+
+.btn {
+  cursor: pointer;
+  border-radius: 8px;
+  background: fade(@colorPrimary, 30%);
+  border: 1px solid fade(@colorPrimary, 30%);
+  color: #FFF;
+  padding: 0 12px;
+  line-height: 2em;
+  display: inline-block;
+  margin: 10px 0 0;
+  &:hover {
+    background: darken(fade(@colorPrimary, 54%), 12%);
+    border-color: darken(fade(@colorPrimary, 54%), 12%);
+  }
+  &-primary {
+    background: @colorSecondary;
+    border: 1px solid @colorSecondary;
+    &:hover {
+      background: darken(@colorSecondary, 12%);
+      border-color: darken(@colorSecondary, 12%);
+    }
+  }
+}
