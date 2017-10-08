@@ -16,7 +16,13 @@ const getters = {
   },
   mealsByWeek: (state,getters) => (year, week) => {
     return state.all.filter(meal => {
-      let mom = moment(meal.date)
+      var mom;
+      if (meal.fields.date) {
+        mom = moment(meal.fields.date)
+      } else {
+        // Legacy - v1 of site only saved week (because I'm shortminded)
+        mom = moment().isoWeekYear(2017).isoWeek(meal.fields.week)
+      }
       return mom.isoWeek() == week && mom.isoWeekYear() == year
     })
   }
