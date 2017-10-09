@@ -87,16 +87,12 @@
       moveToPrevWeek() {
         if(this.mealData.fields.date){
           this.mealData.fields.date = moment(this.mealData.fields.date).subtract(1, 'w')
-        } else {
-          this.mealData.fields.date = moment().isoWeekYear( 2017 ).isoWeek( this.mealData.fields.week ).subtract(1, 'w')
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
       moveToNextWeek() {
         if(this.mealData.fields.date){
           this.mealData.fields.date = moment(this.mealData.fields.date).add(1, 'w')
-        } else {
-          this.mealData.fields.date = moment().isoWeekYear( 2017 ).isoWeek( this.mealData.fields.week ).add(1, 'w')
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       }
