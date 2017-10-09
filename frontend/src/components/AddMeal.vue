@@ -29,7 +29,8 @@
 
   var emptyMeal = {
     fields: {
-      made: false
+      made: false,
+      recipes: []
     },
     status: 'publish'
   }
@@ -41,14 +42,21 @@
     data() {
       return {
         showForm: false,
-        mealData: JSON.parse(JSON.stringify(emptyMeal)),
-        selectedRecipes: []
+        mealData: JSON.parse(JSON.stringify(emptyMeal))
       }
     },
     computed: {
       ...mapGetters({
         'recipes': 'allRecipes'
-      })
+      }),
+      selectedRecipes: {
+        get() {
+          return this.mealData.fields.recipes.map(id => this.$store.getters.recipeById(id))
+        },
+        set(newValue) {
+          this.mealData.fields.recipes = newValue.map(recipe => recipe.id)
+        }
+      },
     },
     methods: {
       toggleForm() {
@@ -56,10 +64,8 @@
       },
       saveMeal() {
         this.mealData.fields.date = moment().isoWeekYear( this.year ).isoWeek( this.week )
-        this.mealData.fields.recipes = this.selectedRecipes.map(recipe => recipe.id)
         this.$store.dispatch('updateMeal',{payload: this.mealData})
         this.mealData = JSON.parse(JSON.stringify(emptyMeal))
-        this.selectedRecipes = []
       }
     }
   }
