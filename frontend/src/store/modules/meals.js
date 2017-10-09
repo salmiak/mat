@@ -16,14 +16,7 @@ const getters = {
   },
   mealsByWeek: (state,getters) => (year, week) => {
     return state.all.filter(meal => {
-      var mom;
-      if (meal.fields.date) {
-        mom = moment(meal.fields.date)
-      } else {
-        // Legacy - v1 of site only saved week (because I'm shortminded)
-        mom = moment().isoWeekYear(2017).isoWeek(meal.fields.week)
-      }
-      return mom.isoWeek() == week && mom.isoWeekYear() == year
+      return moment(meal.fields.date).isoWeek() == week && moment(meal.fields.date).isoWeekYear() == year
     })
   }
 }
@@ -42,6 +35,10 @@ const actions = {
 
         response.body.forEach(function(meal){
           meal = global.wpProcess(meal);
+          if(!meal.fields.date) {
+            meal.fields.date = moment().isoWeekYear(2017).isoWeek(meal.fields.week)
+            delete meal.fields.week
+          }
           commit('pushMeal',{meal: meal})
         })
 
