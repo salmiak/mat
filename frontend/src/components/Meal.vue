@@ -1,37 +1,104 @@
 <template>
   <div class="meal">
-    <div class="madeIcon" @click="toggleMade()">
-      <icon name="check-square-o" v-if="fields.made"></icon>
-      <icon name="square-o" v-else></icon>
+    <form v-if="editMode">
+      <div class="closeIcon" @click="toggleEditMode()">
+        <icon name="times"></icon>
+      </div>
+
+      <h2>Lägg till måltid</h2>
+      <input v-model="mealData.title" placeholder="Namn"/>
+      <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
+      <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
+      <p>
+        <span class="pull-right btn" @click="toggleEditMode()">Stäng</span>
+        <span class="btn btn-primary" @click="saveMeal()">Spara</span>
+      </p>
+    </form>
+
+    <div v-else>
+      <div class="madeIcon" @click="toggleMade()">
+        <icon name="check-square-o" v-if="mealData.fields.made"></icon>
+        <icon name="square-o" v-else></icon>
+      </div>
+      <div class="editIcon" @click="toggleEditMode()">
+        <icon name="edit"></icon>
+      </div>
+      <h2>
+        {{mealData.title}}
+        <span @click="moveToPrevWeek()">
+          <icon name="arrow-left"></icon>
+        </span>
+        <span @click="moveToNextWeek()">
+          <icon name="arrow-right"></icon>
+        </span>
+      </h2>
+      <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
+      <ul>
+        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
+      </ul>
     </div>
-    <h2>
-      {{title}}
-    </h2>
-    <p v-html="fields.comment" v-if="fields.comment"></p>
-    <ul>
-      <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
-    </ul>
   </div>
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
+  import moment from 'moment'
+  import Multiselect from 'vue-multiselect'
   import Recipe from './Recipe'
+
   export default {
     name: "Meal",
-    components: { Recipe },
+    components: { Recipe,Multiselect },
     props: ['mealId'],
     data() {
-      return this.$store.getters.mealById(this.mealId)
+      return {
+        mealData: this.$store.getters.mealById(this.mealId),
+        editMode: false
+      }
     },
     computed: {
+      ...mapGetters({
+        'recipes': 'allRecipes'
+      }),
+      selectedRecipes: {
+        get() {
+          return this.mealData.fields.recipes.map(id => this.$store.getters.recipeById(id))
+        },
+        set(newValue) {
+          this.mealData.fields.recipes = newValue.map(recipe => recipe.id)
+        }
+      },
       verifiedRecipes() {
-        return this.fields.recipes && this.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
+        return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
       }
     },
     methods: {
+      toggleEditMode() {
+        this.editMode = !this.editMode
+      },
       toggleMade() {
-        this.fields.made = !this.fields.made
-        this.$store.dispatch('updateMeal',{id: this.id});
+        this.mealData.fields.made = !this.mealData.fields.made
+        this.$store.dispatch('updateMeal',{id: this.mealData.id})
+      },
+      saveMeal() {
+        this.$store.dispatch('updateMeal',{id: this.mealData.id})
+        this.editMode = false
+      },
+      moveToPrevWeek() {
+        if(this.mealData.fields.date){
+          this.mealData.fields.date = moment(this.mealData.fields.date).subtract(1, 'w')
+        } else {
+          this.mealData.fields.date = moment().isoWeekYear( 2017 ).isoWeek( this.mealData.fields.week ).subtract(1, 'w')
+        }
+        this.$store.dispatch('updateMeal',{id: this.mealData.id})
+      },
+      moveToNextWeek() {
+        if(this.mealData.fields.date){
+          this.mealData.fields.date = moment(this.mealData.fields.date).add(1, 'w')
+        } else {
+          this.mealData.fields.date = moment().isoWeekYear( 2017 ).isoWeek( this.mealData.fields.week ).add(1, 'w')
+        }
+        this.$store.dispatch('updateMeal',{id: this.mealData.id})
       }
     }
   }
@@ -50,13 +117,26 @@
   &:hover {
     background: fade(@colorPrimary, 3%);
   }
+  > form {
+    padding: .2em .3em .5em;
+    border-bottom: 1px solid fade(@colorPrimary, 12%);
+    border-top: 1px solid fade(@colorPrimary, 12%);
+    background: fade(@colorPrimary, 3%);
+  }
 }
-.madeIcon {
+.madeIcon, .editIcon {
   position: absolute;
   top: 1.15em;
-  left: -2em;
   cursor: pointer;
   padding: .5em .5em .25em;
+}
+.madeIcon { left: -2em; }
+.editIcon {
+  opacity: 0;
+  right: -2.3em;
+}
+.meal:hover .editIcon {
+  opacity: 1;
 }
 h2 {
   font-size: 1.2em;
@@ -71,6 +151,34 @@ ul {
   padding: 0;
   li {
     list-style: none;
+  }
+}
+
+.closeIcon {
+  position: absolute;
+  top: .35em;
+  left: -2em;
+  cursor: pointer;
+  padding: .5em .5em .25em;
+}
+
+@import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
+input, textarea {
+  box-sizing: border-box;
+  display: block;
+  width: calc(100% - .6em);
+  margin: 0 0 1em;
+  font-size: 1em;
+  line-height: 1.5em;
+  padding: .3em;
+  border: none;
+  border-bottom: 1px solid fade(@colorPrimary, 12%);
+  background: none;
+  border-radius: 4px 4px 0 0;
+  &:focus {
+    background: #FFF;
+    outline: none;
+    border-bottom-color: @colorSecondary;
   }
 }
 </style>
