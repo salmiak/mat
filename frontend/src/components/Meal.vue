@@ -36,7 +36,7 @@
       <ul>
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
       </ul>
-      <div v-if="showCopyMeal" @click="copyToThisWeek()">
+      <div v-if="showCopyMeal" @click="copyToCurrentWeek()">
         <icon name="clone"></icon> Kopiera till denna vecka
       </div>
     </div>
@@ -75,7 +75,7 @@
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
       },
       showCopyMeal() {
-        return !(this.$route.params.week && this.$route.params.year && this.$store.getters.currentWeek == parseInt(this.$route.params.week) && this.$store.getters.currentYear == parseInt(this.$route.params.year))
+        return this.$route.params.week && this.$route.params.year && !( this.$store.getters.currentWeek == parseInt(this.$route.params.week) && this.$store.getters.currentYear == parseInt(this.$route.params.year))
       }
     },
     methods: {
@@ -102,7 +102,7 @@
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
-      copyToThisWeek() {
+      copyToCurrentWeek() {
         var mealClone = JSON.parse(JSON.stringify(this.mealData))
         delete mealClone.id
         delete mealClone.fields.made
