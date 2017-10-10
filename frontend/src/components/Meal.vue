@@ -28,6 +28,12 @@
       <div class="editIcon" @click="toggleEditMode()">
         <icon name="edit"></icon>
       </div>
+      <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentWeek()">
+        <icon name="clone"></icon>
+      </div>
+      <div class="cloneIcon" v-if="mealCopied">
+        <icon name="check"></icon>
+      </div>
       <h2>
         {{mealData.title}}
         <span @click="moveToPrevWeek()">
@@ -41,12 +47,6 @@
       <ul>
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
       </ul>
-      <div v-if="showCopyMeal" @click="copyToCurrentWeek()">
-        <icon name="clone"></icon> Kopiera till denna vecka
-      </div>
-      <div v-if="mealCopied">
-        Måltid kopierad
-      </div>
     </div>
   </div>
 </template>
@@ -91,7 +91,7 @@
 
         let currentDate = moment().isoWeekYear(this.$store.getters.currentYear).isoWeek(this.$store.getters.currentWeek)
         let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
-        
+
         // Show for dates before current week
         return currentDate > testedDate
       }
@@ -156,19 +156,24 @@
     background: fade(@colorPrimary, 3%);
   }
 }
-.madeIcon, .editIcon {
+.madeIcon, .editIcon, .cloneIcon {
   position: absolute;
   top: 1.15em;
   cursor: pointer;
   padding: .5em .5em .25em;
 }
 .madeIcon { left: -2em; }
-.editIcon {
+.editIcon, .cloneIcon {
   opacity: 0;
   right: -2.3em;
 }
-.meal:hover .editIcon {
-  opacity: 1;
+.cloneIcon {
+  top: 3.15em;
+}
+.meal:hover {
+  .editIcon, .cloneIcon {
+    opacity: 1;
+  }
 }
 h2 {
   font-size: 1.2em;
