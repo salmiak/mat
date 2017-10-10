@@ -5,7 +5,12 @@
         <icon name="times"></icon>
       </div>
 
-      <h2>Redigera måltid</h2>
+      <h2>
+        Redigera måltid
+        <span @click="deleteMeal()">
+          <icon name="trash"></icon>
+        </span>
+      </h2>
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
@@ -89,6 +94,9 @@
       saveMeal() {
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
         this.editMode = false
+      },
+      deleteMeal() {
+        this.$store.dispatch('deleteMeal', {id: this.mealData.id})
       },
       moveToPrevWeek() {
         if(this.mealData.fields.date){

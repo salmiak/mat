@@ -57,13 +57,28 @@ const actions = {
     } else {
       console.error('You should not see this message...');
     }
+  },
+  deleteMeal ({commit, state}, {id}) {
+    Vue.http.delete(global.apiUri+'/meal/'+id).then(response => {
+      commit('deleteMeal', {id:id})
+    })
   }
 }
 
 // mutations
 const mutations = {
   pushMeal (state, payload) { state.all.push(payload.meal) },
-  unshiftMeal (state, payload) { state.all.unshift(payload.meal) }
+  unshiftMeal (state, payload) { state.all.unshift(payload.meal) },
+  deleteMeal (state, payload) {
+    for(var i = 0; i < state.all.length; i++) {
+      var obj = state.all[i];
+
+      if(obj.id == payload.id) {
+        state.all.splice(i, 1);
+        i--;
+      }
+    }
+  }
 }
 
 export default {
