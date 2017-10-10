@@ -5,7 +5,7 @@
         <icon name="times"></icon>
       </div>
 
-      <h2>Lägg till måltid</h2>
+      <h2>Redigera måltid</h2>
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
@@ -36,6 +36,9 @@
       <ul>
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
       </ul>
+      <div v-if="showCopyMeal" @click="copyToThisWeek()">
+        <icon name="clone"></icon> Kopiera till denna vecka
+      </div>
     </div>
   </div>
 </template>
@@ -70,6 +73,9 @@
       },
       verifiedRecipes() {
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
+      },
+      showCopyMeal() {
+        return !(this.$route.params.week && this.$route.params.year && this.$store.getters.currentWeek == parseInt(this.$route.params.week) && this.$store.getters.currentYear == parseInt(this.$route.params.year))
       }
     },
     methods: {
@@ -95,6 +101,14 @@
           this.mealData.fields.date = moment(this.mealData.fields.date).add(1, 'w')
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
+      },
+      copyToThisWeek() {
+        var mealClone = JSON.parse(JSON.stringify(this.mealData))
+        delete mealClone.id
+        delete mealClone.fields.made
+        delete mealClone.date
+        mealClone.fields.date = moment().isoWeekYear( this.$store.getters.currentYear ).isoWeek( this.$store.getters.currentWeek )
+        this.$store.dispatch('updateMeal',{payload: mealClone})
       }
     }
   }
