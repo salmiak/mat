@@ -84,7 +84,16 @@
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
       },
       showCopyMeal() {
-        return !this.mealCopied && this.$route.params.week && this.$route.params.year && !( this.$store.getters.currentWeek == parseInt(this.$route.params.week) && this.$store.getters.currentYear == parseInt(this.$route.params.year))
+        if ( this.mealCopied )
+          return false  // Don't show for meals copied this session
+        if ( !this.$route.params.week && !this.$route.params.year )
+          return false  // If route params not set, we're on home route
+
+        let currentDate = moment().isoWeekYear(this.$store.getters.currentYear).isoWeek(this.$store.getters.currentWeek)
+        let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
+        
+        // Show for dates before current week
+        return currentDate > testedDate
       }
     },
     methods: {
