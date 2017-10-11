@@ -1,7 +1,13 @@
 <template>
-  <div class="meal">
-    <a v-bind:href="fields.url" v-if="fields.url">{{title}}</a>
-    <span v-else>{{title}}</span>
+  <div class="recipe">
+    <h3 v-if="fields.url">
+      <a v-bind:href="fields.url">
+      {{title}}
+      <icon name="external-link"></icon>
+    </a>
+    </h3>
+    <h3 v-else>{{title}}</h3>
+    <p v-if="content != ''" v-html="content"></p>
   </div>
 </template>
 
@@ -21,11 +27,12 @@
 
 <style lang="less" scoped>
 @import "../assets/global.less";
-.meal {
+.recipe {
   position: relative;
-  margin: 0;
-  padding: 1em .3em;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
+  margin: .2em -.3em 0;
+  padding: 0em .6em .2em;
+  border: 1px solid fade(@colorPrimary, 12%);
+  border-radius: .3em;
   &:first-of-type {
     border-top: 1px solid fade(@colorPrimary, 12%);
   }
@@ -38,9 +45,19 @@
   top: 1.95em;
   left: -1.3em;
 }
-h2 {
+h3 {
   font-size: 1.2em;
-  margin: .5em 0 .2em;
+  margin: .7em 0 .5em;
+  > a {
+    margin: -.7em -.6em -.5em;
+    padding: .7em .6em .5em;
+    display: block;
+    > svg {
+      vertical-align: -0.1em;
+      width: .75em;
+      height: .75em;
+    }
+  }
 }
 p {
   margin: 0 0 .5em;

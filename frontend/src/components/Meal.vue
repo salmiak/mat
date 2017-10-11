@@ -44,7 +44,7 @@
         </span>
       </h2>
       <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
-      <ul>
+      <ul class="recipeList" v-if="verifiedRecipes.length">
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
       </ul>
     </div>
@@ -183,8 +183,8 @@ p {
   margin: 0 0 .5em;
   opacity: .54;
 }
-ul {
-  margin: 0 0 .5em;
+ul.recipeList {
+  margin: .6em 0 0;
   padding: 0;
   li {
     list-style: none;
