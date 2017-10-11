@@ -24,6 +24,9 @@
       <div class="editIcon" @click="toggleEditMode()">
         <icon name="edit"></icon>
       </div>
+      <div class="createMealIcon" @click="createMeal()">
+        <icon name="clone"></icon>
+      </div>
 
       <h3 v-if="recipeData.fields.url">
         <a v-bind:href="recipeData.fields.url" target="_blank">
@@ -38,6 +41,8 @@
 </template>
 
 <script>
+  import moment from 'moment'
+
   export default {
     name: "Recipe",
     props: ['recipeId'],
@@ -55,6 +60,17 @@
       },
       deleteRecipe() {
         this.$store.dispatch('deleteRecipe', {id: this.recipeData.id})
+      },
+      createMeal() {
+        let mealData = {
+          title: this.recipeData.title,
+          fields: {
+            recipes: [this.recipeData.id],
+            date: moment().isoWeekYear( this.$store.getters.currentYear ).isoWeek( this.$store.getters.currentWeek ).add(1, 'w')
+          },
+          status: 'publish'
+        }
+        this.$store.dispatch('updateMeal', {payload: mealData})
       }
     }
   }
@@ -74,6 +90,13 @@
   &:hover {
     background: fade(@colorPrimary, 3%);
   }
+}
+.createMealIcon {
+  position: absolute;
+  top: .35em;
+  right: -2em;
+  cursor: pointer;
+  padding: .5em .5em .25em;
 }
 .editIcon, .closeIcon {
   position: absolute;
