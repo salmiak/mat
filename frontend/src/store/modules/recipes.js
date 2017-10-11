@@ -38,18 +38,46 @@ const actions = {
 
         response.body.forEach(function(recipe){
           recipe = global.wpProcess(recipe);
-          commit('addRecipe',{recipe: recipe})
+          commit('pushRecipe',{recipe: recipe})
         })
 
       })
     }
     requestPage(page)
+  },
+  updateRecipe ({ commit,state }, { id, payload }) {
+    if ( id ) {
+      Vue.http.post(global.apiUri+'/recipe/'+id, state.all.find(recipe => recipe.id == id)).then(response => console.log(response))
+    } else if ( payload ) {
+      Vue.http.post(global.apiUri+'/recipe/', payload).then(response => {
+        let recipe = global.wpProcess(response.body);
+        commit('unshiftRecipe', {recipe:recipe})
+      })
+    } else {
+      console.error('You should not see this message...');
+    }
+  },
+  deleteRecipe ({commit, state}, {id}) {
+    Vue.http.delete(global.apiUri+'/recipe/'+id).then(response => {
+      commit('deleteRecipe', {id:id})
+    })
   }
 }
 
 // mutations
 const mutations = {
-  addRecipe (state, payload) { state.all.push(payload.recipe) }
+  pushRecipe (state, payload) { state.all.push(payload.recipe) },
+  unshiftRecipe (state, payload) { state.all.unshift(payload.recipe) },
+  deleteRecipe (state, payload) {
+    for(var i = 0; i < state.all.length; i++) {
+      var obj = state.all[i];
+
+      if(obj.id == payload.id) {
+        state.all.splice(i, 1);
+        i--;
+      }
+    }
+  }
 }
 
 export default {
