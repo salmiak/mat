@@ -28,7 +28,7 @@
       <div class="editIcon" @click="toggleEditMode()">
         <icon name="edit"></icon>
       </div>
-      <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentWeek()">
+      <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
         <icon name="clone"></icon>
       </div>
       <div class="cloneIcon" v-if="mealCopied">
@@ -93,7 +93,7 @@
         let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
 
         // Show for dates before current week
-        return currentDate > testedDate
+        return currentDate >= testedDate
       }
     },
     methods: {
@@ -123,12 +123,12 @@
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
-      copyToCurrentWeek() {
+      copyToCurrentNextWeek() {
         var mealClone = JSON.parse(JSON.stringify(this.mealData))
         delete mealClone.id
         delete mealClone.fields.made
         delete mealClone.date
-        mealClone.fields.date = moment().isoWeekYear( this.$store.getters.currentYear ).isoWeek( this.$store.getters.currentWeek )
+        mealClone.fields.date = moment().isoWeekYear( this.$store.getters.currentYear ).isoWeek( this.$store.getters.currentWeek ).add(1, 'w')
         this.$store.dispatch('updateMeal',{payload: mealClone})
         this.mealCopied = true
       }
