@@ -26,7 +26,7 @@
       </div>
 
       <h3 v-if="recipeData.fields.url">
-        <a v-bind:href="recipeData.fields.url">
+        <a v-bind:href="recipeData.fields.url" target="_blank">
         {{recipeData.title}}
         <icon name="external-link"></icon>
       </a>
