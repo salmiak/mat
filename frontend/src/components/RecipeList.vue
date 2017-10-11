@@ -1,6 +1,7 @@
 <template>
   <div id="recipeList">
     <h1>Recept</h1>
+    <add-recipe/>
     <ul>
       <li v-for="recipe in recipes" :key="recipe.id">
         <recipe v-bind:recipeId="recipe.id"></recipe>
@@ -13,10 +14,11 @@
   import { mapState,mapGetters } from 'vuex'
   import { mapMutations } from 'vuex'
   import Recipe from './Recipe'
+  import AddRecipe from './AddRecipe'
 
   export default {
     name: "RecipeList",
-    components: { Recipe },
+    components: { Recipe, AddRecipe },
     computed: {
       ...mapGetters({
         'recipes': 'allRecipes'

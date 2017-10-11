@@ -16,7 +16,7 @@
       <textarea v-model="recipeData.content" placeholder="Anteckning"></textarea>
       <p>
         <span class="pull-right btn" @click="toggleEditMode()">Stäng</span>
-        <span class="btn btn-primary" @click="saveMeal()">Spara</span>
+        <span class="btn btn-primary" @click="saveRecipe()">Spara</span>
       </p>
     </form>
 
@@ -49,7 +49,7 @@
     },
     methods: {
       toggleEditMode() { this.editMode = !this.editMode },
-      saveMeal() {
+      saveRecipe() {
         this.$store.dispatch('updateRecipe',{id: this.recipeData.id})
         this.editMode = false
       },
