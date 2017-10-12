@@ -7,9 +7,6 @@
 
       <h2>
         Redigera måltid
-        <span @click="deleteMeal()">
-          <icon name="trash"></icon>
-        </span>
       </h2>
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
@@ -28,6 +25,9 @@
       <div class="editIcon" @click="toggleEditMode()">
         <icon name="edit"></icon>
       </div>
+      <div class="deleteIcon" @click="deleteMeal()">
+        <icon name="trash"></icon>
+      </div>
       <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
         <icon name="clone"></icon>
       </div>
@@ -36,6 +36,7 @@
       </div>
       <h2>
         {{mealData.title}}
+        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
         <span @click="moveToPrevWeek()">
           <icon name="arrow-left"></icon>
         </span>
@@ -45,7 +46,7 @@
       </h2>
       <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
       <ul class="recipeList" v-if="verifiedRecipes.length">
-        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe"></recipe>
+        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true"></recipe>
       </ul>
     </div>
   </div>
@@ -65,7 +66,7 @@
       return {
         mealData: this.$store.getters.mealById(this.mealId),
         editMode: false,
-        mealCopied: false
+        createdMeal: false
       }
     },
     computed: {
@@ -130,7 +131,9 @@
         delete mealClone.date
         mealClone.fields.date = moment().isoWeekYear( this.$store.getters.currentYear ).isoWeek( this.$store.getters.currentWeek ).add(1, 'w')
         this.$store.dispatch('updateMeal',{payload: mealClone})
-        this.mealCopied = true
+        this.createdMeal = true
+        var _this = this
+        setTimeout(() => _this.createdMeal = false, 4000)
       }
     }
   }
@@ -156,22 +159,32 @@
     background: fade(@colorPrimary, 3%);
   }
 }
-.madeIcon, .editIcon, .cloneIcon {
+.createdNotification {
+  color: @colorPrimary;
+  font-size: 0.75em;
+  opacity: 0.54;
+  white-space: nowrap;
+}
+
+.madeIcon, .editIcon, .cloneIcon, .deleteIcon {
   position: absolute;
-  top: 1.15em;
+  top: .15em;
   cursor: pointer;
   padding: .5em .5em .25em;
 }
 .madeIcon { left: -2em; }
-.editIcon, .cloneIcon {
+.editIcon, .cloneIcon, .deleteIcon {
   opacity: 0;
   right: -2.3em;
+}
+.deleteIcon {
+  top: 1.5em;
 }
 .cloneIcon {
   top: 3.15em;
 }
 .meal:hover {
-  .editIcon, .cloneIcon {
+  .editIcon, .cloneIcon, .deleteIcon {
     opacity: 1;
   }
 }

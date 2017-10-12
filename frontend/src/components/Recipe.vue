@@ -24,7 +24,7 @@
       <div class="editIcon" @click="toggleEditMode()">
         <icon name="edit"></icon>
       </div>
-      <div class="createMealIcon" @click="createMeal()">
+      <div v-if="!hideCreateMeal" class="createMealIcon" @click="createMeal()">
         <icon name="clone"></icon>
       </div>
 
@@ -32,9 +32,13 @@
         <a v-bind:href="recipeData.fields.url" target="_blank">
         {{recipeData.title}}
         <icon name="external-link"></icon>
+        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
       </a>
       </h3>
-      <h3 v-else>{{recipeData.title}}</h3>
+      <h3 v-else>
+        {{recipeData.title}}
+        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+      </h3>
       <p v-if="recipeData.content != ''" v-html="recipeData.content"></p>
     </div>
   </div>
@@ -45,11 +49,12 @@
 
   export default {
     name: "Recipe",
-    props: ['recipeId'],
+    props: ['recipeId','hideCreateMeal'],
     data() {
       return {
         recipeData: this.$store.getters.verifyRecipe(this.recipeId) ?  this.$store.getters.recipeById(this.recipeId) : {},
-        editMode: false
+        editMode: false,
+        createdMeal: false
       }
     },
     methods: {
@@ -71,6 +76,9 @@
           status: 'publish'
         }
         this.$store.dispatch('updateMeal', {payload: mealData})
+        this.createdMeal = true
+        var _this = this
+        setTimeout(() => _this.createdMeal = false, 4000)
       }
     }
   }
@@ -91,6 +99,12 @@
   &:hover {
     background: fade(#FFA900, 7%);
   }
+}
+.createdNotification {
+  color: @colorPrimary;
+  font-size: 0.75em;
+  opacity: 0.54;
+  white-space: nowrap;
 }
 .createMealIcon {
   position: absolute;
