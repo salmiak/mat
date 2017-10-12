@@ -1,9 +1,11 @@
 <template>
 
   <div id="app">
-    <div id="nav">
-      <router-link to="/week">Planering</router-link>
-      <router-link to="/recipes">Recept</router-link>
+    <div id="toolbar">
+      <div id="nav">
+        <router-link to="/week"><icon name="calendar-o"></icon></router-link>
+        <router-link to="/recipes"><icon name="file-text-o"></icon></router-link>
+      </div>
     </div>
     <router-view/>
   </div>
@@ -21,64 +23,42 @@ export default {
 </script>
 
 <style lang="less">
-@import url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
 @import "./assets/global.less";
 
-#app {
-  font-family: 'Nunito', Helvetica, Arial, sans-serif;
-  font-weight: 700;
-  font-size: 16px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: left;
-  color: @colorPrimary;
-  width: 95%;
-  max-width: 400px;
-  margin: 60px auto;
+#toolbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: @bu*6;
+  background: fade(@colorBackground, 95%);
+  z-index: 900;
 }
 
 #nav {
-  display: inline-block;
+  position: fixed;
+  top: @bu;
+  right: @bu;
+  display: block;
   border: 1px solid @colorPrimary;
-  border-radius: 8px;
+  border-radius: @bu/2;
   width: auto;
   font-size: 0;
-  margin-bottom: 10px;
+  overflow: hidden;
   a {
-    font-size: 1rem;
+    font-size: @fu;
     display: inline-block;
-    padding: 0 12px;
-    line-height: 2em;
+    padding: 0 @bu*2;
+    line-height: @bu*4;
     border-left: 1px solid @colorPrimary;
     color: fade(@colorPrimary, 54%);
     &:first-child {
       border-left: none;
-      padding-left: 14px;
-      border-radius: 7px 0 0 7px;
-    }
-    &:last-child {
-      padding-right: 14px;
-      border-radius: 0 7px 7px 0;
-    }
-    &:hover {
-        background-color: fade(@colorPrimary, 12%);
     }
     &.router-link-active {
       background-color: @colorPrimary;
-      color: #FFF;
+      color: @colorBackground;
     }
   }
-}
-
-h1 {
-  font-weight: 900;
-  color: @colorSecondary;
-  font-size: 3em;
-  line-height: 1em;
-  margin: .5em 0 .3em;
-}
-a {
-  color: @colorSecondary;
-  text-decoration: none;
 }
 </style>

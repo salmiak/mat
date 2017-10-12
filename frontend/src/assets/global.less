@@ -1,16 +1,82 @@
 @import '../../node_modules/reset-css/reset';
+@import url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
+
+// REUSABLES
 
 @colorPrimary: #334;
 @colorSecondary: #F38;
 
+@tc1: fade(@colorPrimary, 87%);
+@tc2: fade(@colorPrimary, 54%);
+@tc3: fade(@colorPrimary, 30%);
+
+@colorBackground: lighten(@colorPrimary, 75%);
+
+@bu: .5rem;  // Base Unit
+
+@fu: 1rem;   // Font unit
+@fusm: 0.75rem;
+@fulg: 1.5rem;
+@fuxl: 2rem;
+
 .pull-right {
   float: right;
 }
+.capitals {
+  font-size: @fusm;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+// BASE
+
+* { box-sizing: border-box; }
+
+html {
+  font-family: 'Nunito', Helvetica, Arial, sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: @tc1;
+  background: @colorBackground;
+
+/*
+  &:after {
+    pointer-events: none;
+    @gridColor: fade(cyan, 50%);
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: transparent;
+    background-image: linear-gradient(0deg, transparent 95%, @gridColor 95%);
+    background-size:@bu @bu;
+  }*/
+}
+
+body {
+  padding-top: @bu*6;
+}
+
+a {
+  color: @colorSecondary;
+  text-decoration: none;
+}
 
 h1 {
-  font-size: 3em;
+  position: fixed;
+  top: 0;
+  left: @bu*2;
+  z-index: 1000;
+  line-height: @bu*6;
   font-weight: 900;
-  margin: .3em 0 .5em;
+  color: @colorSecondary;
+  .capitals;
+  font-size: @fu;
 }
 
 .btn {
@@ -35,4 +101,10 @@ h1 {
       border-color: darken(@colorSecondary, 12%);
     }
   }
+}
+
+
+.fa-icon {
+  height: 1rem;
+  vertical-align: -.1em;
 }

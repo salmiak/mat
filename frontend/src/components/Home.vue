@@ -40,6 +40,6 @@ export default {
 }
 </script>
 
-<style lang="less">
-a { cursor: pointer; }
+<style lang="less" scoped>
+
 </style>

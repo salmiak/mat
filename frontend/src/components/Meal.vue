@@ -31,7 +31,7 @@
       <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
         <icon name="clone"></icon>
       </div>
-      <div class="cloneIcon" v-if="mealCopied">
+      <div class="cloneIcon" v-if="createdMeal">
         <icon name="check"></icon>
       </div>
       <h2>
@@ -85,7 +85,7 @@
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
       },
       showCopyMeal() {
-        if ( this.mealCopied )
+        if ( this.createdMeal )
           return false  // Don't show for meals copied this session
         if ( !this.$route.params.week && !this.$route.params.year )
           return false  // If route params not set, we're on home route
@@ -175,7 +175,7 @@
 .madeIcon { left: -2em; }
 .editIcon, .cloneIcon, .deleteIcon {
   opacity: 0;
-  right: -2.3em;
+  right: .3em;
 }
 .deleteIcon {
   top: 1.5em;

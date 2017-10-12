@@ -58,32 +58,29 @@ export default {
 
 <style lang="less">
 @import "../assets/global.less";
-  a { cursor: pointer; }
+
   .weekNav {
-    @borderRadius: 4px;
-    display: inline-block;
-    border: 1px solid @colorSecondary;
-    border-radius: @borderRadius;
-    width: auto;
-    font-size: 0;
-    margin-bottom: 4px;
-    a {
-      font-size: 1rem;
       display: inline-block;
-      padding: 6px 16px;
-      line-height: 0.8em;
-      border-left: 1px solid @colorSecondary;
-      color: @colorSecondary;
-      &:first-child {
-        border-left: none;
-        border-radius: @borderRadius - 1 0 0 @borderRadius - 1;
+      border: 1px solid @colorSecondary;
+      border-radius: @bu/2;
+      width: auto;
+      font-size: 0;
+      overflow: hidden;
+      margin: @bu @bu*2;
+      a {
+        font-size: @fu;
+        display: inline-block;
+        padding: 0 @bu*2;
+        line-height: @bu*4;
+        border-left: 1px solid @colorSecondary;
+        color: @colorSecondary;
+        &:first-child {
+          border-left: none;
+        }
+        &.router-link-active {
+          background-color: @colorSecondary;
+          color: @colorBackground;
+        }
       }
-      &:last-child {
-        border-radius: 0 @borderRadius - 1 @borderRadius - 1 0;
-      }
-      &:hover {
-        background-color: fade(@colorSecondary, 12%);
-      }
-    }
   }
 </style>
