@@ -84,11 +84,12 @@
   padding: 0em .6em .2em;
   border: 1px solid fade(@colorPrimary, 12%);
   border-radius: .3em;
+  background: fade(#FFA900, 3%);
   &:first-of-type {
     border-top: 1px solid fade(@colorPrimary, 12%);
   }
   &:hover {
-    background: fade(@colorPrimary, 3%);
+    background: fade(#FFA900, 7%);
   }
 }
 .createMealIcon {
