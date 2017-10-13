@@ -153,22 +153,4 @@ ul {
     list-style: none;
   }
 }
-input, textarea {
-  box-sizing: border-box;
-  display: block;
-  width: calc(100% - .6em);
-  margin: 0 0 1em;
-  font-size: 1em;
-  line-height: 1.5em;
-  padding: .3em;
-  border: none;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
-  background: none;
-  border-radius: 4px 4px 0 0;
-  &:focus {
-    background: #FFF;
-    outline: none;
-    border-bottom-color: @colorSecondary;
-  }
-}
 </style>

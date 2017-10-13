@@ -1,5 +1,8 @@
-@import '../../node_modules/reset-css/reset';
 @import url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
+@import '../../node_modules/lesshat/lesshat.less';
+@import '../../node_modules/reset-css/reset';
+@import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
+
 
 // REUSABLES
 
@@ -11,6 +14,7 @@
 @tc3: fade(@colorPrimary, 30%);
 
 @colorBackground: lighten(@colorPrimary, 75%);
+@colorBorder: fade(@colorPrimary, 12%);
 
 @bu: .5rem;  // Base Unit
 
@@ -19,6 +23,18 @@
 @fulg: 1.5rem;
 @fuxl: 2rem;
 
+@hToolbar: @bu*3;
+@hHeader: @bu*5;
+
+.border-bottom {
+  box-shadow: 0 -1px 0 0 @colorBorder inset;
+}
+.centerContent {
+  .display(flex);
+  .flex-direction(row);
+  .align-items(center);
+  .justify-content(center);
+}
 .pull-right {
   float: right;
 }
@@ -41,25 +57,34 @@ html {
   color: @tc1;
   background: @colorBackground;
 
-/*
-  &:after {
-    pointer-events: none;
-    @gridColor: fade(cyan, 50%);
-    display: block;
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: transparent;
-    background-image: linear-gradient(0deg, transparent 95%, @gridColor 95%);
-    background-size:@bu @bu;
-  }*/
+  // &:after {
+  //   pointer-events: none;
+  //   @gridColor: fade(cyan, 50%);
+  //   display: block;
+  //   content: '';
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   height: 100%;
+  //   background-color: transparent;
+  //   background-image: linear-gradient(0deg, transparent 95%, @gridColor 95%);
+  //   background-size:@bu @bu;
+  // }
 }
 
 body {
-  padding-top: @bu*6;
+  padding-top: @hToolbar+@hHeader;
+}
+
+.header {
+  position: fixed;
+  top: @hToolbar;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: @hHeader;
+  background: fade(@colorBackground, 95%);
 }
 
 a {
@@ -68,43 +93,117 @@ a {
 }
 
 h1 {
-  position: fixed;
-  top: 0;
-  left: @bu*2;
-  z-index: 1000;
-  line-height: @bu*6;
   font-weight: 900;
   color: @colorSecondary;
   .capitals;
   font-size: @fu;
+  line-height: @hHeader;
+  padding: 0 @bu*2;
+}
+h2 {
+  font-size: @fulg;
+  line-height: @bu*4;
+  font-weight: 300;
+  margin-bottom: @bu;
+}
+p {
+  margin: 0 0 .5em;
+  color: @tc2;
 }
 
-.btn {
-  cursor: pointer;
-  border-radius: 8px;
-  background: fade(@colorPrimary, 30%);
-  border: 1px solid fade(@colorPrimary, 30%);
-  color: #FFF;
-  padding: 0 12px;
-  line-height: 2em;
-  display: inline-block;
-  margin: 10px 0 0;
-  &:hover {
-    background: darken(fade(@colorPrimary, 54%), 12%);
-    border-color: darken(fade(@colorPrimary, 54%), 12%);
+input:not(.multiselect__input), textarea, .input {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  margin: 0 0 @bu;
+  font-size: @fu;
+  line-height: @bu*3;
+  padding: @bu/2 @bu;
+  border: none;
+  .border-bottom;
+  background: none;
+  border-radius: @bu/2 @bu/2 0 0;
+  &:focus {
+    background: #FFF;
+    outline: none;
+    box-shadow: 0 -1px 0 0 @colorSecondary inset;
   }
-  &-primary {
+}
+
+.multiselect {
+  margin: 0 0 @bu;
+  padding: @bu/2 @bu;
+  .border-bottom;
+  min-height: @bu*4;
+  &--active {
+    background: #FFF;
+    outline: none;
+    box-shadow: 0 -1px 0 0 @colorSecondary inset;
+  }
+  &__select {
+    height: @bu*4;
+    right: 0;
+    top: 0;
+    padding: 0;
+  }
+  &__tags {
+    .input;
+    padding: 0;
+    margin: 0;
+    min-height: @bu*3;
+    box-shadow: none;
+    line-height: 0;
+  }
+  &__tag {
+    padding: @bu/2 @bu*3 @bu/2 @bu;
+    border-radius: @bu/2;
+    margin-right: @bu;
+    color: @colorBackground;
+    line-height: @bu*2;
     background: @colorSecondary;
-    border: 1px solid @colorSecondary;
-    &:hover {
-      background: darken(@colorSecondary, 12%);
-      border-color: darken(@colorSecondary, 12%);
+    margin-bottom: @bu;
+    white-space: nowrap;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  &__input {
+    .input;
+    margin: 0;
+    padding: 0;
+    border: none;
+    background: none;
+    box-shadow: none;
+    &:focus {
+      background: none;
+      box-shadow: none;
     }
   }
 }
 
+.btn {
+  box-sizing: border-box;
+  cursor: pointer;
+  border-radius: @bu/2;
+  background: fade(@colorPrimary, 54%);
+  color: #FFF;
+  padding: 0 @bu*2;
+  line-height: @bu*3;
+  display: inline-block;
+  &:hover {
+    background: darken(fade(@colorPrimary, 54%), 12%);
+  }
+  &-primary {
+    background: @colorSecondary;
+    &:hover {
+      background: darken(@colorSecondary, 12%);
+    }
+  }
+}
 
 .fa-icon {
-  height: 1rem;
-  vertical-align: -.1em;
+  width: auto;
+  height: 1em;
+  max-width: 100%;
+  max-height: 100%;
 }

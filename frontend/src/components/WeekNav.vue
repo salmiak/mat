@@ -59,28 +59,37 @@ export default {
 <style lang="less">
 @import "../assets/global.less";
 
+@height: @bu*3;
+
   .weekNav {
-      display: inline-block;
-      border: 1px solid @colorSecondary;
-      border-radius: @bu/2;
-      width: auto;
-      font-size: 0;
-      overflow: hidden;
-      margin: @bu @bu*2;
-      a {
-        font-size: @fu;
-        display: inline-block;
-        padding: 0 @bu*2;
-        line-height: @bu*4;
-        border-left: 1px solid @colorSecondary;
-        color: @colorSecondary;
-        &:first-child {
-          border-left: none;
-        }
-        &.router-link-active {
-          background-color: @colorSecondary;
-          color: @colorBackground;
-        }
+    top: @bu;
+    right: @bu*2;
+    height: @height;
+    position: absolute;
+    display: block;
+    border: 1px solid @colorSecondary;
+    border-radius: @bu/2;
+    width: auto;
+    font-size: 0;
+    overflow: hidden;
+    margin: 0;
+    a {
+      font-size: 14px;
+      width: @bu*4;
+      float: left;
+      padding: 0 @bu;
+      height: @height;
+      border-left: 1px solid @colorSecondary;
+      color: @colorSecondary;
+      box-sizing: border-box;
+      .centerContent;
+      &:first-child {
+        border-left: none;
       }
+      > svg {
+        top: -1px;
+        position: relative;
+      }
+    }
   }
 </style>

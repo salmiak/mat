@@ -1,6 +1,8 @@
 <template>
   <div id="recipeList">
-    <h1>Recept</h1>
+    <div class="header">
+      <h1>Recept</h1>
+    </div>
     <add-recipe/>
     <vue-fuse :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
     <ul>

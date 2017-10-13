@@ -11,9 +11,9 @@
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
-      <p>
-        <span class="pull-right btn" @click="toggleEditMode()">Stäng</span>
-        <span class="btn btn-primary" @click="saveMeal()">Spara</span>
+      <p class="saveBtnContainer">
+        <span class="btn" @click="toggleEditMode()">Stäng</span>
+        <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
       </p>
     </form>
 
@@ -142,28 +142,14 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
+  padding: @bu @bu*2;
   position: relative;
-  margin: 0;
-  padding: 1em .3em;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
-  &:first-of-type {
-    border-top: 1px solid fade(@colorPrimary, 12%);
-  }
-  &:hover {
-    background: fade(@colorPrimary, 3%);
-  }
-  > form {
-    padding: .2em .3em .5em;
-    border-bottom: 1px solid fade(@colorPrimary, 12%);
-    border-top: 1px solid fade(@colorPrimary, 12%);
-    background: fade(@colorPrimary, 3%);
+  .border-bottom;
+  .saveBtnContainer {
+    padding: @bu 0;
   }
 }
 .createdNotification {
-  color: @colorPrimary;
-  font-size: 0.75em;
-  opacity: 0.54;
-  white-space: nowrap;
 }
 
 .madeIcon, .editIcon, .cloneIcon, .deleteIcon {
@@ -188,14 +174,6 @@
     opacity: 1;
   }
 }
-h2 {
-  font-size: 1.2em;
-  margin: .5em 0 .2em;
-}
-p {
-  margin: 0 0 .5em;
-  opacity: .54;
-}
 ul.recipeList {
   margin: .6em 0 0;
   padding: 0;
@@ -210,25 +188,5 @@ ul.recipeList {
   left: -2em;
   cursor: pointer;
   padding: .5em .5em .25em;
-}
-
-@import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
-input, textarea {
-  box-sizing: border-box;
-  display: block;
-  width: calc(100% - .6em);
-  margin: 0 0 1em;
-  font-size: 1em;
-  line-height: 1.5em;
-  padding: .3em;
-  border: none;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
-  background: none;
-  border-radius: 4px 4px 0 0;
-  &:focus {
-    background: #FFF;
-    outline: none;
-    border-bottom-color: @colorSecondary;
-  }
 }
 </style>

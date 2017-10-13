@@ -3,8 +3,8 @@
   <div id="app">
     <div id="toolbar">
       <div id="nav">
-        <router-link to="/week"><icon name="calendar-o"></icon></router-link>
-        <router-link to="/recipes"><icon name="file-text-o"></icon></router-link>
+        <router-link to="/week">Planering</router-link>
+        <router-link to="/recipes">Recept</router-link>
       </div>
     </div>
     <router-view/>
@@ -30,33 +30,30 @@ export default {
   top: 0;
   left: 0;
   right: 0;
-  height: @bu*6;
-  background: fade(@colorBackground, 95%);
+  height: @hToolbar;
+  background: fade(@colorSecondary, 75%);
   z-index: 900;
 }
 
 #nav {
-  position: fixed;
-  top: @bu;
-  right: @bu;
   display: block;
-  border: 1px solid @colorPrimary;
-  border-radius: @bu/2;
-  width: auto;
   font-size: 0;
   overflow: hidden;
   a {
-    font-size: @fu;
+    font-size: @fusm;
+    font-weight: 800;
+    .capitals;
     display: inline-block;
     padding: 0 @bu*2;
-    line-height: @bu*4;
-    border-left: 1px solid @colorPrimary;
-    color: fade(@colorPrimary, 54%);
+    line-height: @hToolbar;
+    border-left: 1px solid @colorBackground;
+    color: fade(@colorBackground, 70%);
+    width: 50%;
     &:first-child {
       border-left: none;
     }
     &.router-link-active {
-      background-color: @colorPrimary;
+      background-color: @colorSecondary;
       color: @colorBackground;
     }
   }
