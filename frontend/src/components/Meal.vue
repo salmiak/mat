@@ -148,7 +148,7 @@
 .meal {
   padding: @bu @bu*5 @bu*4;
   position: relative;
-  min-height: @bu*13;
+  min-height: @bu*9;
   .border-bottom;
 
   &-edit {
@@ -169,7 +169,7 @@
   width: @bu*4;
   top: 0;
   bottom: 0;
-  background: fade(@colorPrimary, 3%);
+  // background: fade(@colorPrimary, 3%);
   &Left { left: 0 }
   &Right { right: 0 }
   .centerContent;
@@ -180,6 +180,7 @@
   width: @bu*4;
   height: @bu*4;
   .centerContent;
+  color: fade(@colorPrimary, 30%);
 }
 
 .moveArrow {
