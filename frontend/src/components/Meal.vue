@@ -146,7 +146,7 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
-  padding: @bu*2 @bu*6;
+  padding: @bu @bu*5 @bu*4;
   position: relative;
   min-height: @bu*13;
   .border-bottom;
@@ -176,9 +176,9 @@
 
 .iconContainer {
   position: absolute;
-  height: 100%;
   width: @bu*4;
   top: 0;
+  bottom: 0;
   background: fade(@colorPrimary, 3%);
   &Left { left: 0 }
   &Right { right: 0 }
@@ -194,7 +194,7 @@
 
 .moveArrow {
   position: absolute;
-  top: 0;
+  bottom: 0;
   padding: @bu;
   &Right {
     right: @bu*4;
