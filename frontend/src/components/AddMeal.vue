@@ -84,15 +84,4 @@
     padding: @bu 0;
   }
 }
-
-.closeIcon {
-  position: absolute;
-  top: @bu;
-  right: @bu;
-  line-height: @bu*3;
-  height: @bu*3;
-  width: @bu*3;
-  .centerContent;
-}
-
 </style>

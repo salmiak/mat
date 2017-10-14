@@ -1,5 +1,5 @@
 <template>
-  <div class="recipe">
+  <div class="recipe" v-bind:class="editMode?'recipe-edit':''">
     <form v-if="editMode">
       <div class="closeIcon" @click="toggleEditMode()">
         <icon name="times"></icon>
@@ -7,25 +7,25 @@
 
       <h3>
         Redigera recept
-        <span @click="deleteRecipe()">
-          <icon name="trash"></icon>
-        </span>
       </h3>
       <input v-model="recipeData.title" placeholder="Namn"/>
       <input v-model="recipeData.fields.url" placeholder="Url"/>
       <textarea v-model="recipeData.content" placeholder="Anteckning"></textarea>
-      <p>
-        <span class="pull-right btn" @click="toggleEditMode()">Stäng</span>
-        <span class="btn btn-primary" @click="saveRecipe()">Spara</span>
+      <p class="saveBtnContainer">
+        <span class="btn" @click="toggleEditMode()">Stäng</span>
+        <span class="btn btn-red" @click="deleteRecipe()">Ta bort</span>
+        <span class="btn btn-primary pull-right" @click="saveRecipe()">Spara</span>
       </p>
     </form>
 
     <div v-else>
-      <div class="editIcon" @click="toggleEditMode()">
-        <icon name="edit"></icon>
-      </div>
-      <div v-if="!hideCreateMeal" class="createMealIcon" @click="createMeal()">
-        <icon name="clone"></icon>
+      <div class="actionIconContainer">
+        <div class="actionIcon" @click="toggleEditMode()">
+          <icon name="edit"></icon>
+        </div>
+        <div v-if="!hideCreateMeal" class="actionIcon" @click="createMeal()">
+          <icon name="clone"></icon>
+        </div>
       </div>
 
       <h3 v-if="recipeData.fields.url">
@@ -88,69 +88,62 @@
 @import "../assets/global.less";
 .recipe {
   position: relative;
-  margin: .2em -.3em 0;
-  padding: 0em .6em .2em;
-  border: 1px solid fade(@colorPrimary, 12%);
-  border-radius: .3em;
+  margin: @bu -@bu;
+  padding: @bu @bu*5 @bu @bu;
+  min-height: @bu*9;
+  border-radius: @bu/2;
   background: fade(#FFA900, 3%);
-  &:first-of-type {
-    border-top: 1px solid fade(@colorPrimary, 12%);
+  box-shadow: 0 0 0 1px fade(@colorPrimary, 12%) inset;
+  &-edit {
+    padding-right: @bu;
+    padding-bottom: 0;
   }
-  &:hover {
-    background: fade(#FFA900, 7%);
-  }
-}
-.createdNotification {
-  color: @colorPrimary;
-  font-size: 0.75em;
-  opacity: 0.54;
-  white-space: nowrap;
-}
-.createMealIcon {
-  position: absolute;
-  top: .35em;
-  right: -2em;
-  cursor: pointer;
-  padding: .5em .5em .25em;
-}
-.editIcon, .closeIcon {
-  position: absolute;
-  top: .35em;
-  left: -2em;
-  cursor: pointer;
-  padding: .5em .5em .25em;
-}
-.editIcon {
-  opacity: 0;
-}
-.recipe:hover {
-  .editIcon {
-    opacity: 1;
-  }
-}
-h3 {
-  font-size: 1.2em;
-  margin: .7em 0 .5em;
-  > a {
-    margin: -.7em -.6em -.5em;
-    padding: .7em .6em .5em;
-    display: block;
-    > svg {
-      vertical-align: -0.1em;
-      width: .75em;
-      height: .75em;
+  .saveBtnContainer {
+    padding: @bu 0;
+    .btn-red {
+      background: #F35;
     }
   }
 }
-p {
-  margin: 0 0 .5em;
-  opacity: .54;
+.createdNotification {
+  display: inline-block;
+  background-color: @colorPrimary;
+  color: @colorBackground;
+  font-size: @fusm;
+  line-height: @bu*3;
+  border-radius: @bu*2;
+  padding: 0 @bu*2;
+  white-space: nowrap;
 }
-ul {
-  margin: 0 0 .5em;
-  padding: 0;
-  li {
-    list-style: none;
+.actionIconContainer {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  width: @bu*4.5;
+  .centerContent;
+  padding: @bu/2 @bu/2 @bu/2 0;
+}
+.actionIcon {
+  cursor: pointer;
+  padding: @bu;
+  width: @bu*4;
+  height: @bu*4;
+  .centerContent;
+  color: fade(@colorPrimary, 30%);
+}
+h3 {
+  font-size: @fulg;
+  margin: 0 0 @bu;
+  > a {
+    margin: -@bu;
+    padding: @bu;
+    display: block;
+    > .fa-icon {
+      vertical-align: -0.15em;
+      width: .7em;
+      height: .7em;
+    }
   }
 }
 </style>

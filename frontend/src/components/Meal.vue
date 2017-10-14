@@ -13,7 +13,7 @@
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
       <p class="saveBtnContainer">
         <span class="btn" @click="toggleEditMode()">Stäng</span>
-          <span class="btn btn-red" @click="deleteMeal()">Ta bort</span>
+        <span class="btn btn-red" @click="deleteMeal()">Ta bort</span>
         <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
       </p>
     </form>
@@ -159,16 +159,6 @@
     .btn-red {
       background: #F35;
     }
-  }
-
-  .closeIcon {
-    position: absolute;
-    top: @bu;
-    right: @bu;
-    line-height: @bu*3;
-    height: @bu*3;
-    width: @bu*3;
-    .centerContent;
   }
 }
 .createdNotification {

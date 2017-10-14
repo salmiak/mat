@@ -57,20 +57,20 @@ html {
   color: @tc1;
   background: @colorBackground;
 
-  // &:after {
-  //   pointer-events: none;
-  //   @gridColor: fade(cyan, 50%);
-  //   display: block;
-  //   content: '';
-  //   position: absolute;
-  //   top: 0;
-  //   left: 0;
-  //   right: 0;
-  //   height: 100%;
-  //   background-color: transparent;
-  //   background-image: linear-gradient(0deg, transparent 95%, @gridColor 95%);
-  //   background-size:@bu @bu;
-  // }
+  &:after {
+    pointer-events: none;
+    @gridColor: fade(cyan, 50%);
+    display: block;
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background-color: transparent;
+    background-image: linear-gradient(0deg, transparent 95%, @gridColor 95%);
+    background-size:@bu @bu;
+  }
 }
 
 body {
@@ -109,6 +109,7 @@ h2 {
 p {
   margin: 0 0 .5em;
   color: @tc2;
+  line-height: @bu*2;
 }
 
 input:not(.multiselect__input), textarea, .input {
@@ -199,6 +200,16 @@ input:not(.multiselect__input), textarea, .input {
       background: darken(@colorSecondary, 12%);
     }
   }
+}
+
+.closeIcon {
+  position: absolute;
+  top: @bu;
+  right: @bu;
+  line-height: @bu*3;
+  height: @bu*3;
+  width: @bu*3;
+  .centerContent;
 }
 
 .fa-icon {

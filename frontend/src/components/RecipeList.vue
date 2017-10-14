@@ -45,30 +45,11 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 ul {
-  margin: 0 auto 40px;
-  padding: 0;
-}
-li {
-  list-style: none;
-  text-align: left;
-  margin-bottom: 0.5em;
-}
-input, textarea {
-  box-sizing: border-box;
-  display: block;
-  width: calc(100% - .6em);
-  margin: .5em 0;
-  font-size: 1em;
-  line-height: 1.5em;
-  padding: .3em .5em;
-  border: none;
-  border: 1px solid fade(@colorPrimary, 12%);
-  background: fade(@colorPrimary, 3%);
-  border-radius: 4px;
-  &:focus {
-    background: #FFF;
-    outline: none;
-    border-color: @colorSecondary;
+  margin: 0 auto;
+  padding: 0 @bu*2;
+  li {
+    list-style: none;
+    margin-bottom: @bu;
   }
 }
 </style>

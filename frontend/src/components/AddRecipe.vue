@@ -62,32 +62,13 @@
 @import "../assets/global.less";
 .add-recipe {
   position: relative;
-  margin: 1em 0 .5em;
+  box-shadow: 0 -1px 0 0 @colorBorder inset, 0 1px 0 0 @colorBorder inset;
+  padding: @bu @bu*2;
   > div {
-    cursor: pointer;
-    padding: 1em .3em;
-    border-bottom: 1px solid fade(@colorPrimary, 12%);
-    border-top: 1px solid fade(@colorPrimary, 12%);
-    &:hover {
-      background: fade(@colorPrimary, 3%);
-    }
+    .btn;
   }
-  > form {
-    padding: .2em .3em .5em;
-    border-bottom: 1px solid fade(@colorPrimary, 12%);
-    border-top: 1px solid fade(@colorPrimary, 12%);
-    background: fade(@colorPrimary, 3%);
+  .saveBtnContainer {
+    padding: @bu 0;
   }
-}
-h2 {
-  font-size: 1.2em;
-  margin: .5em 0 .75em;
-}
-.closeIcon {
-  position: absolute;
-  top: .35em;
-  left: -2em;
-  cursor: pointer;
-  padding: .5em .5em .25em;
 }
 </style>
