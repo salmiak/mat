@@ -1,5 +1,5 @@
 <template>
-  <div class="meal">
+  <div class="meal" v-bind:class="editMode?'meal-edit':''">
     <form v-if="editMode">
       <div class="closeIcon" @click="toggleEditMode()">
         <icon name="times"></icon>
@@ -13,36 +13,40 @@
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
       <p class="saveBtnContainer">
         <span class="btn" @click="toggleEditMode()">Stäng</span>
+          <span class="btn btn-red" @click="deleteMeal()">Ta bort</span>
         <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
       </p>
     </form>
 
     <div v-else>
-      <div class="madeIcon" @click="toggleMade()">
-        <icon name="check-square-o" v-if="mealData.fields.made"></icon>
-        <icon name="square-o" v-else></icon>
+      <div class="iconContainer iconContainerLeft">
+        <div class="actionIcon" @click="toggleMade()">
+          <icon name="check-square-o" v-if="mealData.fields.made"></icon>
+          <icon name="square-o" v-else></icon>
+        </div>
       </div>
-      <div class="editIcon" @click="toggleEditMode()">
-        <icon name="edit"></icon>
+
+      <div class="iconContainer iconContainerRight">
+        <div class="actionIcon" @click="toggleEditMode()">
+          <icon name="edit"></icon>
+        </div>
+        <div class="actionIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
+          <icon name="clone"></icon>
+        </div>
+        <div class="actionIcon" v-if="createdMeal">
+          <icon name="check"></icon>
+        </div>
       </div>
-      <div class="deleteIcon" @click="deleteMeal()">
-        <icon name="trash"></icon>
+
+      <div class="moveArrow moveArrowLeft" @click="moveToPrevWeek()">
+        <icon name="arrow-left"></icon>
       </div>
-      <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
-        <icon name="clone"></icon>
-      </div>
-      <div class="cloneIcon" v-if="createdMeal">
-        <icon name="check"></icon>
+      <div class="moveArrow moveArrowRight" @click="moveToNextWeek()">
+        <icon name="arrow-right"></icon>
       </div>
       <h2>
         {{mealData.title}}
         <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
-        <span @click="moveToPrevWeek()">
-          <icon name="arrow-left"></icon>
-        </span>
-        <span @click="moveToNextWeek()">
-          <icon name="arrow-right"></icon>
-        </span>
       </h2>
       <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
       <ul class="recipeList" v-if="verifiedRecipes.length">
@@ -142,51 +146,67 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
-  padding: @bu @bu*2;
+  padding: @bu*2 @bu*6;
   position: relative;
+  min-height: @bu*13;
   .border-bottom;
+
+  &-edit {
+    padding: @bu @bu*2;
+  }
   .saveBtnContainer {
     padding: @bu 0;
+    .btn-red {
+      background: #F35;
+    }
+  }
+
+  .closeIcon {
+    position: absolute;
+    top: @bu;
+    right: @bu;
+    line-height: @bu*3;
+    height: @bu*3;
+    width: @bu*3;
+    .centerContent;
   }
 }
 .createdNotification {
 }
 
-.madeIcon, .editIcon, .cloneIcon, .deleteIcon {
+.iconContainer {
   position: absolute;
-  top: .15em;
+  height: 100%;
+  width: @bu*4;
+  top: 0;
+  background: fade(@colorPrimary, 3%);
+  &Left { left: 0 }
+  &Right { right: 0 }
+  .centerContent;
+}
+.actionIcon {
   cursor: pointer;
-  padding: .5em .5em .25em;
+  padding: @bu;
+  width: @bu*4;
+  height: @bu*4;
+  .centerContent;
 }
-.madeIcon { left: -2em; }
-.editIcon, .cloneIcon, .deleteIcon {
-  opacity: 0;
-  right: .3em;
-}
-.deleteIcon {
-  top: 1.5em;
-}
-.cloneIcon {
-  top: 3.15em;
-}
-.meal:hover {
-  .editIcon, .cloneIcon, .deleteIcon {
-    opacity: 1;
+
+.moveArrow {
+  position: absolute;
+  top: 0;
+  padding: @bu;
+  &Right {
+    right: @bu*4;
   }
-}
-ul.recipeList {
-  margin: .6em 0 0;
-  padding: 0;
-  li {
-    list-style: none;
+  &Left {
+    left: @bu*4;
   }
 }
 
-.closeIcon {
-  position: absolute;
-  top: .35em;
-  left: -2em;
-  cursor: pointer;
-  padding: .5em .5em .25em;
+ul.recipeList {
+  margin: @bu 0 0;
+  padding: 0;
+  li {list-style: none;}
 }
 </style>
