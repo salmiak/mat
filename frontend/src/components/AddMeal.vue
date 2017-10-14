@@ -75,7 +75,7 @@
 @import "../assets/global.less";
 .add-meal {
   position: relative;
-  box-shadow: 0 -1px 0 0 @colorBorder inset, 0 1px 0 0 @colorBorder inset;
+  .border-bottom;
   padding: @bu @bu*2;
   > div {
     .btn;

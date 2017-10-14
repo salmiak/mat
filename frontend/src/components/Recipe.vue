@@ -39,7 +39,7 @@
         {{recipeData.title}}
         <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
       </h3>
-      <p v-if="recipeData.content != ''" v-html="recipeData.content"></p>
+      <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
     </div>
   </div>
 </template>
@@ -104,6 +104,9 @@
       background: #F35;
     }
   }
+  &:last-child {
+    margin-bottom: 0;
+  }
 }
 .createdNotification {
   display: inline-block;
@@ -133,8 +136,6 @@
   color: fade(@colorPrimary, 30%);
 }
 h3 {
-  font-size: @fulg;
-  margin: 0 0 @bu;
   > a {
     margin: -@bu;
     padding: @bu;

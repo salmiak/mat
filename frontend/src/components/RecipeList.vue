@@ -4,10 +4,12 @@
       <h1>Recept</h1>
     </div>
     <add-recipe/>
-    <vue-fuse :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
+    <div class="search">
+      <vue-fuse :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
+    </div>
     <ul>
       <li v-for="recipe in recipesResults" :key="recipe.id">
-        <recipe v-bind:recipeId="recipe.id"></recipe>
+        <recipe v-bind:recipeId="recipe.id" />
       </li>
     </ul>
   </div>
@@ -44,8 +46,15 @@
 
 <style lang="less" scoped>
 @import "../assets/global.less";
+.search {
+  .border-bottom;
+  input {
+    padding: @bu 2*@bu;
+    margin: 0;
+    border-radius: 0;
+  }
+}
 ul {
-  margin: 0 auto;
   padding: 0 @bu*2;
   li {
     list-style: none;

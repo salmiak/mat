@@ -31,7 +31,7 @@ export default {
   left: 0;
   right: 0;
   height: @hToolbar;
-  background: fade(@colorSecondary, 75%);
+  background: @colorBackground;
   z-index: 900;
 }
 
@@ -47,14 +47,14 @@ export default {
     padding: 0 @bu*2;
     line-height: @hToolbar;
     border-left: 1px solid @colorBackground;
-    color: fade(@colorBackground, 70%);
+    color: @colorBackground;
+    background: fade(@colorPrimary, 30%);
     width: 50%;
     &:first-child {
       border-left: none;
     }
     &.router-link-active {
       background-color: @colorSecondary;
-      color: @colorBackground;
     }
   }
 }

@@ -49,9 +49,9 @@
         <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
       </h2>
       <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
-      <ul class="recipeList" v-if="verifiedRecipes.length">
+      <div class="recipeList" v-if="verifiedRecipes.length">
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true"></recipe>
-      </ul>
+      </div>
     </div>
   </div>
 </template>
@@ -195,9 +195,7 @@
   }
 }
 
-ul.recipeList {
+.recipeList {
   margin: @bu 0 0;
-  padding: 0;
-  li {list-style: none;}
 }
 </style>
