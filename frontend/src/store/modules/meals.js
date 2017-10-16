@@ -26,7 +26,7 @@ const actions = {
   requestAllMeals ({ commit }) {
     var page = 1
     var requestPage = (page) => {
-      Vue.http.get(global.apiUri+'/meal/?page='+page).then(response => {
+      Vue.http.get(global.apiUri+'/meal/?per_page=100&page='+page).then(response => {
 
         if ( parseInt(response.headers.map['x-wp-totalpages'][0]) != page ) {
           page++
