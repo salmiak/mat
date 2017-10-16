@@ -24,6 +24,7 @@ const getters = {
 // actions
 const actions = {
   requestAllMeals ({ commit }) {
+    commit('clearMeals')
     var page = 1
     var requestPage = (page) => {
       Vue.http.get(global.apiUri+'/meal/?per_page=100&page='+page).then(response => {
@@ -78,7 +79,8 @@ const mutations = {
         i--;
       }
     }
-  }
+  },
+  clearMeals (state) { state.all = [] }
 }
 
 export default {
