@@ -43,17 +43,23 @@ const actions = {
           commit('pushMeal',{meal: meal})
         })
 
+      }, response => {
+        this.$router.push('/login')
       })
     }
     requestPage(page)
   },
   updateMeal ({ commit,state }, { id, payload }) {
     if ( id ) {
-      Vue.http.post(global.apiUri+'/meal/'+id, state.all.find(meal => meal.id == id)).then(response => console.log(response))
+      Vue.http.post(global.apiUri+'/meal/'+id, state.all.find(meal => meal.id == id)).then(response => console.log(response), response => {
+        this.$router.push('/login')
+      })
     } else if ( payload ) {
       Vue.http.post(global.apiUri+'/meal/', payload).then(response => {
         let meal = global.wpProcess(response.body);
         commit('unshiftMeal', {meal:meal})
+      }, response => {
+        this.$router.push('/login')
       })
     } else {
       console.error('You should not see this message...');
@@ -62,6 +68,8 @@ const actions = {
   deleteMeal ({commit, state}, {id}) {
     Vue.http.delete(global.apiUri+'/meal/'+id).then(response => {
       commit('deleteMeal', {id:id})
+    }, response => {
+      this.$router.push('/login')
     })
   }
 }

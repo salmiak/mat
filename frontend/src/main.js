@@ -3,6 +3,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import VueResource from 'vue-resource'
+import VueCookies from 'vue-cookies'
 import 'vue-awesome/icons'
 import Icon from 'vue-awesome/components/Icon'
 import * as global from './store/utils'
@@ -13,7 +14,7 @@ import store from './store'
 Vue.config.productionTip = false
 
 Vue.use(VueResource)
-Vue.http.headers.common['Authorization'] = 'Basic ' + global.authToken;
+Vue.use(VueCookies)
 
 // Register Font Awesome icon component globaly
 Vue.component('icon', Icon)
