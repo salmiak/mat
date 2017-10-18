@@ -21,9 +21,8 @@ export default new Vuex.Store({
     currentYear(){
       return moment().isoWeekYear()
     },
-    isLoggedIn: state => {
-      return state.loggedin
-    }
+    isLoggedIn: state => state.loggedin,
+    isLoading: (state, payload, root) => root.recipes.loading || root.meals.loading
   },
   mutations: {
     loggIn: state => state.loggedin = true

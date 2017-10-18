@@ -5,7 +5,8 @@ import * as global from '../utils'
 
 // initial state
 const state = {
-  all: []
+  all: [],
+  loading: true
 }
 
 // getters
@@ -18,15 +19,18 @@ const getters = {
     return state.all.filter(meal => {
       return moment(meal.fields.date).isoWeek() == week && moment(meal.fields.date).isoWeekYear() == year
     })
-  }
+  },
+  mealsLoading: (state) => state.loading
 }
 
 // actions
 const actions = {
   requestAllMeals ({ commit }) {
     commit('clearMeals')
-    var page = 1
+    commit('mealsLoading', {loading: true})
+    var page = 1, requests = []
     var requestPage = (page) => {
+      requests.push(1)  // Add one more element to requests array per request.
       Vue.http.get(global.apiUri+'/meal/?per_page=100&page='+page).then(response => {
 
         if ( parseInt(response.headers.map['x-wp-totalpages'][0]) != page ) {
@@ -42,6 +46,9 @@ const actions = {
           }
           commit('pushMeal',{meal: meal})
         })
+        requests.pop(1)  // Remove this request from requests array.
+        commit('mealsLoading', { loading: requests.length > 0 })
+
 
       }, response => {
         this.$router.push('/login')
@@ -76,6 +83,7 @@ const actions = {
 
 // mutations
 const mutations = {
+  mealsLoading (state, payload) { state.loading = payload.loading },
   pushMeal (state, payload) { state.all.push(payload.meal) },
   unshiftMeal (state, payload) { state.all.unshift(payload.meal) },
   deleteMeal (state, payload) {

@@ -3,15 +3,21 @@
     <div class="header">
       <h1>Recept</h1>
     </div>
-    <add-recipe/>
-    <div class="search">
-      <vue-fuse :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
+    <div v-if="isLoading" class="loading">
+      <p><icon name="refresh" scale="1" spin></icon></p>
+      <p>Laddar</p>
     </div>
-    <ul>
-      <li v-for="recipe in recipesResults" :key="recipe.id">
-        <recipe v-bind:recipeId="recipe.id" />
-      </li>
-    </ul>
+    <div v-else>
+      <add-recipe/>
+      <div class="search">
+        <vue-fuse :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
+      </div>
+      <ul>
+        <li v-for="recipe in recipesResults" :key="recipe.id">
+          <recipe v-bind:recipeId="recipe.id" />
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -37,6 +43,7 @@
       }
     },
     computed: {
+      isLoading(){ return this.$store.getters.isLoading },
       ...mapGetters({
         'recipes': 'allRecipes'
       })
