@@ -146,7 +146,7 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
-  padding: @bu @bu*5 @bu*4;
+  padding: @bu*1.5 @bu*5 @bu*4.5;
   position: relative;
   min-height: @bu*9;
   .border-bottom;

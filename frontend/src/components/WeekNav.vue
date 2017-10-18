@@ -59,10 +59,10 @@ export default {
 <style lang="less">
 @import "../assets/global.less";
 
-@height: @bu*3;
+@height: @bu*3.5;
 
   .weekNav {
-    top: @bu;
+    top: @bu*1.25;
     right: @bu*2;
     height: @height;
     position: absolute;
@@ -75,9 +75,9 @@ export default {
     margin: 0;
     a {
       font-size: 14px;
-      width: @bu*4;
+      width: @bu*4.5;
       float: left;
-      padding: 0 @bu;
+      padding: 0 @bu*1.25;
       height: @height;
       border-left: 1px solid @colorSecondary;
       color: @colorSecondary;
