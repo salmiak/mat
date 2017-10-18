@@ -92,7 +92,7 @@
         if ( this.createdMeal )
           return false  // Don't show for meals copied this session
         if ( !this.$route.params.week && !this.$route.params.year )
-          return false  // If route params not set, we're on home route
+          return true  // If route params not set, we're on home route
 
         let currentDate = moment().isoWeekYear(this.$store.getters.currentYear).isoWeek(this.$store.getters.currentWeek)
         let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
