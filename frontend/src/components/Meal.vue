@@ -50,7 +50,7 @@
       </h2>
       <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
       <div class="recipeList" v-if="verifiedRecipes.length">
-        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true"></recipe>
+        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
       </div>
     </div>
   </div>

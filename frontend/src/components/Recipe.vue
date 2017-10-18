@@ -20,7 +20,7 @@
 
     <div v-else>
       <div class="actionIconContainer">
-        <div class="actionIcon" @click="toggleEditMode()">
+        <div v-if="!hideEdit" class="actionIcon" @click="toggleEditMode()">
           <icon name="edit"></icon>
         </div>
         <div v-if="!hideCreateMeal" class="actionIcon" @click="createMeal()">
@@ -49,7 +49,7 @@
 
   export default {
     name: "Recipe",
-    props: ['recipeId','hideCreateMeal'],
+    props: ['recipeId','hideCreateMeal','hideEdit'],
     data() {
       return {
         recipeData: this.$store.getters.verifyRecipe(this.recipeId) ?  this.$store.getters.recipeById(this.recipeId) : {},
