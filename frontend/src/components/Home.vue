@@ -3,7 +3,7 @@
     <div class="header">
       <h1 v-if="isThisWeek">Denna vecka</h1>
       <h1 v-else-if="isThisNextWeek">Nästa vecka</h1>
-      <h1 v-else-if="isThisPrevWeek">Förra vecka</h1>
+      <h1 v-else-if="isThisPrevWeek">Förra veckan</h1>
       <h1 v-else>Vecka {{week}}</h1>
       <week-nav></week-nav>
     </div>
