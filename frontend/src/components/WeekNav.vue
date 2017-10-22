@@ -1,7 +1,8 @@
 <template>
   <div class="weekNav">
     <a @click="goToPrevWeek()"><icon name="arrow-left"></icon></a>
-    <router-link to="/"><icon name="calendar-o"></icon></router-link>
+    <a v-if="isCurrentWeek" @click="goToCurrentNextWeek()"><icon name="calendar" ></icon></a>
+    <a v-else @click="goToCurrentWeek()"><icon name="calendar-o" ></icon></a>
     <a @click="goToNextWeek()"><icon name="arrow-right"></icon></a>
   </div>
 </template>
@@ -49,9 +50,19 @@ export default {
       }
     }
   },
+  computed: {
+    isCurrentWeek() {
+      return this.year == this.$store.getters.currentYear && this.week == this.$store.getters.currentWeek;
+    }
+  },
   methods: {
     goToPrevWeek() { this.$router.push( '/week/'+this.prevWeek.year+'/'+this.prevWeek.week ) },
-    goToNextWeek() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) }
+    goToNextWeek() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) },
+    goToCurrentWeek() { this.$router.push('/') },
+    goToCurrentNextWeek() {
+      let year = moment().add(1,'w').isoWeekYear()
+      let week = moment().add(1,'w').isoWeek()
+      this.$router.push( '/week/'+year+'/'+week  ) }
   }
 }
 </script>
