@@ -18,32 +18,12 @@
       </p>
     </form>
 
-    <div v-else>
-      <div class="iconContainer iconContainerLeft">
-        <div class="actionIcon" @click="toggleMade()">
-          <icon name="check-square-o" v-if="mealData.fields.made"></icon>
-          <icon name="square-o" v-else></icon>
-        </div>
-      </div>
-
-      <div class="iconContainer iconContainerRight">
-        <div class="actionIcon" @click="toggleEditMode()">
-          <icon name="edit"></icon>
-        </div>
-        <div class="actionIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
-          <icon name="clone"></icon>
-        </div>
-        <div class="actionIcon" v-if="createdMeal">
-          <icon name="check"></icon>
-        </div>
-      </div>
-
-      <div class="moveArrow moveArrowLeft" @click="moveToPrevWeek()">
-        <icon name="arrow-left"></icon>
-      </div>
-      <div class="moveArrow moveArrowRight" @click="moveToNextWeek()">
-        <icon name="arrow-right"></icon>
-      </div>
+    <v-touch v-else tag="div"
+    v-on:panstart="onPanStart"
+    v-on:panmove="onPanMove"
+    v-on:panend="onPanEnd"
+    v-bind:pan-options="{ direction: 'horizontal', threshold: 50 }"
+    v-bind:style="{left: leftOffset+'px'}">
       <h2 v-bind:class="mealData.fields.made?'made':''">
         {{mealData.title}}
         <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
@@ -52,7 +32,8 @@
       <div class="recipeList" v-if="verifiedRecipes.length">
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
       </div>
-    </div>
+    </v-touch>
+
   </div>
 </template>
 
@@ -70,7 +51,8 @@
       return {
         mealData: this.$store.getters.mealById(this.mealId),
         editMode: false,
-        createdMeal: false
+        createdMeal: false,
+        leftOffset: 0
       }
     },
     computed: {
@@ -102,6 +84,16 @@
       }
     },
     methods: {
+      onPanStart(e) {
+        console.log(e)
+      },
+      onPanMove(e) {
+        console.log(e.deltaX)
+        this.leftOffset = e.deltaX * 0.5
+      },
+      onPanEnd(e) {
+        this.leftOffset = 0;
+      },
       toggleEditMode() {
         this.editMode = !this.editMode
       },
@@ -146,10 +138,11 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
-  padding: @bu*1.5 @bu*5 @bu*4.5;
+  padding: @bu*1.5 @bu*2;
   position: relative;
   min-height: @bu*9;
   .border-bottom;
+  overflow: hidden;
 
   &-edit {
     padding: @bu @bu*2;
@@ -159,6 +152,9 @@
     .btn-red {
       background: #F35;
     }
+  }
+  > div {
+    position: relative;
   }
 }
 
