@@ -8,8 +8,18 @@ function b64EncodeUnicode(str) {
     }));
 }
 
-export const apiUri = "//localhost:8888/mat/wp-json/wp/v2"
-export const authToken = b64EncodeUnicode( 'alfred:ILAt VfPY E86i kMjw Zyzg wQSx' )
+var _root, _apiUri, _authToken;
+
+if (process.env.NODE_ENV == 'development') {
+  _root = "//localhost:8888/mat/";
+  _apiUri = "//localhost:8888/mat/wp-json/wp/v2"
+} else {
+  _root = "/"
+  _apiUri = "/wp-json/wp/v2"
+}
+export const root = _root
+export const apiUri = _apiUri
+
 export const wpProcess = function(post) {
   post.title = post.title.rendered
   if(post.content) post.content = post.content.rendered

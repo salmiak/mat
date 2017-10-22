@@ -1,5 +1,5 @@
 <template>
-  <div class="meal">
+  <div class="meal" v-bind:class="editMode?'meal-edit':''">
     <form v-if="editMode">
       <div class="closeIcon" @click="toggleEditMode()">
         <icon name="times"></icon>
@@ -11,43 +11,47 @@
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
-      <p>
-        <span class="pull-right btn" @click="toggleEditMode()">Stäng</span>
-        <span class="btn btn-primary" @click="saveMeal()">Spara</span>
+      <p class="saveBtnContainer">
+        <span class="btn" @click="toggleEditMode()">Stäng</span>
+        <span class="btn btn-red" @click="deleteMeal()">Ta bort</span>
+        <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
       </p>
     </form>
 
     <div v-else>
-      <div class="madeIcon" @click="toggleMade()">
-        <icon name="check-square-o" v-if="mealData.fields.made"></icon>
-        <icon name="square-o" v-else></icon>
+      <div class="iconContainer iconContainerLeft">
+        <div class="actionIcon" @click="toggleMade()">
+          <icon name="check-square-o" v-if="mealData.fields.made"></icon>
+          <icon name="square-o" v-else></icon>
+        </div>
       </div>
-      <div class="editIcon" @click="toggleEditMode()">
-        <icon name="edit"></icon>
+
+      <div class="iconContainer iconContainerRight">
+        <div class="actionIcon" @click="toggleEditMode()">
+          <icon name="edit"></icon>
+        </div>
+        <div class="actionIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
+          <icon name="clone"></icon>
+        </div>
+        <div class="actionIcon" v-if="createdMeal">
+          <icon name="check"></icon>
+        </div>
       </div>
-      <div class="deleteIcon" @click="deleteMeal()">
-        <icon name="trash"></icon>
+
+      <div class="moveArrow moveArrowLeft" @click="moveToPrevWeek()">
+        <icon name="arrow-left"></icon>
       </div>
-      <div class="cloneIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
-        <icon name="clone"></icon>
+      <div class="moveArrow moveArrowRight" @click="moveToNextWeek()">
+        <icon name="arrow-right"></icon>
       </div>
-      <div class="cloneIcon" v-if="mealCopied">
-        <icon name="check"></icon>
-      </div>
-      <h2>
+      <h2 v-bind:class="mealData.fields.made?'made':''">
         {{mealData.title}}
         <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
-        <span @click="moveToPrevWeek()">
-          <icon name="arrow-left"></icon>
-        </span>
-        <span @click="moveToNextWeek()">
-          <icon name="arrow-right"></icon>
-        </span>
       </h2>
       <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
-      <ul class="recipeList" v-if="verifiedRecipes.length">
-        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true"></recipe>
-      </ul>
+      <div class="recipeList" v-if="verifiedRecipes.length">
+        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
+      </div>
     </div>
   </div>
 </template>
@@ -85,10 +89,10 @@
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
       },
       showCopyMeal() {
-        if ( this.mealCopied )
+        if ( this.createdMeal )
           return false  // Don't show for meals copied this session
         if ( !this.$route.params.week && !this.$route.params.year )
-          return false  // If route params not set, we're on home route
+          return true  // If route params not set, we're on home route
 
         let currentDate = moment().isoWeekYear(this.$store.getters.currentYear).isoWeek(this.$store.getters.currentWeek)
         let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
@@ -142,93 +146,61 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
+  padding: @bu*1.5 @bu*5 @bu*4.5;
   position: relative;
-  margin: 0;
-  padding: 1em .3em;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
-  &:first-of-type {
-    border-top: 1px solid fade(@colorPrimary, 12%);
+  min-height: @bu*9;
+  .border-bottom;
+
+  &-edit {
+    padding: @bu @bu*2;
   }
-  &:hover {
-    background: fade(@colorPrimary, 3%);
-  }
-  > form {
-    padding: .2em .3em .5em;
-    border-bottom: 1px solid fade(@colorPrimary, 12%);
-    border-top: 1px solid fade(@colorPrimary, 12%);
-    background: fade(@colorPrimary, 3%);
+  .saveBtnContainer {
+    padding: @bu 0;
+    .btn-red {
+      background: #F35;
+    }
   }
 }
+
+h2.made {
+  text-decoration: line-through;
+}
+
 .createdNotification {
-  color: @colorPrimary;
-  font-size: 0.75em;
-  opacity: 0.54;
-  white-space: nowrap;
 }
 
-.madeIcon, .editIcon, .cloneIcon, .deleteIcon {
+.iconContainer {
   position: absolute;
-  top: .15em;
+  width: @bu*4;
+  top: 0;
+  bottom: 0;
+  // background: fade(@colorPrimary, 3%);
+  &Left { left: 0 }
+  &Right { right: 0 }
+  .centerContent;
+}
+.actionIcon {
   cursor: pointer;
-  padding: .5em .5em .25em;
-}
-.madeIcon { left: -2em; }
-.editIcon, .cloneIcon, .deleteIcon {
-  opacity: 0;
-  right: -2.3em;
-}
-.deleteIcon {
-  top: 1.5em;
-}
-.cloneIcon {
-  top: 3.15em;
-}
-.meal:hover {
-  .editIcon, .cloneIcon, .deleteIcon {
-    opacity: 1;
-  }
-}
-h2 {
-  font-size: 1.2em;
-  margin: .5em 0 .2em;
-}
-p {
-  margin: 0 0 .5em;
-  opacity: .54;
-}
-ul.recipeList {
-  margin: .6em 0 0;
-  padding: 0;
-  li {
-    list-style: none;
-  }
+  padding: @bu;
+  width: @bu*4;
+  height: @bu*4;
+  .centerContent;
+  color: fade(@colorPrimary, 30%);
 }
 
-.closeIcon {
+.moveArrow {
   position: absolute;
-  top: .35em;
-  left: -2em;
-  cursor: pointer;
-  padding: .5em .5em .25em;
+  bottom: 0;
+  padding: @bu;
+  &Right {
+    right: @bu*4;
+  }
+  &Left {
+    left: @bu*4;
+  }
 }
 
-@import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
-input, textarea {
-  box-sizing: border-box;
-  display: block;
-  width: calc(100% - .6em);
-  margin: 0 0 1em;
-  font-size: 1em;
-  line-height: 1.5em;
-  padding: .3em;
-  border: none;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
-  background: none;
-  border-radius: 4px 4px 0 0;
-  &:focus {
-    background: #FFF;
-    outline: none;
-    border-bottom-color: @colorSecondary;
-  }
+.recipeList {
+  margin: @bu 0 0;
 }
 </style>

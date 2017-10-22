@@ -1,10 +1,12 @@
 <template>
   <div id="home">
-    <h1 v-if="isThisWeek">Denna vecka</h1>
-    <h1 v-else-if="isThisNextWeek">Nästa vecka</h1>
-    <h1 v-else-if="isThisPrevWeek">Förra vecka</h1>
-    <h1 v-else>Vecka {{week}}</h1>
-    <week-nav></week-nav>
+    <div class="header">
+      <h1 v-if="isThisWeek">Denna vecka</h1>
+      <h1 v-else-if="isThisNextWeek">Nästa vecka</h1>
+      <h1 v-else-if="isThisPrevWeek">Förra veckan</h1>
+      <h1 v-else>Vecka {{week}}</h1>
+      <week-nav></week-nav>
+    </div>
     <week v-bind:year="year" v-bind:week="week"></week>
   </div>
 </template>
@@ -40,6 +42,6 @@ export default {
 }
 </script>
 
-<style lang="less">
-a { cursor: pointer; }
+<style lang="less" scoped>
+
 </style>

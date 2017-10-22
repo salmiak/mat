@@ -1,7 +1,8 @@
 <template>
   <div class="weekNav">
     <a @click="goToPrevWeek()"><icon name="arrow-left"></icon></a>
-    <router-link to="/"><icon name="calendar-o"></icon></router-link>
+    <a v-if="isCurrentWeek" @click="goToCurrentNextWeek()"><icon name="calendar" ></icon></a>
+    <a v-else @click="goToCurrentWeek()"><icon name="calendar-o" ></icon></a>
     <a @click="goToNextWeek()"><icon name="arrow-right"></icon></a>
   </div>
 </template>
@@ -49,40 +50,56 @@ export default {
       }
     }
   },
+  computed: {
+    isCurrentWeek() {
+      return this.year == this.$store.getters.currentYear && this.week == this.$store.getters.currentWeek;
+    }
+  },
   methods: {
     goToPrevWeek() { this.$router.push( '/week/'+this.prevWeek.year+'/'+this.prevWeek.week ) },
-    goToNextWeek() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) }
+    goToNextWeek() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) },
+    goToCurrentWeek() { this.$router.push('/') },
+    goToCurrentNextWeek() {
+      let year = moment().add(1,'w').isoWeekYear()
+      let week = moment().add(1,'w').isoWeek()
+      this.$router.push( '/week/'+year+'/'+week  ) }
   }
 }
 </script>
 
 <style lang="less">
 @import "../assets/global.less";
-  a { cursor: pointer; }
+
+@height: @bu*3.5;
+
   .weekNav {
-    @borderRadius: 4px;
-    display: inline-block;
+    top: @bu*1.25;
+    right: @bu*2;
+    height: @height;
+    position: absolute;
+    display: block;
     border: 1px solid @colorSecondary;
-    border-radius: @borderRadius;
+    border-radius: @bu/2;
     width: auto;
     font-size: 0;
-    margin-bottom: 4px;
+    overflow: hidden;
+    margin: 0;
     a {
-      font-size: 1rem;
-      display: inline-block;
-      padding: 6px 16px;
-      line-height: 0.8em;
+      font-size: 14px;
+      width: @bu*4.5;
+      float: left;
+      padding: 0 @bu*1.25;
+      height: @height;
       border-left: 1px solid @colorSecondary;
       color: @colorSecondary;
+      box-sizing: border-box;
+      .centerContent;
       &:first-child {
         border-left: none;
-        border-radius: @borderRadius - 1 0 0 @borderRadius - 1;
       }
-      &:last-child {
-        border-radius: 0 @borderRadius - 1 @borderRadius - 1 0;
-      }
-      &:hover {
-        background-color: fade(@colorSecondary, 12%);
+      > svg {
+        top: -1px;
+        position: relative;
       }
     }
   }

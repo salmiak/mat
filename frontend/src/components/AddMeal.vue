@@ -9,10 +9,10 @@
       <input v-model="mealData.title" placeholder="Namn"/>
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
-      <p>
-        <span class="pull-right btn" @click="toggleForm()">Stäng</span>
-        <span class="btn btn-primary" @click="saveMeal()">Spara</span>
-      </p>
+      <div class="saveBtnContainer">
+        <span class="btn" @click="toggleForm()">Stäng</span>
+        <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
+      </div>
     </form>
 
     <div @click="toggleForm()" v-else>
@@ -75,52 +75,13 @@
 @import "../assets/global.less";
 .add-meal {
   position: relative;
-  margin: 1em 0 0;
+  .border-bottom;
+  padding: @bu @bu*2;
   > div {
-    cursor: pointer;
-    padding: 1em .3em;
-    border-bottom: 1px solid fade(@colorPrimary, 12%);
-    border-top: 1px solid fade(@colorPrimary, 12%);
-    &:hover {
-      background: fade(@colorPrimary, 3%);
-    }
+    .btn;
   }
-  > form {
-    padding: .2em .3em .5em;
-    border-bottom: 1px solid fade(@colorPrimary, 12%);
-    border-top: 1px solid fade(@colorPrimary, 12%);
-    background: fade(@colorPrimary, 3%);
-  }
-}
-h2 {
-  font-size: 1.2em;
-  margin: .5em 0 .75em;
-}
-.closeIcon {
-  position: absolute;
-  top: .35em;
-  left: -2em;
-  cursor: pointer;
-  padding: .5em .5em .25em;
-}
-
-@import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
-input, textarea {
-  box-sizing: border-box;
-  display: block;
-  width: calc(100% - .6em);
-  margin: 0 0 1em;
-  font-size: 1em;
-  line-height: 1.5em;
-  padding: .3em;
-  border: none;
-  border-bottom: 1px solid fade(@colorPrimary, 12%);
-  background: none;
-  border-radius: 4px 4px 0 0;
-  &:focus {
-    background: #FFF;
-    outline: none;
-    border-bottom-color: @colorSecondary;
+  .saveBtnContainer {
+    padding: @bu 0;
   }
 }
 </style>

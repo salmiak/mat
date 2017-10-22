@@ -11,12 +11,20 @@ export default new Vuex.Store({
     recipes,
     meals
   },
+  state:{
+    loggedin: false
+  },
   getters: {
     currentWeek(){
       return moment().isoWeek()
     },
     currentYear(){
       return moment().isoWeekYear()
-    }
+    },
+    isLoggedIn: state => state.loggedin,
+    isLoading: (state, payload, root) => root.recipes.loading || root.meals.loading
+  },
+  mutations: {
+    loggIn: state => state.loggedin = true
   }
 })
