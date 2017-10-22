@@ -18,34 +18,10 @@ function admin_default_page() {
 add_filter('login_redirect', 'admin_default_page');
 
 
-// Register styles and scripts
-function reg_styles()
-{
-    wp_register_style('google-fonts', 'https://fonts.googleapis.com/css?family=Oswald|Open+Sans');
-    wp_enqueue_style('google-fonts'); // Enqueue it!
-
-    wp_register_style('mat', get_template_directory_uri() . '/style.css');
-    wp_enqueue_style('mat'); // Enqueue it!
-}
-add_action('wp_enqueue_scripts', 'reg_styles');
-
 function mat_scripts() {
-    // wp_enqueue_style( 'style-name', get_stylesheet_uri() );
-    wp_enqueue_script( 'vue', 'https://unpkg.com/vue',null, null, true);
-
-    wp_enqueue_script( 'momentjs', get_template_directory_uri() . '/node_modules/moment/min/moment.min.js',null, null, true);
-
-    wp_enqueue_script( 'sortable', get_template_directory_uri() . '/node_modules/sortablejs/Sortable.min.js',null, null, true);
-
-    wp_enqueue_script( 'vuedraggable', get_template_directory_uri() . '/node_modules/vuedraggable/dist/vuedraggable.js',array('vue','sortable'), null, true);
-
-    wp_enqueue_script( 'fuse', get_template_directory_uri() . '/node_modules/fuse.js/dist/fuse.min.js',null, null, true);
-
-    wp_enqueue_script( 'matjs', get_template_directory_uri() . '/js/script.js', array( 'wp-api','underscore','jquery','vue','momentjs','vuedraggable','fuse' ), '1.0.0', true );
+    wp_enqueue_script( 'wp-api' );
 }
 add_action( 'wp_enqueue_scripts', 'mat_scripts' );
-
-
 
 function add_post_types() {
   register_post_type( 'recipe',
