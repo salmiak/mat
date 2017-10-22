@@ -44,7 +44,7 @@
       <div class="moveArrow moveArrowRight" @click="moveToNextWeek()">
         <icon name="arrow-right"></icon>
       </div>
-      <h2>
+      <h2 v-bind:class="mealData.fields.made?'made':''">
         {{mealData.title}}
         <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
       </h2>
@@ -161,6 +161,11 @@
     }
   }
 }
+
+h2.made {
+  text-decoration: line-through;
+}
+
 .createdNotification {
 }
 
