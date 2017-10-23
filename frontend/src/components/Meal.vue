@@ -18,11 +18,12 @@
       </p>
     </form>
 
-    <v-touch v-else tag="div"
+    <v-touch tag="div"
+    v-if="!editMode"
     v-on:panstart="onPanStart"
     v-on:panmove="onPanMove"
     v-on:panend="onPanEnd"
-    v-bind:pan-options="{ direction: 'horizontal', threshold: 50 }"
+    v-bind:pan-options="{ direction: 'horizontal', threshold: 20 }"
     v-bind:style="{left: leftOffset+'px'}">
       <h2 v-bind:class="mealData.fields.made?'made':''">
         {{mealData.title}}
@@ -33,6 +34,10 @@
         <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
       </div>
     </v-touch>
+    <div class="mealBg" v-bind:style="bgStyle" v-if="!editMode" >
+      <div>{{swipeActionLabelLeft}}</div>
+      <div>{{swipeActionLabelRight}}</div>
+    </div>
 
   </div>
 </template>
@@ -40,6 +45,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import moment from 'moment'
+  import chroma from 'chroma-js'
   import Multiselect from 'vue-multiselect'
   import Recipe from './Recipe'
 
@@ -52,7 +58,9 @@
         mealData: this.$store.getters.mealById(this.mealId),
         editMode: false,
         createdMeal: false,
-        leftOffset: 0
+        leftOffset: 0,
+        swipeActionLabelLeft: null,
+        swipeActionLabelRight: null
       }
     },
     computed: {
@@ -81,19 +89,56 @@
 
         // Show for dates before current week
         return currentDate >= testedDate
+      },
+      bgStyle() {
+        let colorScale = chroma.scale(['#EEE','#EEE','#EEE','#FFA900','#FFA900','#FFA900','#F38']).mode('lch')
+        let maxThreshold = 0.4
+        console.log(this.$el?this.$el.offsetWidth:0);
+        return {
+          'background': colorScale(Math.abs(this.leftOffset)/((this.$el?this.$el.offsetWidth:0)*maxThreshold)).hex()
+        }
       }
     },
     methods: {
+
       onPanStart(e) {
-        console.log(e)
       },
       onPanMove(e) {
-        console.log(e.deltaX)
-        this.leftOffset = e.deltaX * 0.5
+        this.leftOffset = e.deltaX * 0.75
+        let maxThreshold = 0.4
+        if (this.leftOffset > this.$el.offsetWidth*maxThreshold) {
+          // Swipe right secondary action
+          if (this.mealData.fields.made) {
+            this.swipeActionLabelLeft = 'Kopiera'
+            this.swipeAction = this.copyToCurrentNextWeek;
+          } else {
+            this.swipeActionLabelLeft = 'Flytta'
+            this.swipeAction = this.moveToNextWeek;
+          }
+        } else if (this.leftOffset > this.$el.offsetWidth*maxThreshold/2) {
+          // Swipe right primary action
+          this.swipeActionLabelLeft = this.mealData.fields.made?'Markera ogjord':'Markera gjord'
+          this.swipeAction = this.toggleMade;
+        } else if (this.leftOffset < this.$el.offsetWidth*-maxThreshold) {
+          // Swipe left secondary action
+          this.swipeActionLabelRight = 'Flytta'
+          this.swipeAction = this.moveToPrevWeek;
+        } else if (this.leftOffset < this.$el.offsetWidth*-maxThreshold/2) {
+          // Swipe left primary action
+          this.swipeActionLabelRight = 'Redigera'
+          this.swipeAction = this.toggleEditMode;
+        } else {
+          this.swipeActionLabelLeft = null
+          this.swipeActionLabelRight = null
+          this.swipeAction = undefined
+        }
       },
       onPanEnd(e) {
         this.leftOffset = 0;
+        if(this.swipeAction)
+          this.swipeAction()
       },
+
       toggleEditMode() {
         this.editMode = !this.editMode
       },
@@ -138,10 +183,7 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
-  padding: @bu*1.5 @bu*2;
   position: relative;
-  min-height: @bu*9;
-  .border-bottom;
   overflow: hidden;
 
   &-edit {
@@ -154,7 +196,25 @@
     }
   }
   > div {
+    padding: @bu*1.5 @bu*2;
+    min-height: @bu*9;
     position: relative;
+    z-index: 100;
+    background: @colorBackground;
+    .border-bottom;
+  }
+  .mealBg {
+    z-index: 0;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: fade(@colorSecondary, 90%);
+    .border-bottom;
+    .display(flex);
+    .justify-content(space-between);
+    .align-items(center)
   }
 }
 
