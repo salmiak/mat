@@ -92,7 +92,7 @@
       },
       bgStyle() {
         let colorScale = chroma.scale(['#EEE','#EEE','#EEE','#FFA900','#FFA900','#FFA900','#F38']).mode('lch')
-        let maxThreshold = 0.4
+        let maxThreshold = 0.55
         console.log(this.$el?this.$el.offsetWidth:0);
         return {
           'background': colorScale(Math.abs(this.leftOffset)/((this.$el?this.$el.offsetWidth:0)*maxThreshold)).hex()
@@ -105,7 +105,7 @@
       },
       onPanMove(e) {
         this.leftOffset = e.deltaX * 0.75
-        let maxThreshold = 0.4
+        let maxThreshold = 0.55
         if (this.leftOffset > this.$el.offsetWidth*maxThreshold) {
           // Swipe right secondary action
           if (this.mealData.fields.made) {
