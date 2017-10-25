@@ -18,26 +18,43 @@
       </p>
     </form>
 
-    <v-touch tag="div"
-    v-if="!editMode"
-    v-on:panstart="onPanStart"
-    v-on:panmove="onPanMove"
-    v-on:panend="onPanEnd"
-    v-bind:pan-options="{ direction: 'horizontal', threshold: 20 }"
-    v-bind:style="{left: leftOffset+'px'}">
-      <h2 v-bind:class="mealData.fields.made?'made':''">
-        {{mealData.title}}
-        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
-      </h2>
-      <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
-      <div class="recipeList" v-if="verifiedRecipes.length">
-        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
+    <swipe-action-item
+      v-if="!editMode"
+      v-on:rightprimary="toggleMade"
+      v-on:rightsecondary="toNextWeek"
+      v-on:leftprimary="toggleEditMode"
+      v-on:leftsecondary="moveToPrevWeek">
+
+      <span slot="rightprimary">
+        <span v-if="mealData.fields.made">
+          <icon name="square-o"></icon> Ogjord
+        </span>
+        <span v-else>
+          <icon name="check-square-o"></icon> Gjord
+        </span>
+      </span>
+      <span slot="rightsecondary">
+        <span v-if="mealData.fields.made">
+          <icon name="copy"></icon> Kopiera
+        </span>
+        <span v-else>
+          <icon name="arrow-right"></icon> Flytta
+        </span>
+      </span>
+      <span slot="leftprimary"><icon name="edit"></icon> Redigera</span>
+      <span slot="leftsecondary"><icon name="arrow-left"></icon> Flytta</span>
+
+      <div class="mealContent">
+        <h2 v-bind:class="mealData.fields.made?'made':''">
+          {{mealData.title}}
+          <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+        </h2>
+        <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
+        <div class="recipeList" v-if="verifiedRecipes.length">
+          <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
+        </div>
       </div>
-    </v-touch>
-    <div class="mealBg" v-bind:style="bgStyle" v-if="!editMode" >
-      <div>{{swipeActionLabelLeft}}</div>
-      <div>{{swipeActionLabelRight}}</div>
-    </div>
+    </swipe-action-item>
 
   </div>
 </template>
@@ -48,19 +65,17 @@
   import chroma from 'chroma-js'
   import Multiselect from 'vue-multiselect'
   import Recipe from './Recipe'
+  import SwipeActionItem from './SwipeActionItem'
 
   export default {
     name: "Meal",
-    components: { Recipe,Multiselect },
+    components: { Recipe,Multiselect,SwipeActionItem },
     props: ['mealId'],
     data() {
       return {
         mealData: this.$store.getters.mealById(this.mealId),
         editMode: false,
-        createdMeal: false,
-        leftOffset: 0,
-        swipeActionLabelLeft: null,
-        swipeActionLabelRight: null
+        createdMeal: false
       }
     },
     computed: {
@@ -77,68 +92,9 @@
       },
       verifiedRecipes() {
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
-      },
-      showCopyMeal() {
-        if ( this.createdMeal )
-          return false  // Don't show for meals copied this session
-        if ( !this.$route.params.week && !this.$route.params.year )
-          return true  // If route params not set, we're on home route
-
-        let currentDate = moment().isoWeekYear(this.$store.getters.currentYear).isoWeek(this.$store.getters.currentWeek)
-        let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
-
-        // Show for dates before current week
-        return currentDate >= testedDate
-      },
-      bgStyle() {
-        let colorScale = chroma.scale(['#EEE','#EEE','#EEE','#FFA900','#FFA900','#FFA900','#F38']).mode('lch')
-        let maxThreshold = 0.55
-        console.log(this.$el?this.$el.offsetWidth:0);
-        return {
-          'background': colorScale(Math.abs(this.leftOffset)/((this.$el?this.$el.offsetWidth:0)*maxThreshold)).hex()
-        }
       }
     },
     methods: {
-
-      onPanStart(e) {
-      },
-      onPanMove(e) {
-        this.leftOffset = e.deltaX * 0.75
-        let maxThreshold = 0.55
-        if (this.leftOffset > this.$el.offsetWidth*maxThreshold) {
-          // Swipe right secondary action
-          if (this.mealData.fields.made) {
-            this.swipeActionLabelLeft = 'Kopiera'
-            this.swipeAction = this.copyToCurrentNextWeek;
-          } else {
-            this.swipeActionLabelLeft = 'Flytta'
-            this.swipeAction = this.moveToNextWeek;
-          }
-        } else if (this.leftOffset > this.$el.offsetWidth*maxThreshold/2) {
-          // Swipe right primary action
-          this.swipeActionLabelLeft = this.mealData.fields.made?'Markera ogjord':'Markera gjord'
-          this.swipeAction = this.toggleMade;
-        } else if (this.leftOffset < this.$el.offsetWidth*-maxThreshold) {
-          // Swipe left secondary action
-          this.swipeActionLabelRight = 'Flytta'
-          this.swipeAction = this.moveToPrevWeek;
-        } else if (this.leftOffset < this.$el.offsetWidth*-maxThreshold/2) {
-          // Swipe left primary action
-          this.swipeActionLabelRight = 'Redigera'
-          this.swipeAction = this.toggleEditMode;
-        } else {
-          this.swipeActionLabelLeft = null
-          this.swipeActionLabelRight = null
-          this.swipeAction = undefined
-        }
-      },
-      onPanEnd(e) {
-        this.leftOffset = 0;
-        if(this.swipeAction)
-          this.swipeAction()
-      },
-
       toggleEditMode() {
         this.editMode = !this.editMode
       },
@@ -175,6 +131,13 @@
         this.createdMeal = true
         var _this = this
         setTimeout(() => _this.createdMeal = false, 4000)
+      },
+      toNextWeek() {
+        if (this.mealData.fields.made) {
+          this.copyToCurrentNextWeek()
+        } else {
+          this.moveToNextWeek()
+        }
       }
     }
   }
@@ -195,7 +158,7 @@
       background: #F35;
     }
   }
-  > div {
+  .mealContent {
     padding: @bu*1.5 @bu*2;
     min-height: @bu*9;
     position: relative;
@@ -203,57 +166,10 @@
     background: @colorBackground;
     .border-bottom;
   }
-  .mealBg {
-    z-index: 0;
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: fade(@colorSecondary, 90%);
-    .border-bottom;
-    .display(flex);
-    .justify-content(space-between);
-    .align-items(center)
-  }
 }
 
 h2.made {
   text-decoration: line-through;
-}
-
-.createdNotification {
-}
-
-.iconContainer {
-  position: absolute;
-  width: @bu*4;
-  top: 0;
-  bottom: 0;
-  // background: fade(@colorPrimary, 3%);
-  &Left { left: 0 }
-  &Right { right: 0 }
-  .centerContent;
-}
-.actionIcon {
-  cursor: pointer;
-  padding: @bu;
-  width: @bu*4;
-  height: @bu*4;
-  .centerContent;
-  color: fade(@colorPrimary, 30%);
-}
-
-.moveArrow {
-  position: absolute;
-  bottom: 0;
-  padding: @bu;
-  &Right {
-    right: @bu*4;
-  }
-  &Left {
-    left: @bu*4;
-  }
 }
 
 .recipeList {
