@@ -9,7 +9,7 @@
       v-on:panend="onPanEnd">
       <slot></slot>
     </v-touch>
-    <div class="itemBackground" :class="action">
+    <div class="itemBackground" :class="action" v-if="direction">
       <div>
         <slot v-if="direction=='right' && action =='primary'" name="rightprimary"></slot>
         <slot v-if="direction=='right' && action == 'secondary'" name="rightsecondary"></slot>
@@ -66,11 +66,12 @@
 @import "../assets/global.less";
 .swipeActionItem {
   position: relative;
+  overflow: hidden;
 }
 .itemContent {
   position: relative;
   z-index: 100;
-  background: @colorBackground;
+  // background: @colorBackground;
 }
 .itemBackground {
   z-index: 0;
@@ -79,14 +80,17 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: fade(@colorPrimary, 10%);
-  transition: background 0.2s;
+  background: fade(@colorPrimary, 5%);
+  transition: background 0.2s, opacity 0.2s;
   padding: 0 @bu*2;
   font-size: @fuxl;
   .border-bottom;
   .display(flex);
   .justify-content(space-between);
   .align-items(center);
+  &.hidden {
+    opacity: 0;
+  }
   &.primary {
     background: #FA0;
   }

@@ -51,7 +51,12 @@
         </h2>
         <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
         <div class="recipeList" v-if="verifiedRecipes.length">
-          <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
+          <recipe
+            v-for="recipe in verifiedRecipes"
+            :key="recipe"
+            :recipeId="recipe"
+            :disableActions="true" 
+            :hideEdit="true"></recipe>
         </div>
       </div>
     </swipe-action-item>
@@ -147,7 +152,8 @@
 @import "../assets/global.less";
 .meal {
   position: relative;
-  overflow: hidden;
+  background: @colorBackground;
+  .border-bottom;
 
   &-edit {
     padding: @bu @bu*2;

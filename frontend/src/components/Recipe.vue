@@ -1,6 +1,6 @@
 <template>
-  <div class="recipe" v-bind:class="editMode?'recipe-edit':''">
-    <form v-if="editMode">
+  <div>
+    <form v-if="editMode" class="recipe recipeEdit">
       <div class="closeIcon" @click="toggleEditMode()">
         <icon name="times"></icon>
       </div>
@@ -18,38 +18,63 @@
       </p>
     </form>
 
-    <div v-else>
-      <div class="actionIconContainer">
-        <div v-if="!hideEdit" class="actionIcon" @click="toggleEditMode()">
-          <icon name="edit"></icon>
+    <div v-if="!editMode && disableActions">
+      <div class="recipeContent">
+        <div class="recipe">
+          <h3 v-if="recipeData.fields.url">
+            <a v-bind:href="recipeData.fields.url" target="_blank">
+            {{recipeData.title}}
+            <icon name="external-link"></icon>
+            <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+          </a>
+          </h3>
+          <h3 v-else>
+            {{recipeData.title}}
+            <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+          </h3>
+          <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
         </div>
-        <div v-if="!hideCreateMeal" class="actionIcon" @click="createMeal()">
-          <icon name="clone"></icon>
+      </div>
+    </div>
+
+    <swipe-action-item v-if="!editMode && !disableActions"
+    class="recipeItem"
+    v-on:leftprimary="toggleEditMode"
+    v-on:rightprimary="createMeal">
+
+      <span slot="leftprimary"><icon name="edit"></icon> Redigera</span>
+      <span slot="rightprimary"><icon name="copy"></icon> Kopiera</span>
+
+      <div class="recipeContent">
+        <div class="recipe">
+          <h3 v-if="recipeData.fields.url">
+            <a v-bind:href="recipeData.fields.url" target="_blank">
+            {{recipeData.title}}
+            <icon name="external-link"></icon>
+            <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+          </a>
+          </h3>
+          <h3 v-else>
+            {{recipeData.title}}
+            <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+          </h3>
+          <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
+
         </div>
       </div>
 
-      <h3 v-if="recipeData.fields.url">
-        <a v-bind:href="recipeData.fields.url" target="_blank">
-        {{recipeData.title}}
-        <icon name="external-link"></icon>
-        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
-      </a>
-      </h3>
-      <h3 v-else>
-        {{recipeData.title}}
-        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
-      </h3>
-      <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
-    </div>
+    </swipe-action-item>
   </div>
 </template>
 
 <script>
   import moment from 'moment'
+  import SwipeActionItem from './SwipeActionItem'
 
   export default {
     name: "Recipe",
-    props: ['recipeId','hideCreateMeal','hideEdit'],
+    components: { SwipeActionItem },
+    props: ['recipeId','disableActions','hideEdit'],
     data() {
       return {
         recipeData: this.$store.getters.verifyRecipe(this.recipeId) ?  this.$store.getters.recipeById(this.recipeId) : {},
@@ -58,7 +83,10 @@
       }
     },
     methods: {
-      toggleEditMode() { this.editMode = !this.editMode },
+      toggleEditMode() {
+        console.log('hej')
+        this.editMode = !this.editMode
+      },
       saveRecipe() {
         this.$store.dispatch('updateRecipe',{id: this.recipeData.id})
         this.editMode = false
@@ -86,13 +114,16 @@
 
 <style lang="less" scoped>
 @import "../assets/global.less";
+.recipeContent {
+  padding: @bu/2 0;
+}
+
 .recipe {
   position: relative;
-  margin: @bu -@bu;
-  padding: @bu @bu*5 @bu @bu;
-  min-height: @bu*9;
+  margin: 0 @bu;
+  padding: @bu @bu;
   border-radius: @bu/2;
-  background: fade(#FFA900, 3%);
+  background: lighten(#FFA900, 45%);
   box-shadow: 0 0 0 1px fade(@colorPrimary, 12%) inset;
   &-edit {
     padding-right: @bu;
@@ -117,23 +148,6 @@
   border-radius: @bu*2;
   padding: 0 @bu*2;
   white-space: nowrap;
-}
-.actionIconContainer {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  right: 0;
-  width: @bu*4.5;
-  .centerContent;
-  padding: @bu/2 @bu/2 @bu/2 0;
-}
-.actionIcon {
-  cursor: pointer;
-  padding: @bu;
-  width: @bu*4;
-  height: @bu*4;
-  .centerContent;
-  color: fade(@colorPrimary, 30%);
 }
 h3 {
   > a {
