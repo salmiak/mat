@@ -178,6 +178,7 @@
 
 h2.made {
   text-decoration: line-through;
+  color: fade(@colorPrimary, 30%);
 }
 
 .recipeList {
