@@ -20,6 +20,8 @@
 
     <swipe-action-item
       v-if="!editMode"
+      v-bind:rightActions="2"
+      v-bind:leftActions="2"
       v-on:rightprimary="toggleMade"
       v-on:rightsecondary="toNextWeek"
       v-on:leftprimary="toggleEditMode"
@@ -49,8 +51,9 @@
           {{mealData.title}}
           <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
         </h2>
-        <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
-        <div class="recipeList" v-if="verifiedRecipes.length">
+        <p v-html="mealData.fields.comment"
+          v-if="mealData.fields.comment && !mealData.fields.made"></p>
+        <div class="recipeList" v-if="verifiedRecipes.length && !mealData.fields.made">
           <recipe
             v-for="recipe in verifiedRecipes"
             :key="recipe"

@@ -25,11 +25,12 @@
 
 <script>
 
-  var friction = 0.75
-  var maxThreshold = 0.55
+  var friction = 0.85
+  var maxThreshold = 0.45
 
   export default {
     name: "SwipeActionItem",
+    props:['rightActions','leftActions'],
     data() {
       return {
         leftOffset: 0
@@ -44,7 +45,8 @@
       action() {
         let itemWidth = this.$el?this.$el.offsetWidth:0
         let thresholdInPixels = maxThreshold*itemWidth
-        if ( Math.abs(this.leftOffset) > thresholdInPixels) return 'secondary'
+        if ( this[this.direction+'Actions'] == 2 &&
+             Math.abs(this.leftOffset) > thresholdInPixels) return 'secondary'
         if ( Math.abs(this.leftOffset) > thresholdInPixels/2) return 'primary'
         return undefined
       }
@@ -71,7 +73,6 @@
 .itemContent {
   position: relative;
   z-index: 100;
-  // background: @colorBackground;
 }
 .itemBackground {
   z-index: 0;
