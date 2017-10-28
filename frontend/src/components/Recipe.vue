@@ -123,8 +123,8 @@
   margin: 0 @bu;
   padding: @bu @bu;
   border-radius: @bu/2;
-  background: lighten(#FFA900, 45%);
-  box-shadow: 0 0 0 1px fade(@colorPrimary, 12%) inset;
+  background: @colorBackground;
+  box-shadow: 0 0 0 1px @colorBorder inset;
   &-edit {
     padding-right: @bu;
     padding-bottom: 0;

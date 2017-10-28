@@ -55,7 +55,7 @@
             v-for="recipe in verifiedRecipes"
             :key="recipe"
             :recipeId="recipe"
-            :disableActions="true" 
+            :disableActions="true"
             :hideEdit="true"></recipe>
         </div>
       </div>
@@ -165,8 +165,7 @@
     }
   }
   .mealContent {
-    padding: @bu*1.5 @bu*2;
-    min-height: @bu*9;
+    padding: @bu*2 @bu*2;
     position: relative;
     z-index: 100;
     background: @colorBackground;
@@ -179,6 +178,6 @@ h2.made {
 }
 
 .recipeList {
-  margin: @bu 0 0;
+  margin: @bu -@bu*2 0;
 }
 </style>

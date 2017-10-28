@@ -92,7 +92,7 @@
     opacity: 0;
   }
   &.primary {
-    background: #FA0;
+    background: @colorYellow;
   }
   &.secondary {
     background: @colorSecondary;

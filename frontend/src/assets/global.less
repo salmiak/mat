@@ -8,13 +8,15 @@
 
 @colorPrimary: #334;
 @colorSecondary: #F38;
+@colorYellow: #FA0;
+
 
 @tc1: fade(@colorPrimary, 87%);
 @tc2: fade(@colorPrimary, 54%);
 @tc3: fade(@colorPrimary, 30%);
 
-@colorBackground: lighten(@colorPrimary, 75%);
-@colorBorder: fade(@colorPrimary, 12%);
+@colorBackground: lighten(@colorPrimary, 74%);
+@colorBorder: fade(@colorPrimary, 6%);
 
 @bu: .5rem;  // Base Unit
 
@@ -50,7 +52,7 @@
 
 html {
   font-family: 'Nunito', Helvetica, Arial, sans-serif;
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
   line-height: @bu*3;
   -webkit-font-smoothing: antialiased;
@@ -108,16 +110,18 @@ h1 {
   padding: 0 @bu*2;
 }
 h2 {
-  font-size: @fuxl;
+  font-size: @fu;
   line-height: @bu*3;
-  font-weight: 500;
+  font-weight: 700;
   margin-bottom: @bu;
+  &:last-child { margin-bottom: 0; }
 }
 h3 {
-  font-size: @fulg;
+  font-size: @fu;
   line-height: @bu*3;
-  font-weight: 400;
+  font-weight: 700;
   margin-bottom: @bu;
+  &:last-child { margin-bottom: 0; }
 }
 p {
   margin: 0 0 .5em;
