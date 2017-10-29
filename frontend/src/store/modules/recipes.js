@@ -34,10 +34,10 @@ const actions = {
     var page = 1, requests = []
     var requestPage = (page) => {
       requests.push(1)  // Add one more element to requests array per request.
-      console.log(requests)
       Vue.http.get(global.apiUri+'/recipe/?per_page=100&page='+page).then(response => {
 
-        if ( parseInt(response.headers.map['x-wp-totalpages'][0]) != page ) {
+        var totalPages = response.headers.map['X-WP-TotalPages']?response.headers.map['X-WP-TotalPages'][0]:response.headers.map['x-wp-totalpages'][0]
+        if ( parseInt(totalPages) != page ) {
           page++
           requestPage(page)
         }
