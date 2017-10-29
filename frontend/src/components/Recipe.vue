@@ -75,7 +75,7 @@
     name: "Recipe",
     components: { SwipeActionItem },
     props: ['recipeId','disableActions','hideEdit'],
-    data() {
+    data: function() { 
       return {
         recipeData: this.$store.getters.verifyRecipe(this.recipeId) ?  this.$store.getters.recipeById(this.recipeId) : {},
         editMode: false,
@@ -83,19 +83,19 @@
       }
     },
     methods: {
-      toggleEditMode() {
+      toggleEditMode: function() {
         console.log('hej')
         this.editMode = !this.editMode
       },
-      saveRecipe() {
+      saveRecipe: function() {
         this.$store.dispatch('updateRecipe',{id: this.recipeData.id})
         this.editMode = false
       },
-      deleteRecipe() {
+      deleteRecipe: function() {
         this.$store.dispatch('deleteRecipe', {id: this.recipeData.id})
       },
-      createMeal() {
-        let mealData = {
+      createMeal: function() {
+        var mealData = {
           title: this.recipeData.title,
           fields: {
             recipes: [this.recipeData.id],

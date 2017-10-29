@@ -36,21 +36,21 @@
   export default {
     name: "AddRecipe",
     components: { },
-    data() {
+    data: function() { 
       return {
         showForm: false,
         recipeData: JSON.parse(JSON.stringify(emptyRecipe))
       }
     },
     methods: {
-      toggleForm() {
+      toggleForm: function() {
         this.showForm = !this.showForm
       },
-      saveRecipe() {
+      saveRecipe: function() {
         this.$store.dispatch('updateRecipe',{payload: this.recipeData})
         this.recipeData = JSON.parse(JSON.stringify(emptyRecipe))
       },
-      saveRecipeAndClose() {
+      saveRecipeAndClose: function() {
         this.saveRecipe()
         this.showForm = false
       }

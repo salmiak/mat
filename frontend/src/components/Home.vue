@@ -19,9 +19,9 @@ import moment from 'moment'
 export default {
   name: 'Home',
   components:{ WeekNav,Week },
-  data() {
-    let year = this.$route.params.year ? parseInt(this.$route.params.year) :  moment().isoWeekYear()
-    let week = this.$route.params.week ? parseInt(this.$route.params.week) : moment().isoWeek()
+  data: function() { 
+    var year = this.$route.params.year ? parseInt(this.$route.params.year) :  moment().isoWeekYear()
+    var week = this.$route.params.week ? parseInt(this.$route.params.week) : moment().isoWeek()
     return {
       year: year,
       week: week,

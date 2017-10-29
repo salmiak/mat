@@ -39,7 +39,7 @@
     name: "AddMeal",
     components: { Recipe, Multiselect },
     props: ['year','week'],
-    data() {
+    data: function() { 
       return {
         showForm: false,
         mealData: JSON.parse(JSON.stringify(emptyMeal))
@@ -50,19 +50,19 @@
         'recipes': 'allRecipes'
       }),
       selectedRecipes: {
-        get() {
+        get: function() {
           return this.mealData.fields.recipes.map(id => this.$store.getters.recipeById(id))
         },
-        set(newValue) {
+        set: function(newValue) {
           this.mealData.fields.recipes = newValue.map(recipe => recipe.id)
         }
       },
     },
     methods: {
-      toggleForm() {
+      toggleForm: function() {
         this.showForm = !this.showForm
       },
-      saveMeal() {
+      saveMeal: function() {
         this.mealData.fields.date = moment().isoWeekYear( this.year ).isoWeek( this.week )
         this.$store.dispatch('updateMeal',{payload: this.mealData})
         this.mealData = JSON.parse(JSON.stringify(emptyMeal))

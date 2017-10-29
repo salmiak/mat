@@ -32,10 +32,10 @@ const actions = {
     commit('clearRecipes')
     commit('recipesLoading', {loading: true})
     var page = 1, requests = []
-    var requestPage = (page) => {
+    var requestPage = function(page) {
       requests.push(1)  // Add one more element to requests array per request.
       console.log(requests)
-      Vue.http.get(global.apiUri+'/recipe/?per_page=100&page='+page).then(response => {
+      Vue.http.get(global.apiUri+'/recipe/?per_page=40&page='+page).then(response => {
 
         if ( parseInt(response.headers.map['x-wp-totalpages'][0]) != page ) {
           page++
@@ -62,7 +62,7 @@ const actions = {
       })
     } else if ( payload ) {
       Vue.http.post(global.apiUri+'/recipe/', payload).then(response => {
-        let recipe = global.wpProcess(response.body);
+        var recipe = global.wpProcess(response.body);
         commit('unshiftRecipe', {recipe:recipe})
       }, response => {
         this.$router.push('/login')

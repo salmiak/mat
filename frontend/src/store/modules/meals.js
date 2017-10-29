@@ -29,9 +29,11 @@ const actions = {
     commit('clearMeals')
     commit('mealsLoading', {loading: true})
     var page = 1, requests = []
-    var requestPage = (page) => {
+    var requestPage = function(page) {
       requests.push(1)  // Add one more element to requests array per request.
-      Vue.http.get(global.apiUri+'/meal/?per_page=100&page='+page).then(response => {
+      Vue.http.get(global.apiUri+'/meal/?per_page=40&page='+page).then(response => {
+
+        console.log(response.headers)
 
         if ( parseInt(response.headers.map['x-wp-totalpages'][0]) != page ) {
           page++
@@ -63,7 +65,7 @@ const actions = {
       })
     } else if ( payload ) {
       Vue.http.post(global.apiUri+'/meal/', payload).then(response => {
-        let meal = global.wpProcess(response.body);
+        var meal = global.wpProcess(response.body);
         commit('unshiftMeal', {meal:meal})
       }, response => {
         this.$router.push('/login')

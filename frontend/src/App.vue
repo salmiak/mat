@@ -18,7 +18,7 @@ import * as global from './store/utils'
 export default {
   name: 'app',
   created() {
-    let token = this.$cookies.get('mat_authToken')
+    var token = this.$cookies.get('mat_authToken')
 
     // If no token, break and go to Login
     if(!token)

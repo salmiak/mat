@@ -20,9 +20,9 @@
     props: ['year','week'],
     components: { Meal,AddMeal },
     computed: {
-      isLoading(){ return this.$store.getters.isLoading },
-      madeMeals() { return this.$store.getters.mealsByWeek(this.year, this.week).filter(r => r.fields.made) },
-      nonMadeMeals() { return this.$store.getters.mealsByWeek(this.year, this.week).filter(r => !r.fields.made) }
+      isLoading: function() {  return this.$store.getters.isLoading },
+      madeMeals: function() {  return this.$store.getters.mealsByWeek(this.year, this.week).filter(r => r.fields.made) },
+      nonMadeMeals: function() {  return this.$store.getters.mealsByWeek(this.year, this.week).filter(r => !r.fields.made) }
     }
   }
 </script>

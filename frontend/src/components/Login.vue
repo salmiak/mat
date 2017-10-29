@@ -18,7 +18,7 @@
   import * as global from '../store/utils'
   export default {
     name: "Login",
-    data(){
+    data: function() {
       return {
         user: '',
         password: '',
@@ -26,7 +26,7 @@
       }
     },
     methods: {
-      doLogin(){
+      doLogin: function() {
         delete Vue.http.headers.common['Authorization']
         this.errorMessage = false
         Vue.http.post(global.root + "wp-json/jwt-auth/v1/token",{
@@ -34,7 +34,7 @@
           password: this.password
         }).then (response => {
           if (response.status == 200) {
-            let token = response.body.token
+            var token = response.body.token
             this.$cookies.set('mat_authToken', token)
             Vue.http.headers.common['Authorization'] = 'Bearer ' + token;
             this.$store.commit('loggIn')

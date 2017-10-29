@@ -31,20 +31,20 @@
   export default {
     name: "SwipeActionItem",
     props:['rightActions','leftActions'],
-    data() {
+    data: function() {
       return {
         leftOffset: 0
       }
     },
     computed: {
-      direction() {
+      direction: function() {
         if (this.leftOffset > 0) return 'right'
         if (this.leftOffset < 0) return 'left'
         return undefined
       },
-      action() {
-        let itemWidth = this.$el?this.$el.offsetWidth:0
-        let thresholdInPixels = maxThreshold*itemWidth
+      action: function() {
+        var itemWidth = this.$el?this.$el.offsetWidth:0
+        var thresholdInPixels = maxThreshold*itemWidth
         if ( this[this.direction+'Actions'] == 2 &&
              Math.abs(this.leftOffset) > thresholdInPixels) return 'secondary'
         if ( Math.abs(this.leftOffset) > thresholdInPixels/2) return 'primary'
@@ -52,10 +52,10 @@
       }
     },
     methods: {
-      onPanMove(e) {
+      onPanMove: function(e) {
         this.leftOffset = e.deltaX * friction
       },
-      onPanEnd(e) {
+      onPanEnd: function(e) {
         if (this.direction && this.action)
           this.$emit(this.direction+this.action)
         this.leftOffset = 0;

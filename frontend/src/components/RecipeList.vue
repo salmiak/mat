@@ -31,19 +31,19 @@
   export default {
     name: "RecipeList",
     components: { Recipe, AddRecipe, VueFuse },
-    created(){
+    created: function(){
       this.$on('recipeSearchChanged', results =>{
         this.recipesResults = results
       })
     },
-    data(){
+    data: function() {
       return {
         recipesResults: [],
         keys: ['title','content']
       }
     },
     computed: {
-      isLoading(){ return this.$store.getters.isLoading },
+      isLoading: function() { return this.$store.getters.isLoading },
       ...mapGetters({
         'recipes': 'allRecipes'
       })

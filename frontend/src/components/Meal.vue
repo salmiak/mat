@@ -79,7 +79,7 @@
     name: "Meal",
     components: { Recipe,Multiselect,SwipeActionItem },
     props: ['mealId'],
-    data() {
+    data: function() { 
       return {
         mealData: this.$store.getters.mealById(this.mealId),
         editMode: false,
@@ -91,45 +91,45 @@
         'recipes': 'allRecipes'
       }),
       selectedRecipes: {
-        get() {
+        get: function() {
           return this.mealData.fields.recipes.map(id => this.$store.getters.recipeById(id))
         },
-        set(newValue) {
+        set: function(newValue) {
           this.mealData.fields.recipes = newValue.map(recipe => recipe.id)
         }
       },
-      verifiedRecipes() {
+      verifiedRecipes: function() {
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
       }
     },
     methods: {
-      toggleEditMode() {
+      toggleEditMode: function() {
         this.editMode = !this.editMode
       },
-      toggleMade() {
+      toggleMade: function() {
         this.mealData.fields.made = !this.mealData.fields.made
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
-      saveMeal() {
+      saveMeal: function() {
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
         this.editMode = false
       },
-      deleteMeal() {
+      deleteMeal: function() {
         this.$store.dispatch('deleteMeal', {id: this.mealData.id})
       },
-      moveToPrevWeek() {
+      moveToPrevWeek: function() {
         if(this.mealData.fields.date){
           this.mealData.fields.date = moment(this.mealData.fields.date).subtract(1, 'w')
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
-      moveToNextWeek() {
+      moveToNextWeek: function() {
         if(this.mealData.fields.date){
           this.mealData.fields.date = moment(this.mealData.fields.date).add(1, 'w')
         }
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
-      copyToCurrentNextWeek() {
+      copyToCurrentNextWeek: function() {
         var mealClone = JSON.parse(JSON.stringify(this.mealData))
         delete mealClone.id
         delete mealClone.fields.made
@@ -140,7 +140,7 @@
         var _this = this
         setTimeout(() => _this.createdMeal = false, 4000)
       },
-      toNextWeek() {
+      toNextWeek: function() {
         if (this.mealData.fields.made) {
           this.copyToCurrentNextWeek()
         } else {

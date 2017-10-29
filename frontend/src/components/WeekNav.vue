@@ -12,11 +12,11 @@ import moment from 'moment'
 
 export default {
   name: 'weekNav',
-  data() {
-    let week = this.$route.params.week ? parseInt(this.$route.params.week) : moment().isoWeek()
-    let year = this.$route.params.year ? parseInt(this.$route.params.year) :  moment().isoWeekYear()
-    let nextWeek = moment().isoWeek(week).isoWeekYear(year).add(1,'w');
-    let prevWeek = moment().isoWeek(week).isoWeekYear(year).subtract(1,'w');
+  data: function() {
+    var week = this.$route.params.week ? parseInt(this.$route.params.week) : moment().isoWeek()
+    var year = this.$route.params.year ? parseInt(this.$route.params.year) :  moment().isoWeekYear()
+    var nextWeek = moment().isoWeek(week).isoWeekYear(year).add(1,'w');
+    var prevWeek = moment().isoWeek(week).isoWeekYear(year).subtract(1,'w');
 
     return {
       year: year,
@@ -33,10 +33,10 @@ export default {
   },
   watch: {
     '$route' (to, from) {
-      let week = this.$route.params.week ? parseInt(this.$route.params.week) : moment().isoWeek()
-      let year = this.$route.params.year ? parseInt(this.$route.params.year) :  moment().isoWeekYear()
-      let nextWeek = moment().isoWeek(week).isoWeekYear(year).add(1,'w');
-      let prevWeek = moment().isoWeek(week).isoWeekYear(year).subtract(1,'w');
+      var week = this.$route.params.week ? parseInt(this.$route.params.week) : moment().isoWeek()
+      var year = this.$route.params.year ? parseInt(this.$route.params.year) :  moment().isoWeekYear()
+      var nextWeek = moment().isoWeek(week).isoWeekYear(year).add(1,'w');
+      var prevWeek = moment().isoWeek(week).isoWeekYear(year).subtract(1,'w');
 
       this.year =  year,
       this.week =  week,
@@ -51,17 +51,17 @@ export default {
     }
   },
   computed: {
-    isCurrentWeek() {
+    isCurrentWeek: function() {
       return this.year == this.$store.getters.currentYear && this.week == this.$store.getters.currentWeek;
     }
   },
   methods: {
-    goToPrevWeek() { this.$router.push( '/week/'+this.prevWeek.year+'/'+this.prevWeek.week ) },
-    goToNextWeek() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) },
-    goToCurrentWeek() { this.$router.push('/') },
-    goToCurrentNextWeek() {
-      let year = moment().add(1,'w').isoWeekYear()
-      let week = moment().add(1,'w').isoWeek()
+    goToPrevWeek: function() { this.$router.push( '/week/'+this.prevWeek.year+'/'+this.prevWeek.week ) },
+    goToNextWeek: function() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) },
+    goToCurrentWeek: function() { this.$router.push('/') },
+    goToCurrentNextWeek: function() {
+      var year = moment().add(1,'w').isoWeekYear()
+      var week = moment().add(1,'w').isoWeek()
       this.$router.push( '/week/'+year+'/'+week  ) }
   }
 }
