@@ -129,7 +129,7 @@ p {
   line-height: @bu*3;
 }
 
-input:not(.multiselect__input), textarea, .input {
+input:not(.multiselect__input):not([type=submit]), textarea, .input {
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -145,6 +145,18 @@ input:not(.multiselect__input), textarea, .input {
     background: #FFF;
     outline: none;
     box-shadow: 0 -1px 0 0 @colorSecondary inset;
+  }
+}
+input[type=submit] {
+  .btn;
+  border:none;
+  font-family: inherit;
+  font-size: inherit;
+  &.btn-primary {
+    background: @colorSecondary;
+    &:hover {
+      background: darken(@colorSecondary, 12%);
+    }
   }
 }
 

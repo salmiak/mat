@@ -3,10 +3,10 @@
     <div class="header">
       <h1>Logga in</h1>
     </div>
-    <form>
+    <form v-on:submit.prevent="doLogin()">
       Användare <input type="text" v-model="user" /><br/>
       Lösenord <input type="password" v-model="password" />
-      <div class="btn btn-primary" @click="doLogin()">Logga in</div>
+      <input type="submit" class="btn btn-primary" value="Logga in" />
     </form>
     <p class="errorMessage" v-if="errorMessage" v-html="errorMessage"></p>
   </div>
