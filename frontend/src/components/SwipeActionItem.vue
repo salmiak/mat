@@ -84,7 +84,10 @@
   background: fade(@colorPrimary, 5%);
   transition: background 0.2s, opacity 0.2s;
   padding: 0 @bu*2;
-  font-size: @fuxl;
+  .capitals;
+  font-size: @fulg;
+  font-weight: 700;
+  font-style: italic;
   .border-bottom;
   .display(flex);
   .justify-content(space-between);
@@ -99,7 +102,9 @@
     background: @colorSecondary;
   }
   .fa-icon {
-    vertical-align: bottom;
+    font-size: 1.5em;
+    vertical-align: -.25em;
+    //vertical-align: bottom;
   }
 }
 </style>

@@ -165,7 +165,7 @@
   .saveBtnContainer {
     padding: @bu 0;
     .btn-red {
-      background: #F35;
+      background: #F56;
     }
   }
   .mealContent {

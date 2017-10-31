@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i');
+@import url('https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,700,700i');
 @import '../../node_modules/lesshat/lesshat.less';
 @import '../../node_modules/reset-css/reset';
 @import '../../node_modules/vue-multiselect/dist/vue-multiselect.min.css';
@@ -42,7 +42,7 @@
 }
 .capitals {
   font-size: @fusm;
-  letter-spacing: 0.15em;
+  letter-spacing: 0.1em;
   text-transform: uppercase;
 }
 
@@ -51,8 +51,8 @@
 * { box-sizing: border-box; }
 
 html {
-  font-family: 'Nunito', Helvetica, Arial, sans-serif;
-  font-weight: 500;
+  font-family: 'Josefin Sans', Helvetica, Arial, sans-serif;
+  font-weight: 400;
   font-size: 16px;
   line-height: @bu*3;
   -webkit-font-smoothing: antialiased;
@@ -102,7 +102,8 @@ a {
 }
 
 h1 {
-  font-weight: 900;
+  font-weight: 700;
+  font-style: italic;
   color: @colorSecondary;
   .capitals;
   font-size: @fu;
@@ -110,6 +111,7 @@ h1 {
   padding: 0 @bu*2;
 }
 h2 {
+  .capitals;
   font-size: @fu;
   line-height: @bu*3;
   font-weight: 700;
@@ -130,6 +132,7 @@ p {
 }
 
 input:not(.multiselect__input):not([type=submit]), textarea, .input {
+  font-family: inherit;
   box-sizing: border-box;
   display: block;
   width: 100%;
@@ -212,16 +215,20 @@ input[type=submit] {
 }
 
 .btn {
+  .capitals;
+  font-weight: 700;
+  font-size: @fu;
+  font-family: inherit;
   box-sizing: border-box;
   cursor: pointer;
   border-radius: @bu/2;
-  background: fade(@colorPrimary, 54%);
+  background: fade(@colorPrimary, 30%);
   color: #FFF;
-  padding: 0 @bu*2;
-  line-height: @bu*4;
+  padding: @bu*.5 @bu*2 0;
+  line-height: @bu*3.5;
   display: inline-block;
   &:hover {
-    background: darken(fade(@colorPrimary, 54%), 12%);
+    background: darken(fade(@colorPrimary, 30%), 12%);
   }
   &-primary {
     background: @colorSecondary;
