@@ -47,7 +47,7 @@
         let thresholdInPixels = maxThreshold*itemWidth
         if ( this[this.direction+'Actions'] == 2 &&
              Math.abs(this.leftOffset) > thresholdInPixels) return 'secondary'
-        if ( Math.abs(this.leftOffset) > thresholdInPixels/2) return 'primary'
+        if ( Math.abs(this.leftOffset) > thresholdInPixels/5) return 'primary'
         return undefined
       }
     },
