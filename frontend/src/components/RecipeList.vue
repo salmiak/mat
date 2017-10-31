@@ -62,10 +62,10 @@
   }
 }
 ul {
-  padding: 0 @bu*2;
+  padding: @bu/2 0;
   li {
     list-style: none;
-    margin-bottom: @bu;
+    padding: 0;
   }
 }
 </style>

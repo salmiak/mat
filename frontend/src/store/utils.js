@@ -8,15 +8,9 @@ function b64EncodeUnicode(str) {
     }));
 }
 
-var _root, _apiUri, _authToken;
+var _root = process.env.API_ROOT
+var _apiUri = _root + "wp-json/wp/v2"
 
-if (process.env.NODE_ENV == 'development') {
-  _root = "//localhost:8888/mat/";
-  _apiUri = "//localhost:8888/mat/wp-json/wp/v2"
-} else {
-  _root = "/"
-  _apiUri = "/wp-json/wp/v2"
-}
 export const root = _root
 export const apiUri = _apiUri
 

@@ -2,6 +2,9 @@
 
 > Matplaneringssajt
 
+## Config
+In `frontend/config` duplcate the file `dev.env.template.js` and remove "template" from name. Change API_ROOT to where ever the local backend can be found.
+
 ## Build Setup
 
 ``` bash

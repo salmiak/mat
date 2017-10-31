@@ -18,53 +18,66 @@
       </p>
     </form>
 
-    <div v-else>
-      <div class="iconContainer iconContainerLeft">
-        <div class="actionIcon" @click="toggleMade()">
-          <icon name="check-square-o" v-if="mealData.fields.made"></icon>
-          <icon name="square-o" v-else></icon>
-        </div>
-      </div>
+    <swipe-action-item
+      v-if="!editMode"
+      v-bind:rightActions="2"
+      v-bind:leftActions="2"
+      v-on:rightprimary="toggleMade"
+      v-on:rightsecondary="toNextWeek"
+      v-on:leftprimary="toggleEditMode"
+      v-on:leftsecondary="moveToPrevWeek">
 
-      <div class="iconContainer iconContainerRight">
-        <div class="actionIcon" @click="toggleEditMode()">
-          <icon name="edit"></icon>
-        </div>
-        <div class="actionIcon" v-if="showCopyMeal" @click="copyToCurrentNextWeek()">
-          <icon name="clone"></icon>
-        </div>
-        <div class="actionIcon" v-if="createdMeal">
-          <icon name="check"></icon>
-        </div>
-      </div>
+      <span slot="rightprimary">
+        <span v-if="mealData.fields.made">
+          <icon name="square-o"></icon> Ogjord
+        </span>
+        <span v-else>
+          <icon name="check-square-o"></icon> Gjord
+        </span>
+      </span>
+      <span slot="rightsecondary">
+        <span v-if="mealData.fields.made">
+          <icon name="copy"></icon> Kopiera
+        </span>
+        <span v-else>
+          <icon name="arrow-right"></icon> Flytta
+        </span>
+      </span>
+      <span slot="leftprimary"><icon name="edit"></icon> Redigera</span>
+      <span slot="leftsecondary"><icon name="arrow-left"></icon> Flytta</span>
 
-      <div class="moveArrow moveArrowLeft" @click="moveToPrevWeek()">
-        <icon name="arrow-left"></icon>
+      <div class="mealContent">
+        <h2 v-bind:class="mealData.fields.made?'made':''">
+          {{mealData.title}}
+          <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+        </h2>
+        <p v-html="mealData.fields.comment"
+          v-if="mealData.fields.comment && !mealData.fields.made"></p>
+        <div class="recipeList" v-if="verifiedRecipes.length && !mealData.fields.made">
+          <recipe
+            v-for="recipe in verifiedRecipes"
+            :key="recipe"
+            :recipeId="recipe"
+            :disableActions="true"
+            :hideEdit="true"></recipe>
+        </div>
       </div>
-      <div class="moveArrow moveArrowRight" @click="moveToNextWeek()">
-        <icon name="arrow-right"></icon>
-      </div>
-      <h2 v-bind:class="mealData.fields.made?'made':''">
-        {{mealData.title}}
-        <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
-      </h2>
-      <p v-html="mealData.fields.comment" v-if="mealData.fields.comment"></p>
-      <div class="recipeList" v-if="verifiedRecipes.length">
-        <recipe v-for="recipe in verifiedRecipes" :key="recipe" v-bind:recipeId="recipe" v-bind:hideCreateMeal="true" v-bind:hideEdit="true"></recipe>
-      </div>
-    </div>
+    </swipe-action-item>
+
   </div>
 </template>
 
 <script>
   import { mapGetters } from 'vuex'
   import moment from 'moment'
+  import chroma from 'chroma-js'
   import Multiselect from 'vue-multiselect'
   import Recipe from './Recipe'
+  import SwipeActionItem from './SwipeActionItem'
 
   export default {
     name: "Meal",
-    components: { Recipe,Multiselect },
+    components: { Recipe,Multiselect,SwipeActionItem },
     props: ['mealId'],
     data() {
       return {
@@ -87,18 +100,6 @@
       },
       verifiedRecipes() {
         return this.mealData.fields.recipes && this.mealData.fields.recipes.filter(id => this.$store.getters.verifyRecipe(id))
-      },
-      showCopyMeal() {
-        if ( this.createdMeal )
-          return false  // Don't show for meals copied this session
-        if ( !this.$route.params.week && !this.$route.params.year )
-          return true  // If route params not set, we're on home route
-
-        let currentDate = moment().isoWeekYear(this.$store.getters.currentYear).isoWeek(this.$store.getters.currentWeek)
-        let testedDate = moment().isoWeekYear(this.$route.params.year).isoWeek(this.$route.params.week)
-
-        // Show for dates before current week
-        return currentDate >= testedDate
       }
     },
     methods: {
@@ -138,6 +139,13 @@
         this.createdMeal = true
         var _this = this
         setTimeout(() => _this.createdMeal = false, 4000)
+      },
+      toNextWeek() {
+        if (this.mealData.fields.made) {
+          this.copyToCurrentNextWeek()
+        } else {
+          this.moveToNextWeek()
+        }
       }
     }
   }
@@ -146,9 +154,8 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
-  padding: @bu*1.5 @bu*5 @bu*4.5;
   position: relative;
-  min-height: @bu*9;
+  background: @colorBackground;
   .border-bottom;
 
   &-edit {
@@ -160,47 +167,21 @@
       background: #F35;
     }
   }
+  .mealContent {
+    padding: @bu*2 @bu*2;
+    position: relative;
+    z-index: 100;
+    background: @colorBackground;
+    .border-bottom;
+  }
 }
 
 h2.made {
   text-decoration: line-through;
-}
-
-.createdNotification {
-}
-
-.iconContainer {
-  position: absolute;
-  width: @bu*4;
-  top: 0;
-  bottom: 0;
-  // background: fade(@colorPrimary, 3%);
-  &Left { left: 0 }
-  &Right { right: 0 }
-  .centerContent;
-}
-.actionIcon {
-  cursor: pointer;
-  padding: @bu;
-  width: @bu*4;
-  height: @bu*4;
-  .centerContent;
   color: fade(@colorPrimary, 30%);
 }
 
-.moveArrow {
-  position: absolute;
-  bottom: 0;
-  padding: @bu;
-  &Right {
-    right: @bu*4;
-  }
-  &Left {
-    left: @bu*4;
-  }
-}
-
 .recipeList {
-  margin: @bu 0 0;
+  margin: @bu -@bu*2 0;
 }
 </style>
