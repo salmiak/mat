@@ -108,6 +108,7 @@
       },
       toggleMade() {
         this.mealData.fields.made = !this.mealData.fields.made
+        this.$forceUpdate()
         this.$store.dispatch('updateMeal',{id: this.mealData.id})
       },
       saveMeal() {
