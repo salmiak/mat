@@ -43,5 +43,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../assets/global.less";
 
+#home {
+  width: 100%;
+  max-width: 450px;
+  margin: 0 auto;
+  box-shadow: 0 0 0 1px @colorBorder;
+  background: @colorBackground;
+}
 </style>

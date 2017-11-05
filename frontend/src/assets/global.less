@@ -16,6 +16,7 @@
 @tc3: fade(@colorPrimary, 30%);
 
 @colorBackground: lighten(@colorPrimary, 74%);
+@colorBody: #00c5d4;
 @colorBorder: fade(@colorPrimary, 6%);
 
 @bu: .5rem;  // Base Unit
@@ -58,7 +59,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: @tc1;
-  background: @colorBackground;
+  background: @colorBody;
 
   @media (max-width: 340px) {
     font-size: 14px;

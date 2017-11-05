@@ -4,6 +4,9 @@ import moment from 'moment'
 import recipes from './modules/recipes'
 import meals from './modules/meals'
 
+import MobileDetect from 'mobile-detect'
+var md = new MobileDetect(window.navigator.userAgent);
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -12,7 +15,8 @@ export default new Vuex.Store({
     meals
   },
   state:{
-    loggedin: false
+    loggedin: false,
+    mobile: md.mobile()
   },
   getters: {
     currentWeek(){
