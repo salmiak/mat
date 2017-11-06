@@ -44,7 +44,11 @@
             this.$store.dispatch('requestAllMeals')
 
             // Go to home screen
-            this.$router.push('week')
+            if( this.$store.state.mobile ) {
+              this.$router.push('week')
+            } else {
+              this.$router.push('/desktop')
+            }
           }
         }, response => {
           this.errorMessage = response.body.message
