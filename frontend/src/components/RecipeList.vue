@@ -10,7 +10,7 @@
     <div v-else>
       <add-recipe/>
       <div class="search">
-        <vue-fuse :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
+        <vue-fuse class="searchField" :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
       </div>
       <ul>
         <li v-for="recipe in recipesResults" :key="recipe.id">
@@ -53,9 +53,12 @@
 
 <style lang="less" scoped>
 @import "../assets/global.less";
+#recipeList {
+  background: @colorBackground;
+}
 .search {
   .border-bottom;
-  input {
+  input.searchField {
     padding: @bu 2*@bu;
     margin: 0;
     border-radius: 0;
