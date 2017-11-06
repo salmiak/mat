@@ -49,7 +49,7 @@ export default {
 
   .weekContainer {
     border-radius: @bu @bu 0 0;
-    width: 400px;
+    width: 430px;
     .flex-shrink(0);
     margin: 0 @bu;
     max-height: 100%;
