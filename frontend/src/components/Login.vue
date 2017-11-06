@@ -62,11 +62,25 @@
 <style lang="less" scoped>
 @import "../assets/global.less";
 #login {
-  padding: @bu*4 @bu*2;
+  padding: @hHeader+@bu*4 @bu*2 0;
   max-width: 400px;
   margin: 0 auto;
+  background: @colorBackground;
+  position: relative;
+  border-radius: @bu;
+  overflow: hidden;
+  .header {
+    position: absolute;
+    top: 0;
+    background: @colorSecondary;
+    h1 { color: @colorBackground; }
+  }
   form {
     margin: 0 0 @bu*2;
+    .btn {
+      margin-top: @bu;
+      cursor: pointer;
+    }
   }
   .errorMessage {
     background: fade(@colorSecondary, 10%);
