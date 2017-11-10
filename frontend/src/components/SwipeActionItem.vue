@@ -4,7 +4,7 @@
       <v-touch
         tag="div"
         class="itemContent"
-        v-bind:pan-options="{ direction: 'horizontal', threshold: 20 }"
+        v-bind:pan-options="{ direction: 'horizontal', threshold: 30 }"
         v-bind:style="{left: leftOffset+'px'}"
         v-on:panmove="onPanMove"
         v-on:panend="onPanEnd">
@@ -48,7 +48,7 @@
 
 <script>
 
-  var friction = 0.85
+  var friction = 0.80
   var maxThreshold = 0.45
 
   export default {
@@ -70,7 +70,7 @@
         let thresholdInPixels = maxThreshold*itemWidth
         if ( this[this.direction+'Actions'] == 2 &&
              Math.abs(this.leftOffset) > thresholdInPixels) return 'secondary'
-        if ( Math.abs(this.leftOffset) > thresholdInPixels/5) return 'primary'
+        if ( Math.abs(this.leftOffset) > thresholdInPixels/3) return 'primary'
         return undefined
       }
     },
