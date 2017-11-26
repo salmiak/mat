@@ -48,8 +48,8 @@
 
 <script>
 
-  var friction = 0.80
-  var maxThreshold = 0.45
+  var friction = .95
+  var maxThreshold = 0.65
 
   export default {
     name: "SwipeActionItem",
