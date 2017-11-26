@@ -5,7 +5,8 @@
     </div>
     <form v-on:submit.prevent="doLogin()">
       Användare <input type="text" v-model="user" /><br/>
-      Lösenord <input type="password" v-model="password" />
+      Lösenord <input type="text" v-model="password" />
+      <label for="sorePwd"><input name="storePwd" type="checkbox" v-model="storePwd"> Kom ih&aring;g mig</label><br>
       <input type="submit" class="btn btn-primary" value="Logga in" />
     </form>
     <p class="errorMessage" v-if="errorMessage" v-html="errorMessage"></p>
@@ -20,8 +21,9 @@
     name: "Login",
     data(){
       return {
-        user: '',
-        password: '',
+        user: this.$cookies.isKey('mat_usr')?this.$cookies.get('mat_usr'):'',
+        password: this.$cookies.isKey('mat_pwd')?this.$cookies.get('mat_pwd'):'',
+        storePwd: true,
         errorMessage: false
       }
     },
@@ -36,6 +38,10 @@
           if (response.status == 200) {
             let token = response.body.token
             this.$cookies.set('mat_authToken', token)
+            if (this.storePwd) {
+              this.$cookies.set('mat_pwd', this.password)
+              this.$cookies.set('mat_usr', this.user)
+            }
             Vue.http.headers.common['Authorization'] = 'Bearer ' + token;
             this.$store.commit('loggIn')
 
@@ -44,7 +50,7 @@
             this.$store.dispatch('requestAllMeals')
 
             // Go to home screen
-            this.$router.push('week')
+            this.$router.push('/')
           }
         }, response => {
           this.errorMessage = response.body.message
@@ -69,5 +75,9 @@
     padding: @bu;
     border-radius: @bu;
   }
+}
+label {
+  display: block;
+  line-height: 5*@bu;
 }
 </style>
