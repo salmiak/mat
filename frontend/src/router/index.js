@@ -21,7 +21,7 @@ export default new Router({
       component: Mobile
     },
     {
-      path: 'm/week/:year/:week',
+      path: '/m/week/:year/:week',
       name: 'Week',
       component: Mobile
     },

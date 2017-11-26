@@ -3,7 +3,7 @@
   <div id="app">
     <div id="toolbar" v-if="$store.state.mobile">
       <div id="nav">
-        <router-link to="/week">Planering</router-link>
+        <router-link to="/m/week">Planering</router-link>
         <router-link to="/recipes">Recept</router-link>
       </div>
     </div>
