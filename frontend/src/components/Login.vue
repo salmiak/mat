@@ -5,7 +5,7 @@
     </div>
     <form v-on:submit.prevent="doLogin()">
       Användare <input type="text" v-model="user" /><br/>
-      Lösenord <input type="text" v-model="password" />
+      Lösenord <input type="password" v-model="password" />
       <label for="storePwd"><input id="storePwd" type="checkbox" v-model="storePwd"> Kom ih&aring;g mig</label><br>
       <input type="submit" class="btn btn-primary" value="Logga in" />
     </form>
