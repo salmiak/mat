@@ -17,7 +17,7 @@ import Vue from 'vue'
 import * as global from './store/utils'
 
 export default {
-  name: 'app',
+  name: 'app'
 }
 </script>
 

@@ -4,7 +4,7 @@
       <div class="weekContainer" v-for="thisWeek in weeksToShow">
         <h2 v-if="thisWeek.label">{{thisWeek.label}}</h2>
         <h2 v-else>Vecka {{thisWeek.week}}</h2>
-        <week v-bind:year="thisWeek.year" v-bind:week="thisWeek.week" :key="$index" />
+        <week v-bind:year="thisWeek.year" v-bind:week="thisWeek.week" />
       </div>
     </div>
   </div>
@@ -20,7 +20,7 @@ export default {
   computed: {
     weeksToShow() {
       var o = []
-      for ( var i = -2; i<10 ; i++ ) {
+      for ( var i = -1; i<10 ; i++ ) {
         o.push({
           week:moment().subtract(i, 'w').isoWeek(),
           year: moment().subtract(i, 'w').isoWeekYear(),
@@ -48,7 +48,7 @@ export default {
 
   .weekContainer {
     border-radius: @bu @bu 0 0;
-    width: 400px;
+    width: 430px;
     .flex-shrink(0);
     margin: 0 @bu;
     max-height: 100%;
