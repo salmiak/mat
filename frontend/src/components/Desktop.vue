@@ -27,7 +27,6 @@ export default {
           label: i==0?'Denna vecka':i==-1?'Nasta vecka':undefined
         })
       }
-      console.log(o);
       return o
     }
   }

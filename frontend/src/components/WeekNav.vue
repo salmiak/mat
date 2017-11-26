@@ -56,13 +56,13 @@ export default {
     }
   },
   methods: {
-    goToPrevWeek() { this.$router.push( '/week/'+this.prevWeek.year+'/'+this.prevWeek.week ) },
-    goToNextWeek() { this.$router.push( '/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) },
-    goToCurrentWeek() { this.$router.push('/') },
+    goToPrevWeek() { this.$router.push( '/m/week/'+this.prevWeek.year+'/'+this.prevWeek.week ) },
+    goToNextWeek() { this.$router.push( '/m/week/'+this.nextWeek.year+'/'+this.nextWeek.week  ) },
+    goToCurrentWeek() { this.$router.push('/m/week') },
     goToCurrentNextWeek() {
       let year = moment().add(1,'w').isoWeekYear()
       let week = moment().add(1,'w').isoWeek()
-      this.$router.push( '/week/'+year+'/'+week  ) }
+      this.$router.push( '/m/week/'+year+'/'+week  ) }
   }
 }
 </script>

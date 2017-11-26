@@ -18,11 +18,6 @@ import * as global from './store/utils'
 
 export default {
   name: 'app',
-  created() {
-    if( !this.$store.state.mobile && this.$route.name != "Desktop" ) {
-      this.$router.push('/desktop')
-    }
-  }
 }
 </script>
 
