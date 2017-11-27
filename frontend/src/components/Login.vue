@@ -3,6 +3,9 @@
     <div class="header">
       <h1>Logga in</h1>
     </div>
+    <div class="loadingCover" v-if="loading">
+      <div>Loggar in...</div>
+    </div>
     <form v-on:submit.prevent="doLogin()">
       Användare <input type="text" v-model="user" /><br/>
       Lösenord <input type="password" v-model="password" />
@@ -24,11 +27,18 @@
         user: this.$cookies.isKey('mat_usr')?this.$cookies.get('mat_usr'):'',
         password: this.$cookies.isKey('mat_pwd')?this.$cookies.get('mat_pwd'):'',
         storePwd: true,
-        errorMessage: false
+        errorMessage: false,
+        loading: false
+      }
+    },
+    created(){
+      if(!this.$store.state.loggedin && this.$cookies.isKey('mat_usr') && this.$cookies.isKey('mat_pwd')){
+        this.doLogin()
       }
     },
     methods: {
       doLogin(){
+        this.loading = true
         delete Vue.http.headers.common['Authorization']
         this.errorMessage = false
         Vue.http.post(global.root + "wp-json/jwt-auth/v1/token",{
@@ -42,6 +52,7 @@
               this.$cookies.set('mat_pwd', this.password)
               this.$cookies.set('mat_usr', this.user)
             }
+
             Vue.http.headers.common['Authorization'] = 'Bearer ' + token;
             this.$store.commit('loggIn')
 
@@ -51,9 +62,11 @@
 
             // Go to home screen
             this.$router.push('/')
+            this.loading = false
           }
         }, response => {
           this.errorMessage = response.body.message
+          this.loading = false
         });
         return false;
       }
@@ -74,10 +87,26 @@
   .header {
     position: absolute;
     top: 0;
+    z-index:300;
     background: @colorSecondary;
     h1 { color: @colorBackground; }
   }
+  .loadingCover {
+    position: absolute;
+    top:@hHeader;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index: 100;
+    background: fade(#FFF, 95%);
+    font-size: @fuxl;
+    color: @tc3;
+    display: flex;
+    justify-content:center;
+    align-items:center;
+  }
   form {
+    z-index:0;
     margin: 0 0 @bu*2;
     .btn {
       margin-top: @bu;
