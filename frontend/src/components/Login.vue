@@ -79,6 +79,7 @@
 #login {
   padding: @hHeader+@bu*4 @bu*2 0;
   max-width: 400px;
+  width: 95%;
   margin: 0 auto;
   background: @colorBackground;
   position: relative;
