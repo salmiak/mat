@@ -1,22 +1,45 @@
 <template>
   <div class="swipeActionItem">
-    <v-touch
-      tag="div"
-      class="itemContent"
-      v-bind:pan-options="{ direction: 'horizontal', threshold: 20 }"
-      v-bind:style="{left: leftOffset+'px'}"
-      v-on:panmove="onPanMove"
-      v-on:panend="onPanEnd">
-      <slot></slot>
-    </v-touch>
-    <div class="itemBackground" :class="action" v-if="direction">
-      <div>
-        <slot v-if="direction=='right' && action =='primary'" name="rightprimary"></slot>
-        <slot v-if="direction=='right' && action == 'secondary'" name="rightsecondary"></slot>
+    <template v-if="$store.state.mobile">
+      <v-touch
+        tag="div"
+        class="itemContent"
+        v-bind:pan-options="{ direction: 'horizontal', threshold: 30 }"
+        v-bind:style="{left: leftOffset+'px'}"
+        v-on:panmove="onPanMove"
+        v-on:panend="onPanEnd">
+        <slot></slot>
+      </v-touch>
+      <div class="itemBackground" :class="action" v-if="direction">
+        <div>
+          <slot v-if="direction=='right' && action =='primary'" name="rightprimary"></slot>
+          <slot v-if="direction=='right' && action == 'secondary'" name="rightsecondary"></slot>
+        </div>
+        <div>
+          <slot v-if="direction=='left' && action =='primary'" name="leftprimary"></slot>
+          <slot v-if="direction=='left' && action == 'secondary'" name="leftsecondary"></slot>
+        </div>
       </div>
-      <div>
-        <slot v-if="direction=='left' && action =='primary'" name="leftprimary"></slot>
-        <slot v-if="direction=='left' && action == 'secondary'" name="leftsecondary"></slot>
+    </template>
+    <div v-else>
+      <slot></slot>
+      <div class="itemFooter">
+        <div class="btnBar">
+          <div v-on:click="emitAction('rightprimary')">
+            <slot name="rightprimary" ></slot>
+          </div>
+          <div v-on:click="emitAction('rightsecondary')">
+            <slot name="rightsecondary" ></slot>
+          </div>
+        </div>
+        <div class="btnBar">
+          <div v-on:click="emitAction('leftsecondary')">
+            <slot name="leftsecondary" ></slot>
+          </div>
+          <div v-on:click="emitAction('leftprimary')">
+            <slot name="leftprimary" ></slot>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -25,8 +48,8 @@
 
 <script>
 
-  var friction = 0.85
-  var maxThreshold = 0.45
+  var friction = .95
+  var maxThreshold = 0.65
 
   export default {
     name: "SwipeActionItem",
@@ -47,7 +70,7 @@
         let thresholdInPixels = maxThreshold*itemWidth
         if ( this[this.direction+'Actions'] == 2 &&
              Math.abs(this.leftOffset) > thresholdInPixels) return 'secondary'
-        if ( Math.abs(this.leftOffset) > thresholdInPixels/5) return 'primary'
+        if ( Math.abs(this.leftOffset) > thresholdInPixels/3) return 'primary'
         return undefined
       }
     },
@@ -59,6 +82,10 @@
         if (this.direction && this.action)
           this.$emit(this.direction+this.action)
         this.leftOffset = 0;
+      },
+      emitAction(action) {
+        console.log(action)
+        this.$emit(action)
       }
     }
   }
@@ -105,6 +132,30 @@
     font-size: 1.5em;
     vertical-align: -.25em;
     //vertical-align: bottom;
+  }
+}
+.itemFooter {
+  padding: @bu;
+  border-bottom: @bu solid @colorBody;
+  .capitals;
+  .display(flex);
+  .justify-content(space-between);
+  .btnBar {
+    .display(flex);
+    > div {
+      box-shadow: 0 0 0 1px @colorBorder inset;
+      padding: @bu;
+      margin: 0 @bu 0 0;
+      border-radius: @bu*.5;
+      cursor: pointer;
+      &:hover {
+        background: @colorYellow;
+      }
+    }
+  }
+  .fa-icon {
+    font-size: 1em;
+    vertical-align: -.125em;
   }
 }
 </style>

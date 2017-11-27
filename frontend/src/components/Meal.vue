@@ -40,11 +40,17 @@
           <icon name="copy"></icon> Kopiera
         </span>
         <span v-else>
-          <icon name="arrow-right"></icon> Flytta
+          <icon v-if="$store.state.mobile" name="arrow-right"></icon>
+          <icon v-else name="arrow-left"></icon>
+          Flytta
         </span>
       </span>
       <span slot="leftprimary"><icon name="edit"></icon> Redigera</span>
-      <span slot="leftsecondary"><icon name="arrow-left"></icon> Flytta</span>
+      <span slot="leftsecondary">
+        <icon v-if="$store.state.mobile" name="arrow-left"></icon>
+        <icon v-else name="arrow-right"></icon>
+        Flytta
+      </span>
 
       <div class="mealContent">
         <h2 v-bind:class="mealData.fields.made?'made':''">

@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Login from '@/components/Login'
 import Home from '@/components/Home'
+import Login from '@/components/Login'
+import Mobile from '@/components/Mobile'
 import RecipeList from '@/components/RecipeList'
+import Desktop from '@/components/Desktop'
 
 Vue.use(Router)
 
@@ -10,22 +12,28 @@ export default new Router({
   routes: [
     {
       path: '/',
-      redirect: '/week'
-    },
-    {
-      path: '/week',
       name: 'Home',
       component: Home
     },
     {
-      path: '/week/:year/:week',
+      path: '/m/week',
+      name: 'This week',
+      component: Mobile
+    },
+    {
+      path: '/m/week/:year/:week',
       name: 'Week',
-      component: Home
+      component: Mobile
     },
     {
       path: '/recipes',
       name: 'Recipes',
       component: RecipeList
+    },
+    {
+      path: '/d',
+      name: 'Overview',
+      component: Desktop
     },
     {
       path: '/login',
