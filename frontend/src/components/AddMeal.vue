@@ -1,16 +1,17 @@
 <template>
   <div class="add-meal">
     <form v-if="showForm">
-      <div class="closeIcon" @click="toggleForm()">
-        <icon name="times"></icon>
-      </div>
 
       <h2>Lägg till måltid</h2>
-      <input v-model="mealData.title" placeholder="Namn"/>
-      <textarea v-model="mealData.fields.comment" placeholder="Kommentar"></textarea>
-      <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="recipes" :multiple="true"></multiselect>
+
+      <input v-model="mealData.title" placeholder="Namn" v-if="selectedRecipes.length > 1"/>
+
+      <textarea v-model="mealData.fields.comment" placeholder="Kommentar" v-if="showComment"></textarea>
+
+      <multiselect placeholder="Namn eller sök recept" v-model="selectedRecipes" tag-placeholder="Lägg till utan recept" track-by="id" label="title" :options="recipes" :multiple="true" :taggable="true" @tag="noRecipe"></multiselect>
+
       <div class="saveBtnContainer">
-        <span class="btn" @click="toggleForm()">Stäng</span>
+        <span class="btn" @click="toggleForm()">Avbryt</span>
         <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
       </div>
     </form>
@@ -42,6 +43,8 @@
     data() {
       return {
         showForm: false,
+        showComment: false,
+        nonRecipes: [],
         mealData: JSON.parse(JSON.stringify(emptyMeal))
       }
     },
@@ -51,20 +54,49 @@
       }),
       selectedRecipes: {
         get() {
-          return this.mealData.fields.recipes.map(id => this.$store.getters.recipeById(id))
+          // Fetch the reciepes data
+          let recipes = this.mealData.fields.recipes.map(id => this.$store.getters.recipeById(id))
+          // Concat with non recipe tags
+          return recipes.concat(this.nonRecipes)
         },
         set(newValue) {
-          this.mealData.fields.recipes = newValue.map(recipe => recipe.id)
+          // Filter out recipes and set them in fields
+          let recipes = newValue.filter(r => r.id != undefined)
+          this.mealData.fields.recipes = recipes.map(recipe => recipe.id)
+          // Update nonRecipes if any non recipe tag has been removed
+          this.nonRecipes = newValue.filter(r => r.id === undefined)
         }
-      },
+      }
+    },
+    watch: {
+      // Update title if selectedRecipes changes
+      selectedRecipes(newVal) {
+        if (!newVal.length) {
+          this.mealData.title = ""
+        } else {
+          this.mealData.title = newVal.map(r => r.title).join(' & ')
+        }
+      }
     },
     methods: {
+      noRecipe(val) {
+        this.nonRecipes.push({
+          id: undefined,
+          title: val
+        })
+      },
       toggleForm() {
+        this.resetMealData()
         this.showForm = !this.showForm
       },
       saveMeal() {
         this.mealData.fields.date = moment().isoWeekYear( this.year ).isoWeek( this.week )
         this.$store.dispatch('updateMeal',{payload: this.mealData})
+        this.resetMealData()
+        this.toggleForm()
+      },
+      resetMealData() {
+        this.nonRecipes = []
         this.mealData = JSON.parse(JSON.stringify(emptyMeal))
       }
     }
