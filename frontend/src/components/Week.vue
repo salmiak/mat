@@ -5,9 +5,9 @@
       <p>Laddar</p>
     </div>
     <div v-else>
-      <add-meal v-bind:year="year" v-bind:week="week"/>
-      <meal v-for="meal in nonMadeMeals" :key="meal.id" v-bind:mealId="meal.id"></meal>
-      <meal v-for="meal in madeMeals" :key="meal.id" v-bind:mealId="meal.id"></meal>
+      <add-meal class="addMeal" v-bind:year="year" v-bind:week="week"/>
+      <meal class="mealList" v-for="meal in nonMadeMeals" :key="meal.id" v-bind:mealId="meal.id"></meal>
+      <meal class="mealList" v-for="meal in madeMeals" :key="meal.id" v-bind:mealId="meal.id"></meal>
     </div>
   </div>
 </template>
@@ -26,3 +26,14 @@
     }
   }
 </script>
+
+<style scoped>
+.addMeal {
+  position: relative;
+  z-index: 300;
+}
+.mealList {
+  position: relative;
+  z-index: 200;
+}
+</style>
