@@ -6,9 +6,12 @@
 
       <input v-model="mealData.title" placeholder="Namn" v-if="selectedRecipes.length > 1"/>
 
-      <textarea v-model="mealData.fields.comment" placeholder="Kommentar" v-if="showComment"></textarea>
-
       <multiselect placeholder="Namn eller sök recept" v-model="selectedRecipes" tag-placeholder="Lägg till utan recept" track-by="id" label="title" :options="recipes" :multiple="true" :taggable="true" @tag="noRecipe"></multiselect>
+
+      <p class="capitals" v-if="!showComment" @click="showComment = !showComment">
+        <icon name="comment"></icon> Lägg till Kommentar
+      </p>
+      <textarea v-model="mealData.fields.comment" placeholder="Kommentar" ref="comment" v-if="showComment"></textarea>
 
       <div class="saveBtnContainer">
         <span class="btn" @click="toggleForm()">Avbryt</span>
@@ -76,6 +79,13 @@
         } else {
           this.mealData.title = newVal.map(r => r.title).join(' & ')
         }
+      },
+      // Set marker in comment field on show showComment (with small timeout to make sure field is showing when focused)
+      showComment() {
+        let _this = this
+        setTimeout(() => {
+          _this.$refs.comment.focus()
+        }, 150)
       }
     },
     methods: {
@@ -96,6 +106,7 @@
         this.toggleForm()
       },
       resetMealData() {
+        this.showComment = false
         this.nonRecipes = []
         this.mealData = JSON.parse(JSON.stringify(emptyMeal))
       }
