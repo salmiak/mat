@@ -46,11 +46,12 @@
           password: this.password
         }).then (response => {
           if (response.status == 200) {
+            let expire = moment().add(10, 'y').toDate();
             let token = response.body.token
-            this.$cookies.set('mat_authToken', token)
+            this.$cookies.set('mat_authToken', token, expire)
             if (this.storePwd) {
-              this.$cookies.set('mat_pwd', this.password)
-              this.$cookies.set('mat_usr', this.user)
+              this.$cookies.set('mat_pwd', this.password, expire)
+              this.$cookies.set('mat_usr', this.user, expire)
             }
 
             Vue.http.headers.common['Authorization'] = 'Bearer ' + token;
