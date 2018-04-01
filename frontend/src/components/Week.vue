@@ -5,7 +5,7 @@
       <p>Laddar</p>
     </div>
     <div v-else>
-      <add-meal class="addMeal" v-bind:year="year" v-bind:week="week"/>
+      <add-meal class="addMeal" v-bind:year="year" v-bind:week="week" v-on:newrecipe="ping"/>
       <meal class="mealList" v-for="meal in nonMadeMeals" :key="meal.id" v-bind:mealId="meal.id"></meal>
       <meal class="mealList" v-for="meal in madeMeals" :key="meal.id" v-bind:mealId="meal.id"></meal>
     </div>
@@ -23,6 +23,9 @@
       isLoading(){ return this.$store.getters.isLoading },
       madeMeals() { return this.$store.getters.mealsByWeek(this.year, this.week).filter(r => r.fields.made) },
       nonMadeMeals() { return this.$store.getters.mealsByWeek(this.year, this.week).filter(r => !r.fields.made) }
+    },
+    methods: {
+      ping() { console.log('ping') }
     }
   }
 </script>
