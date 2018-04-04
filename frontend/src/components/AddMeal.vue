@@ -12,7 +12,14 @@
 
       <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="allTags" :multiple="true" :taggable="true" tag-placeholder="Lägg till" @tag="addTag" @remove="removeTag"></multiselect>
 
-
+      <div v-if="extraTags.length">
+        <h3>Skapa nytt recept</h3>
+        <ul>
+          <li v-for="tag in extraTags">
+            {{tag.title}} <add-recipe @saved="recipeAdded" :tag="tag" />
+          </li>
+        </ul>
+      </div>
 
       <textarea v-model="mealData.fields.comment" placeholder="Kommentar" v-if="showCommentField"></textarea>
       <span class="link" v-else @click="showCommentField=true">Lägg till kommentar</span>
@@ -33,6 +40,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import Recipe from './Recipe'
+  import AddRecipe from './AddRecipe'
   import moment from 'moment'
   import Multiselect from 'vue-multiselect'
 
@@ -46,7 +54,7 @@
 
   export default {
     name: "AddMeal",
-    components: { Recipe, Multiselect },
+    components: { Recipe, AddRecipe, Multiselect },
     props: ['year','week'],
     data() {
       return {
@@ -110,6 +118,10 @@
       removeTag(tagToRemove) {
         if(tagToRemove.type == "tempTag")
           this.extraTags = this.extraTags.filter(tag => tag.id != tagToRemove.id)
+      },
+      recipeAdded(reponse) {
+        this.mealData.fields.recipes.push(reponse.recipe.id)
+        this.removeTag(reponse.tag)
       }
     }
   }

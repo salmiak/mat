@@ -36,10 +36,15 @@
   export default {
     name: "AddRecipe",
     components: { },
+    props: ['tag'],
     data() {
+      let recipeData = JSON.parse(JSON.stringify(emptyRecipe))
+      if(this.tag) {
+        recipeData.title = this.tag.title
+      }
       return {
         showForm: false,
-        recipeData: JSON.parse(JSON.stringify(emptyRecipe))
+        recipeData: recipeData
       }
     },
     methods: {
@@ -47,7 +52,7 @@
         this.showForm = !this.showForm
       },
       saveRecipe() {
-        this.$store.dispatch('updateRecipe',{payload: this.recipeData})
+        this.$store.dispatch('updateRecipe',{payload: this.recipeData}).then(recipe => this.$emit('saved', {recipe: recipe, tag: this.tag}))
         this.recipeData = JSON.parse(JSON.stringify(emptyRecipe))
       },
       saveRecipeAndClose() {
