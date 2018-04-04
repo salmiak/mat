@@ -95,12 +95,25 @@
         this.showTitleField = false
       },
       setTitle() {
+        this.setComment()
         if(this.showTitleField)
           return // Set title manualy, don't touch it.
-        if(this.extraTags.length)
+        if(this.extraTags.length) {
           this.mealData.title = this.extraTags[0].title
-        else
+        } else {
           this.mealData.title = this.$store.getters.recipeById(this.mealData.fields.recipes[0]).title
+        }
+        let recipeCount = this.extraTags.length + this.mealData.fields.recipes.length
+        if (recipeCount > 1) {
+          this.mealData.title = this.mealData.title + " + " + (recipeCount-1) + " recept"
+        }
+      },
+      setComment() {
+        if(this.showCommentField)
+          return // Set comment manualy, don't touch it.
+        if(this.extraTags.length > 1) {
+          this.mealData.fields.comment = this.extraTags.map(tag => tag.title).join('\n')
+        }
       },
       saveMeal() {
         this.mealData.fields.date = moment().isoWeekYear( this.year ).isoWeek( this.week )
@@ -108,9 +121,9 @@
         this.resetForm()
       },
       addTag(newTag) {
-        this.extraTags.unshift({
+        this.extraTags.push({
           title: newTag,
-          id: "t"+Math.floor(Math.random()*100),
+          id: "t"+(new Date()).getTime(),
           type: "tempTag"
         })
         this.setTitle()
