@@ -66,7 +66,7 @@
     props: ['year','week'],
     data() {
       return {
-        showForm: true,
+        showForm: false,
         showCommentField: false,
         showTitleField: false,
         mealData: JSON.parse(JSON.stringify(emptyMeal)),
