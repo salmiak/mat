@@ -5,28 +5,36 @@
         <icon name="times"></icon>
       </div>
 
-      <h2>Lägg till måltid</h2>
+      <h3>Lägg till måltid</h3>
 
-      <input v-if="showTitleField" v-model="mealData.title" placeholder="Namn"/>
-      <span class="link" v-else @click="showTitleField=true">Redigera titel</span>
+      <multiselect placeholder="Börja skriva" v-model="selectedRecipes" trackBy="id" label="title" :options="allTags" :multiple="true" :taggable="true" tag-placeholder="Lägg till" @tag="addTag" @remove="removeTag" ref="search"></multiselect>
 
-      <multiselect placeholder="Recept" v-model="selectedRecipes" trackBy="id" label="title" :options="allTags" :multiple="true" :taggable="true" tag-placeholder="Lägg till" @tag="addTag" @remove="removeTag"></multiselect>
+      <input v-if="showTitleField" v-model="mealData.title" placeholder="Namn" @blur="showTitleField=false" ref="title"/>
+      <h2 v-else @click="showTitleField=true">{{mealData.title || "Måltid"}}</h2>
 
-      <div v-if="extraTags.length">
-        <h3>Skapa nytt recept</h3>
-        <ul>
-          <li v-for="tag in extraTags">
-            {{tag.title}} <add-recipe @saved="recipeAdded" :tag="tag" />
-          </li>
-        </ul>
+      <textarea v-if="showCommentField" v-model="mealData.fields.comment" placeholder="Kommentar" @blur="showCommentField=false" ref="comment" ></textarea>
+      <p v-else @click="showCommentField=true">{{mealData.fields.comment || "Redigera kommentar"}}</p>
+
+      <div class="recipeList">
+        <recipe
+          v-for="recipe in selectedRecipes"
+          :key="recipe.id"
+          :recipeId="recipe.id"
+          :disableActions="true"
+          :hideEdit="true"></recipe>
       </div>
 
-      <textarea v-model="mealData.fields.comment" placeholder="Kommentar" v-if="showCommentField"></textarea>
-      <span class="link" v-else @click="showCommentField=true">Lägg till kommentar</span>
+      <div v-if="extraTags.length">
+        <h3>Skapa nya recept</h3>
+        <p v-for="tag in extraTags">
+          <add-recipe-inline @saved="recipeAdded" @initiated="addingRecipes.push(1)" @canceled="addingRecipes.pop()" :tag="tag" />
+        </p>
+      </div>
 
       <div class="saveBtnContainer">
         <span class="btn" @click="toggleForm()">Stäng</span>
-        <span class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
+        <span v-if="!addingRecipes.length" class="btn btn-primary pull-right" @click="saveMeal()">Spara</span>
+        <span v-else class="btn btn-disabled pull-right">Spara</span>
       </div>
 
     </form>
@@ -40,7 +48,7 @@
 <script>
   import { mapGetters } from 'vuex'
   import Recipe from './Recipe'
-  import AddRecipe from './AddRecipe'
+  import AddRecipeInline from './AddRecipeInline'
   import moment from 'moment'
   import Multiselect from 'vue-multiselect'
 
@@ -54,7 +62,7 @@
 
   export default {
     name: "AddMeal",
-    components: { Recipe, AddRecipe, Multiselect },
+    components: { Recipe, AddRecipeInline, Multiselect },
     props: ['year','week'],
     data() {
       return {
@@ -62,7 +70,8 @@
         showCommentField: false,
         showTitleField: false,
         mealData: JSON.parse(JSON.stringify(emptyMeal)),
-        extraTags: []
+        extraTags: [],
+        addingRecipes: []
       }
     },
     computed: {
@@ -80,7 +89,24 @@
           this.mealData.fields.recipes = newValue.filter(tag => tag.type != "tempTag").map(recipe => recipe.id)
           this.setTitle()
         }
+      }
+    },
+    watch: {
+      showForm(value) {
+        if(value) {
+          this.$nextTick( () => this.$refs.search.$el.focus() )
+        }
       },
+      showTitleField(value) {
+        if(value) {
+          this.$nextTick( () => this.$refs.title.focus() )
+        }
+      },
+      showCommentField(value) {
+        if(value) {
+          this.$nextTick( () => this.$refs.comment.focus() )
+        }
+      }
     },
     methods: {
       toggleForm() {
@@ -135,6 +161,7 @@
       recipeAdded(reponse) {
         this.mealData.fields.recipes.push(reponse.recipe.id)
         this.removeTag(reponse.tag)
+        this.addingRecipes.pop()
       }
     }
   }
@@ -147,18 +174,23 @@
   z-index: 200;
   .border-bottom;
   padding: @bu @bu*2;
+  h2 {
+    margin: @bu 0;
+    padding: @bu 0;
+  }
+  h3 {
+    margin: @bu 0;
+    .capitals;
+  }
   > div {
     .btn;
   }
   .saveBtnContainer {
     padding: @bu 0;
   }
-  .link {
-    display: block;
-    padding: @bu*2 0;
-    color: @colorSecondary;
-    text-decoration: underline;
-    .capitals;
+  .recipeList {
+    margin: @bu -@bu*2 0;
   }
 }
+
 </style>

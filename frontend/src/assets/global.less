@@ -137,18 +137,17 @@ input:not(.multiselect__input):not([type=submit]):not([type=checkbox]), textarea
   box-sizing: border-box;
   display: block;
   width: 100%;
-  margin: 0 0 @bu;
+  margin: @bu 0;
   font-size: @fu;
   line-height: @bu*3;
-  padding: @bu/2 @bu;
-  border: none;
-  .border-bottom;
-  background: none;
-  border-radius: @bu/2 @bu/2 0 0;
+  padding: @bu @bu;
+  border: 1px solid @colorBorder;
+  background: #FFF;
+  border-radius: @bu/2;
   &:focus {
     background: #FFF;
     outline: none;
-    box-shadow: 0 -1px 0 0 @colorSecondary inset;
+    border-color: @colorPrimary;
   }
 }
 input[type=submit] {
@@ -164,6 +163,11 @@ input[type=submit] {
   }
 }
 
+.multiselect__tags {
+  border: 1px solid @colorBorder;
+  border-radius: @bu/2;
+}
+/*
 .multiselect {
   margin: 0 0 @bu;
   padding: @bu/2 @bu;
@@ -215,6 +219,7 @@ input[type=submit] {
   }
 }
 
+*/
 .btn {
   .capitals;
   font-weight: 700;
@@ -236,6 +241,10 @@ input[type=submit] {
     &:hover {
       background: darken(@colorSecondary, 12%);
     }
+  }
+  &-disabled {
+    background: fade(@colorPrimary, 20%);
+    color: fade(@colorBackground, 65%);
   }
 }
 
