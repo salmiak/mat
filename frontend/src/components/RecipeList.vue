@@ -3,21 +3,16 @@
     <div class="header">
       <h1>Recept</h1>
     </div>
-    <div v-if="isLoading" class="loading">
-      <p><icon name="refresh" scale="1" spin></icon></p>
-      <p>Laddar</p>
+    <add-recipe/>
+    <div class="search" v-if="!isLoading">
+      <vue-fuse class="searchField" :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
     </div>
-    <div v-else>
-      <add-recipe/>
-      <div class="search">
-        <vue-fuse class="searchField" :keys="keys" :list="recipes" :defaultAll="true" :eventName="'recipeSearchChanged'" placeholder="Sök recept"></vue-fuse>
-      </div>
-      <ul>
-        <li v-for="recipe in recipesResults" :key="recipe.id">
-          <recipe v-bind:recipeId="recipe.id" />
-        </li>
-      </ul>
-    </div>
+    <ul v-if="!isLoading">
+      <li v-for="recipe in recipesResults" :key="recipe.id">
+        <recipe v-bind:recipeId="recipe.id" />
+      </li>
+    </ul>
+    <div v-for="i in [1,2,3]" class="loadingPlaceholder" v-if="!recipesResults.length && isLoading"></div>
   </div>
 </template>
 
@@ -57,7 +52,7 @@
   background: @colorBackground;
 }
 .search {
-  .border-bottom;
+  padding: 0 @bu;
   input.searchField {
     padding: @bu 2*@bu;
     margin: 0;
@@ -69,6 +64,33 @@ ul {
   li {
     list-style: none;
     padding: 0;
+  }
+}
+.loadingPlaceholder {
+  height: @bu*13;
+  background: @colorBackground;
+  position: relative;
+  .border-bottom;
+  &::before {
+    content: '';
+    display: block;
+    position: absolute;
+    top: @bu*2;
+    left: @bu*2;
+    width: 34%;
+    height: @bu*2;
+    background: @colorBorder;
+  }
+  &::after {
+    content: '';
+    display: block;
+    position: absolute;
+    top: @bu*6;
+    left: @bu*2;
+    right: @bu*5;
+    height: @bu*1.5;
+    background: @colorBorder;
+    box-shadow: 0 @bu*3 0 0 @colorBorder;
   }
 }
 </style>
