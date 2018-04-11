@@ -1,25 +1,24 @@
 <template>
-  <div class="add-recipe">
+  <span class="add-recipe">
     <form v-if="showForm">
       <div class="closeIcon" @click="toggleForm()">
         <icon name="times"></icon>
       </div>
 
-      <h2>Lägg till recept</h2>
+      <h2>Lägg till recept för {{recipeData.title}}</h2>
       <input v-model="recipeData.title" placeholder="Namn"/>
       <input v-model="recipeData.fields.url" placeholder="Url"/>
       <textarea v-model="recipeData.content" placeholder="Anteckning"></textarea>
       <p>
-        <span class="pull-right btn" @click="toggleForm()">Stäng</span>
-        <span class="btn btn-primary" @click="saveRecipe()">Spara</span>
-        <span class="btn" @click="saveRecipeAndClose()">Spara och stäng</span>
+        <span class="pull-right btn btn-primary" @click="saveRecipe()">Spara recept</span>
+        <span class="btn" @click="toggleForm()">Ångra</span>
       </p>
     </form>
 
-    <div @click="toggleForm()" v-else>
-      Lägg till recept
-    </div>
-  </div>
+    <span @click="toggleForm()" v-else>
+      Lägg till recept för {{recipeData.title}}
+    </span>
+  </span>
 </template>
 
 <script>
@@ -34,7 +33,7 @@
   }
 
   export default {
-    name: "AddRecipe",
+    name: "AddRecipeInline",
     components: { },
     props: ['tag'],
     data() {
@@ -50,13 +49,15 @@
     methods: {
       toggleForm() {
         this.showForm = !this.showForm
+        if (this.showForm)
+          this.$emit('initiated')
+        else {
+          this.$emit('canceled')
+        }
       },
       saveRecipe() {
         this.$store.dispatch('updateRecipe',{payload: this.recipeData}).then(recipe => this.$emit('saved', {recipe: recipe, tag: this.tag}))
         this.recipeData = JSON.parse(JSON.stringify(emptyRecipe))
-      },
-      saveRecipeAndClose() {
-        this.saveRecipe()
         this.showForm = false
       }
     }
@@ -67,13 +68,20 @@
 @import "../assets/global.less";
 .add-recipe {
   position: relative;
-  box-shadow: 0 -1px 0 0 @colorBorder inset, 0 1px 0 0 @colorBorder inset;
-  padding: @bu @bu*2;
-  > div {
-    .btn;
+  padding: @bu 0;
+  > form {
+    padding: @bu @bu 1px;
+    margin: @bu -@bu;
+    background: @colorBackground;
+    border: 1px solid @colorBorder;
+    border-radius: 2px;
+  }
+  > span {
+    color: @colorSecondary;
+    text-decoration: underline;
   }
   .saveBtnContainer {
-    padding: @bu 0;
+    padding: @bu 0 0;
   }
 }
 </style>

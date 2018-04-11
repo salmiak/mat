@@ -56,20 +56,26 @@ const actions = {
     requestPage(page)
   },
   updateRecipe ({ commit,state }, { id, payload }) {
-    if ( id ) {
-      Vue.http.post(global.apiUri+'/recipe/'+id, state.all.find(recipe => recipe.id == id)).then(response => console.log(response), response => {
-        this.$router.push('/login')
-      })
-    } else if ( payload ) {
-      Vue.http.post(global.apiUri+'/recipe/', payload).then(response => {
-        let recipe = global.wpProcess(response.body);
-        commit('unshiftRecipe', {recipe:recipe})
-      }, response => {
-        this.$router.push('/login')
-      })
-    } else {
-      console.error('You should not see this message...');
-    }
+    return new Promise((resolve, reject) => {
+      if ( id ) {
+        Vue.http.post(global.apiUri+'/recipe/'+id, state.all.find(recipe => recipe.id == id)).then(response => {
+          console.log(response)
+          resolve(global.wpProcess(response.body))
+        }, response => {
+          this.$router.push('/login')
+        })
+      } else if ( payload ) {
+        Vue.http.post(global.apiUri+'/recipe/', payload).then(response => {
+          let recipe = global.wpProcess(response.body);
+          commit('unshiftRecipe', {recipe:recipe})
+          resolve(recipe)
+        }, response => {
+          this.$router.push('/login')
+        })
+      } else {
+        console.error('You should not see this message...');
+      }
+    })
   },
   deleteRecipe ({commit, state}, {id}) {
     Vue.http.delete(global.apiUri+'/recipe/'+id).then(response => {
