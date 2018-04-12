@@ -144,7 +144,7 @@
       saveMeal() {
         this.mealData.fields.date = moment().isoWeekYear( this.year ).isoWeek( this.week )
         this.$store.dispatch('updateMeal',{payload: this.mealData})
-        this.resetForm()
+        this.toggleForm()
       },
       addTag(newTag) {
         this.extraTags.push({

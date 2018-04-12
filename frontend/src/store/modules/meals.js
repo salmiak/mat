@@ -63,9 +63,16 @@ const actions = {
         this.$router.push('/login')
       })
     } else if ( payload ) {
+
+      // Add meal to state directly with a temp id to make UI more snappy
+      let t_id = "t__"+(new Date()).getTime()
+      payload.t_id = t_id
+      commit('unshiftMeal', {meal:payload})
+
       Vue.http.post(global.apiUri+'/meal/', payload).then(response => {
         let meal = global.wpProcess(response.body);
-        commit('unshiftMeal', {meal:meal})
+        // Update the meal with the real id
+        commit('updateMealId', {id:meal.id, t_id:t_id})
       }, response => {
         this.$router.push('/login')
       })
@@ -87,6 +94,10 @@ const mutations = {
   mealsLoading (state, payload) { state.loading = payload.loading },
   pushMeal (state, payload) { state.all.push(payload.meal) },
   unshiftMeal (state, payload) { state.all.unshift(payload.meal) },
+  updateMealId (state, payload) {
+    var meal = state.all.find( (m) => m.t_id == payload.t_id )
+    Vue.set(meal, "id", payload.id)
+  },
   deleteMeal (state, payload) {
     for(var i = 0; i < state.all.length; i++) {
       var obj = state.all[i];

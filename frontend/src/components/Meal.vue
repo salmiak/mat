@@ -56,6 +56,7 @@
         <h2 v-bind:class="mealData.fields.made?'made':''">
           {{mealData.title}}
           <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
+          <icon v-if="!mealData.id" name="circle-o-notch" spin class="faded"></icon>
         </h2>
         <p v-html="mealData.fields.comment"
           v-if="mealData.fields.comment && !mealData.fields.made"></p>
@@ -182,6 +183,19 @@
     .border-bottom;
   }
 }
+
+.createdNotification {
+  display: inline-block;
+  background-color: @colorPrimary;
+  color: @colorBackground;
+  font-size: @fusm;
+  line-height: @bu*2;
+  border-radius: @bu*2;
+  padding: @bu*.5 @bu 0;
+  white-space: nowrap;
+}
+
+.faded { opacity: 0.54; }
 
 h2.made {
   text-decoration: line-through;
