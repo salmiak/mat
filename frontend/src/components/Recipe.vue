@@ -58,6 +58,10 @@
             {{recipeData.title}}
             <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
           </h3>
+          <p class="ranking">
+            <icon name="star" v-for="n in ranking.stars" :key="n"></icon><icon name="star-o" v-for="n in (5 - ranking.stars)" :key="n"></icon>
+            ({{ranking.votes}} r&ouml;ster)
+          </p>
           <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
 
         </div>
@@ -80,6 +84,19 @@
         recipeData: this.$store.getters.verifyRecipe(this.recipeId) ?  this.$store.getters.recipeById(this.recipeId) : {},
         editMode: false,
         createdMeal: false
+      }
+    },
+    computed: {
+      ranking() {
+        let upValue = parseInt(this.recipeData.fields.upvotes || 0)+1
+        let downValue = parseInt(this.recipeData.fields.downvotes || 0)+1
+        let rankValue = (upValue - downValue) / (upValue + downValue)
+        let score = (rankValue+1)*5/2
+        return {
+          votes: 0 + parseInt(this.recipeData.fields.upvotes || 0) + parseInt(this.recipeData.fields.downvotes || 0),
+          score: score,
+          stars: Math.round(score)
+        }
       }
     },
     methods: {
@@ -137,6 +154,15 @@
   }
   &:last-child {
     margin-bottom: 0;
+  }
+  .ranking {
+    font-size: @fusm;
+    .capitals;
+    .fa-icon {
+      vertical-align: -.2em;
+      margin-right: 0.2em;
+      color: @colorYellow;
+    }
   }
 }
 .createdNotification {
