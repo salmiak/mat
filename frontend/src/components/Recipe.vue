@@ -59,8 +59,8 @@
             <span v-if="createdMeal" class="createdNotification">Ny måltid skapad!</span>
           </h3>
           <p class="ranking">
-            <icon name="star" v-for="n in ranking.stars" :key="n"></icon><icon name="star-o" v-for="n in (5 - ranking.stars)" :key="n"></icon>
-            ({{ranking.votes}} r&ouml;ster)
+            <icon name="star" v-for="n in ranking.stars"></icon><icon name="star-o" v-for="n in (5 - ranking.stars)"></icon>
+            ({{ranking.votes}} r&ouml;ster) <span @click="upVote(1)">Up vote</span> <span @click="downVote(1)">Down vote</span>
           </p>
           <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
 
@@ -101,7 +101,6 @@
     },
     methods: {
       toggleEditMode() {
-        console.log('hej')
         this.editMode = !this.editMode
       },
       saveRecipe() {
@@ -110,6 +109,12 @@
       },
       deleteRecipe() {
         this.$store.dispatch('deleteRecipe', {id: this.recipeData.id})
+      },
+      upVote(value) {
+        this.$store.dispatch('voteRecipe', {id: this.recipeData.id, up: value})
+      },
+      downVote(value) {
+        this.$store.dispatch('voteRecipe', {id: this.recipeData.id, down: value})
       },
       createMeal() {
         let mealData = {

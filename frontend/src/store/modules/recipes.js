@@ -83,6 +83,11 @@ const actions = {
     }, response => {
       this.$router.push('/login')
     })
+  },
+  voteRecipe ({commit, state}, payload) {
+    commit('voteRecipe', payload)
+    this.dispatch('updateRecipe', {id:payload.id})
+    // let recipe = state.all.find(recipe => recipe.id == id)
   }
 }
 
@@ -101,7 +106,18 @@ const mutations = {
       }
     }
   },
-  clearRecipes (state) { state.all = [] }
+  clearRecipes (state) { state.all = [] },
+  voteRecipe (state, payload) {
+    var recipe = state.all.find(recipe => recipe.id == payload.id)
+    if (payload.up) {
+      recipe.fields.upvotes = parseInt(recipe.fields.upvotes || 0)
+      recipe.fields.upvotes += payload.up
+    }
+    if (payload.down) {
+      recipe.fields.downvotes = parseInt(recipe.fields.downvotes || 0)
+      recipe.fields.downvotes += payload.down
+    }
+  }
 }
 
 export default {
