@@ -60,7 +60,7 @@
           </h3>
           <p class="ranking">
             <icon name="star" v-for="n in ranking.stars"></icon><icon name="star-o" v-for="n in (5 - ranking.stars)"></icon>
-            ({{ranking.votes}} r&ouml;ster) <span @click="upVote(1)">Up vote</span> <span @click="downVote(1)">Down vote</span>
+            ({{ranking.votes}} r&ouml;ster)
           </p>
           <div v-if="recipeData.content != ''" v-html="recipeData.content"></div>
 

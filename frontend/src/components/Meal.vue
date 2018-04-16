@@ -68,6 +68,8 @@
             :disableActions="true"
             :hideEdit="true"></recipe>
         </div>
+        <span @click="upVote()">Rosta up</span>
+        <span @click="downVote()">Rosta ner</span>
       </div>
     </swipe-action-item>
 
@@ -154,7 +156,17 @@
         } else {
           this.moveToNextWeek()
         }
-      }
+      },
+      upVote() {
+        this.mealData.fields.recipes.forEach((id) => {
+          this.$store.dispatch('voteRecipe', {id: id, up: 1})
+        })
+      },
+      downVote() {
+        this.mealData.fields.recipes.forEach((id) => {
+          this.$store.dispatch('voteRecipe', {id: id, down: 1})
+        })
+      },
     }
   }
 </script>
