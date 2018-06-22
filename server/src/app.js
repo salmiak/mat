@@ -2,29 +2,17 @@ const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
+const mongoose = require('mongoose')
 
 const app = express()
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-// const MongoClient = require('mongodb').MongoClient
-var Post = require("../models/post");
-//var db
+const Post = require("../models/post");
+const Recipe = require("../models/recipe");
+const Meal = require("../models/meal");
 
-/*
-MongoClient.connect('mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat', (err, client) => {
-  if (err) return console.log(err)
-
-  db = client.db('mat') // whatever your database name is
-  app.listen(process.env.PORT || 8081, () => {
-    console.log('listening on ' + (process.env.PORT || 8081))
-  })
-  // ... start the server
-})
-*/
-
-var mongoose = require('mongoose');
 mongoose.connect('mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat');
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
@@ -36,6 +24,39 @@ db.once("open", function(callback){
 });
 
 
+/**
+  * MEAL
+  **/
+
+// Create
+app.post('/meals', (req, res) => {
+  var db = req.db;
+  var title = req.body.title;
+  var comment = req.body.comment;
+  var date = req.body.date;
+  var recipes = req.body.recipes;
+  var new_post = new Meal({
+    title: title,
+    comment: comment,
+    date: date,
+    recipes: recipes
+  })
+
+  new_post.save(function (error) {
+    if (error) {
+      console.log(error)
+    }
+    res.send({
+      success: true,
+      message: 'Post saved successfully!'
+    })
+  })
+})
+
+
+/**
+  * POST
+  **/
 
 
 // Creat new post
