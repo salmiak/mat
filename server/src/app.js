@@ -103,11 +103,83 @@ app.delete('/meals/:id', (req, res) => {
 })
 
 
+/**
+  * RECIPE
+  **/
+
+// Create
+app.post('/recipes', (req, res) => {
+  var db = req.db;
+
+  var payload = {
+    title: req.body.title,
+    comment: req.body.comment,
+    url: req.body.url
+  }
+
+  var new_post = new Recipe(payload)
+
+  new_post.save(function (error) {
+    if (error) {
+      console.log(error)
+    }
+    res.send({
+      success: true,
+      message: 'Post saved successfully!'
+    })
+  })
+})
+
+// Read all recipes
+app.get('/recipes', (req, res) => {
+  Recipe.find({}, 'title comment url', function (error, recipes) {
+    if (error) { console.error(error); }
+    res.send({
+      recipes: recipes
+    })
+  }).sort({_id:-1})
+})
+
+// Update a recipe
+app.put('/recipes/:id', (req, res) => {
+  var db = req.db;
+  Recipe.findById(req.params.id, 'title comment url', function (error, recipe) {
+    if (error) { console.error(error); }
+
+    recipe.title = req.body.title
+    recipe.comment = req.body.comment
+    recipe.url = req.body.url
+
+    recipe.save(function (error) {
+      if (error) {
+        console.log(error)
+      }
+      res.send({
+        success: true
+      })
+    })
+  })
+})
+
+// Delete a post
+app.delete('/recipes/:id', (req, res) => {
+  var db = req.db;
+  Recipe.remove({
+    _id: req.params.id
+  }, function(err, post){
+    if (err)
+      res.send(err)
+    res.send({
+      success: true
+    })
+  })
+})
+
+
 
 /**
   * POST
   **/
-
 
 // Creat new post
 app.post('/posts', (req, res) => {

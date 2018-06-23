@@ -5,6 +5,9 @@ import HelloWorld from '@/components/HelloWorld'
 import Meals from '@/components/Meals'
 import NewMeal from '@/components/NewMeal'
 
+import Recipes from '@/components/Recipes'
+import NewRecipe from '@/components/NewRecipe'
+
 import Posts from '@/components/Posts'
 import NewPost from '@/components/NewPost'
 import EditPost from '@/components/EditPost'
@@ -29,6 +32,17 @@ export default new Router({
       path: '/meals/new',
       name: 'NewMeal',
       component: NewMeal
+    },
+
+    {
+      path: '/recipes',
+      name: 'Recipes',
+      component: Recipes
+    },
+    {
+      path: '/recipes/new',
+      name: 'NewRecipe',
+      component: NewRecipe
     },
 
     {
