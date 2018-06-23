@@ -1,6 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
+
+import Meals from '@/components/Meals'
+import NewMeal from '@/components/NewMeal'
+
 import Posts from '@/components/Posts'
 import NewPost from '@/components/NewPost'
 import EditPost from '@/components/EditPost'
@@ -15,6 +19,18 @@ export default new Router({
       name: 'HelloWorld',
       component: HelloWorld
     },
+
+    {
+      path: '/meals',
+      name: 'Meals',
+      component: Meals
+    },
+    {
+      path: '/meals/new',
+      name: 'NewMeal',
+      component: NewMeal
+    },
+
     {
       path: '/posts',
       name: 'Posts',
