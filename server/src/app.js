@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -31,16 +32,16 @@ db.once("open", function(callback){
 // Create
 app.post('/meals', (req, res) => {
   var db = req.db;
-  var title = req.body.title;
-  var comment = req.body.comment;
-  var date = req.body.date;
-  var recipes = req.body.recipes;
-  var new_post = new Meal({
-    title: title,
-    comment: comment,
-    date: date,
-    recipes: recipes
-  })
+
+  var payload = {
+    title: req.body.title,
+    comment: req.body.comment,
+    date: req.body.date,
+    recipes: req.body.recipes,
+    index: req.body.index
+  }
+
+  var new_post = new Meal(payload)
 
   new_post.save(function (error) {
     if (error) {
@@ -52,6 +53,55 @@ app.post('/meals', (req, res) => {
     })
   })
 })
+
+// Read all meals
+app.get('/meals', (req, res) => {
+  Meal.find({}, 'title comment date recipes index made', function (error, meals) {
+    if (error) { console.error(error); }
+    res.send({
+      meals: _.orderBy(meals, ['date','index'], ['desc','asc'])
+    })
+  }).sort({_id:-1})
+})
+
+// Update a meal
+app.put('/meals/:id', (req, res) => {
+  var db = req.db;
+  Meal.findById(req.params.id, 'title comment date recipes index made', function (error, meal) {
+    if (error) { console.error(error); }
+
+    meal.title = req.body.title
+    meal.comment = req.body.comment
+    meal.date = req.body.date
+    meal.recipes = req.body.recipes
+    meal.index = req.body.index
+    meal.made = req.body.made
+
+    meal.save(function (error) {
+      if (error) {
+        console.log(error)
+      }
+      res.send({
+        success: true
+      })
+    })
+  })
+})
+
+// Delete a post
+app.delete('/meals/:id', (req, res) => {
+  var db = req.db;
+  Meal.remove({
+    _id: req.params.id
+  }, function(err, post){
+    if (err)
+      res.send(err)
+    res.send({
+      success: true
+    })
+  })
+})
+
 
 
 /**
