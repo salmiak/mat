@@ -6,6 +6,8 @@
     <router-link to="/week">Today</router-link>
     <router-link :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}">Next week</router-link>
 
+    <new-meal :week="week" :year="year"></new-meal>
+
     <meal v-for="meal in meals" :key="meal.id" :meal="meal"></meal>
   </div>
 </template>
@@ -14,17 +16,14 @@
 import MealsService from '@/services/MealsService'
 import moment from 'moment'
 import Meal from './Meal'
+import NewMeal from './NewMeal'
 
 export default {
   name: 'week',
-  components: { Meal },
+  components: { Meal, NewMeal },
   data () {
     return {
-      meals: [],
-      query: {
-        week: undefined,
-        year: undefined
-      }
+      meals: []
     }
   },
   mounted () {
@@ -38,7 +37,7 @@ export default {
       return this.$route.params.year || moment().isoWeekYear()
     },
     nextWeek () {
-      var m = moment().isoWeekYear(this.year).isoWeek(this.week).isoWeekday(1).add(1, 'w')
+      var m = moment().isoWeekYear(this.year).isoWeek(this.week).startOf('isoWeek').add(1, 'w')
       return {
         m: m,
         week: m.isoWeek(),
@@ -46,7 +45,7 @@ export default {
       }
     },
     prevWeek () {
-      var m = moment().isoWeekYear(this.year).isoWeek(this.week).isoWeekday(1).add(-1, 'w')
+      var m = moment().isoWeekYear(this.year).isoWeek(this.week).startOf('isoWeek').add(-1, 'w')
       return {
         m: m,
         week: m.isoWeek(),

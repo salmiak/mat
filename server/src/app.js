@@ -60,8 +60,8 @@ app.get('/meals', (req, res) => {
   var query = {}
   if(req.query.week && req.query.year) {
 
-    var startDate = moment().set('year',req.query.year).isoWeek(req.query.week).isoWeekday(1).toDate()
-    var endDate = moment().set('year',req.query.year).isoWeek(req.query.week).add(1,'w').isoWeekday(1).toDate()
+    var startDate = moment().set('year',req.query.year).isoWeek(req.query.week).startOf('isoWeek').toDate()
+    var endDate = moment().set('year',req.query.year).isoWeek(req.query.week).add(1,'w').startOf('isoWeek').toDate()
 
     query.date = {
       $gte: startDate,

@@ -1,15 +1,12 @@
 <template>
   <div class="meals">
     <h1>Add Meal</h1>
-      <div class="form">
+      <div>
         <div>
           <input type="text" name="title" placeholder="TITLE" v-model="title">
         </div>
         <div>
           <textarea rows="15" cols="15" placeholder="COMMENT" v-model="comment"></textarea>
-        </div>
-        <div>
-          <input type="date" name="date" v-model="date">
         </div>
         <div>
           <button class="app_meal_btn" @click="addMeal">Add</button>
@@ -20,13 +17,20 @@
 
 <script>
 import MealsService from '@/services/MealsService'
+import moment from 'moment'
+
 export default {
   name: 'NewMeal',
+  props: ['week', 'year'],
   data () {
     return {
       title: '',
-      comment: '',
-      date: undefined
+      comment: ''
+    }
+  },
+  computed: {
+    date () {
+      return moment().isoWeek(this.week).isoWeekYear(this.year).startOf('isoWeek').toDate()
     }
   },
   methods: {
@@ -36,7 +40,9 @@ export default {
         comment: this.comment,
         date: this.date
       })
-      this.$router.push({ name: 'Meals' })
+      this.title = ''
+      this.comment = ''
+      // TODO: Missing reload of list on save - time for VUEX?
     }
   }
 }
