@@ -14,7 +14,7 @@ export default {
   },
 
   updateMeal (params) {
-    return Api().put('meals/' + params.id, params)
+    return Api().put('meals/' + params._id, params)
   },
 
   /*

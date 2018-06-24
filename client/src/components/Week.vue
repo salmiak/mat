@@ -6,18 +6,18 @@
     <router-link to="/week">Today</router-link>
     <router-link :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}">Next week</router-link>
 
-    <div v-for="meal in meals" :key="meal.id">
-      {{meal.date}} - {{meal.title}}
-    </div>
+    <meal v-for="meal in meals" :key="meal.id" :meal="meal"></meal>
   </div>
 </template>
 
 <script>
 import MealsService from '@/services/MealsService'
 import moment from 'moment'
+import Meal from './Meal'
 
 export default {
   name: 'week',
+  components: { Meal },
   data () {
     return {
       meals: [],
