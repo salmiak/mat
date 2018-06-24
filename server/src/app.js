@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const moment = require('moment')
 const express = require('express')
 const bodyParser = require('body-parser')
 const cors = require('cors')
@@ -56,7 +57,19 @@ app.post('/meals', (req, res) => {
 
 // Read all meals
 app.get('/meals', (req, res) => {
-  Meal.find({}, 'title comment date recipes index made', function (error, meals) {
+  var query = {}
+  if(req.query.week && req.query.year) {
+    var startDate = moment().set('year',req.query.year).isoWeek(req.query.week).isoWeekday(1).toDate()
+    var endDate = moment().set('year',req.query.year).isoWeek(req.query.week).add(1,'w').isoWeekday(1).toDate()
+    query.date = {
+      $gte: startDate,
+      $lte: endDate
+    }
+  }
+
+  console.log(query)
+
+  Meal.find(query, 'title comment date recipes index made', function (error, meals) {
     if (error) { console.error(error); }
     res.send({
       meals: _.orderBy(meals, ['date','index'], ['desc','asc'])

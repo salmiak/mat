@@ -5,6 +5,10 @@ export default {
     return Api().get('meals')
   },
 
+  fetchMealsInWeek (params) {
+    return Api().get('meals', {params: params})
+  },
+
   addMeal (params) {
     return Api().post('meals', params)
   },

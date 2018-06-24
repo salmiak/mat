@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 
+import Week from '@/components/Week'
+
 import Meals from '@/components/Meals'
 import NewMeal from '@/components/NewMeal'
 
@@ -21,6 +23,17 @@ export default new Router({
       path: '/',
       name: 'HelloWorld',
       component: HelloWorld
+    },
+
+    {
+      path: '/week/:year/:week',
+      name: 'Week',
+      component: Week
+    },
+    {
+      path: '/week',
+      name: 'Current Week',
+      component: Week
     },
 
     {

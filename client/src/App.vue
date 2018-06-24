@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <nav>
+      <router-link to="/week">Go to week</router-link>
       <router-link to="/meals">Go to Meals</router-link>
       <router-link to="/recipes">Go to Recipes</router-link>
     </nav>
