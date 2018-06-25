@@ -30,26 +30,22 @@
 </template>
 
 <script>
-import RecipesService from '@/services/RecipesService'
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'recipes',
-  data () {
-    return {
-      recipes: []
-    }
+  computed: {
+    ...mapState('recipes', {
+      recipes: 'list'
+    })
   },
   mounted () {
-    this.getRecipes()
+    this.$store.dispatch('recipes/loadRecipeList')
   },
   methods: {
-    async getRecipes () {
-      const response = await RecipesService.fetchRecipes()
-      this.recipes = response.data.recipes
-    },
-    async deleteRecipe (id) {
-      await RecipesService.deleteRecipe(id)
-      this.getRecipes()
-    }
+    ...mapActions('recipes', {
+      deleteRecipe: 'deleteRecipe'
+    })
   }
 }
 </script>

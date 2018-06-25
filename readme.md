@@ -1,9 +1,10 @@
 # Beckmans Matplanering
 
 ## Todo
-- Add VUEX (?)
-- Add support to connect recipes to meals
+- Connect Meals to VUEX
+- Update week list when adding meal
 - Show recipes on meal
+- Add support to connect recipes to meals
 - Add recipes search
 - Bring SexyBack (Design)
 - Add edit recipe

@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import RecipesService from '@/services/RecipesService'
 export default {
   name: 'NewRecipe',
   data () {
@@ -30,13 +29,14 @@ export default {
     }
   },
   methods: {
-    async addRecipe () {
-      await RecipesService.addRecipe({
+    addRecipe () {
+      this.$store.dispatch('recipes/addRecipe', {
         title: this.title,
         comment: this.comment,
         url: this.url
+      }).then(() => {
+        this.$router.push({ name: 'Recipes' })
       })
-      this.$router.push({ name: 'Recipes' })
     }
   }
 }
