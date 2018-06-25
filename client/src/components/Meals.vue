@@ -33,26 +33,22 @@
 </template>
 
 <script>
-import MealsService from '@/services/MealsService'
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'meals',
-  data () {
-    return {
-      meals: []
-    }
+  computed: {
+    ...mapState('meals', {
+      meals: 'list'
+    })
   },
   mounted () {
-    this.getMeals()
+    this.$store.dispatch('meals/loadMealList')
   },
   methods: {
-    async getMeals () {
-      const response = await MealsService.fetchMeals()
-      this.meals = response.data.meals
-    },
-    async deleteMeal (id) {
-      await MealsService.deleteMeal(id)
-      this.getMeals()
-    }
+    ...mapActions('meals', {
+      deleteMeal: 'deleteMeal'
+    })
   }
 }
 </script>

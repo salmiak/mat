@@ -16,7 +16,6 @@
 </template>
 
 <script>
-import MealsService from '@/services/MealsService'
 import moment from 'moment'
 
 export default {
@@ -30,19 +29,23 @@ export default {
   },
   computed: {
     date () {
-      return moment().isoWeek(this.week).isoWeekYear(this.year).startOf('isoWeek').toDate()
+      if (this.week && this.year) {
+        return moment().isoWeek(this.week).isoWeekYear(this.year).startOf('isoWeek').toDate()
+      } else {
+        return moment().startOf('isoWeek').toDate()
+      }
     }
   },
   methods: {
-    async addMeal () {
-      await MealsService.addMeal({
+    addMeal () {
+      this.$store.dispatch('meals/addMeal', {
         title: this.title,
         comment: this.comment,
         date: this.date
+      }).then(() => {
+        this.title = ''
+        this.comment = ''
       })
-      this.title = ''
-      this.comment = ''
-      // TODO: Missing reload of list on save - time for VUEX?
     }
   }
 }

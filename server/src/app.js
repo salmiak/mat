@@ -44,13 +44,14 @@ app.post('/meals', (req, res) => {
 
   var new_post = new Meal(payload)
 
-  new_post.save(function (error) {
+  new_post.save(function (error, meal) {
     if (error) {
       console.log(error)
     }
     res.send({
       success: true,
-      message: 'Post saved successfully!'
+      message: 'Post saved successfully!',
+      meal: meal
     })
   })
 })
