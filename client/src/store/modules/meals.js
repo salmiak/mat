@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import moment from 'moment'
 import MealsService from '@/services/MealsService'
 
 // initial state
@@ -10,6 +11,12 @@ const state = {
 const getters = {
   mealList (state) {
     return state.list
+  },
+  mealsInWeek: (state) => (query) => {
+    return _.filter(state.list, (meal) => {
+      var m = moment(meal.date)
+      return (m.isoWeek() === query.week && m.isoWeekYear() === query.year)
+    })
   }
 }
 
@@ -19,6 +26,16 @@ const actions = {
   loadMealList ({commit}) {
     MealsService.fetchMeals().then((response) => {
       commit('setMealList', { list: response.data.meals })
+    }, (err) => {
+      console.log(err)
+    })
+  },
+
+  loadMealsInWeek ({commit}, query) {
+    MealsService.fetchMealsInWeek(query).then((response) => {
+      response.data.meals.forEach((meal) => {
+        commit('addMeal', { meal: meal })
+      })
     }, (err) => {
       console.log(err)
     })
@@ -54,7 +71,12 @@ const mutations = {
     state.list = list
   },
   addMeal (state, {meal}) {
-    state.list.push(meal)
+    var index = _.findIndex(state.list, {_id: meal._id})
+    if (index !== -1) {
+      state.list[index] = meal
+    } else {
+      state.list.push(meal)
+    }
   }
 }
 

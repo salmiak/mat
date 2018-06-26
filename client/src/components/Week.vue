@@ -8,12 +8,12 @@
 
     <new-meal :week="week" :year="year"></new-meal>
 
-    <meal v-for="meal in meals" :key="meal.id" :meal="meal"></meal>
+    <meal v-for="meal in mealsInCurrentWeek" :key="meal.id" :meal="meal"></meal>
   </div>
 </template>
 
 <script>
-import MealsService from '@/services/MealsService'
+// import MealsService from '@/services/MealsService'
 import moment from 'moment'
 import Meal from './Meal'
 import NewMeal from './NewMeal'
@@ -21,13 +21,10 @@ import NewMeal from './NewMeal'
 export default {
   name: 'week',
   components: { Meal, NewMeal },
-  data () {
-    return {
-      meals: []
-    }
-  },
   mounted () {
-    this.getMealsInWeek()
+    this.loadMealsInWeek(this.currentWeek)
+    this.loadMealsInWeek(this.prevWeek)
+    this.loadMealsInWeek(this.nextWeek)
   },
   computed: {
     week () {
@@ -36,10 +33,15 @@ export default {
     year () {
       return this.$route.params.year || moment().isoWeekYear()
     },
+    currentWeek () {
+      return {
+        week: this.week,
+        year: this.year
+      }
+    },
     nextWeek () {
       var m = moment().isoWeekYear(this.year).isoWeek(this.week).startOf('isoWeek').add(1, 'w')
       return {
-        m: m,
         week: m.isoWeek(),
         year: m.isoWeekYear()
       }
@@ -47,25 +49,24 @@ export default {
     prevWeek () {
       var m = moment().isoWeekYear(this.year).isoWeek(this.week).startOf('isoWeek').add(-1, 'w')
       return {
-        m: m,
         week: m.isoWeek(),
         year: m.isoWeekYear()
       }
+    },
+    mealsInCurrentWeek () {
+      return this.$store.getters['meals/mealsInWeek'](this.currentWeek)
     }
   },
   watch: {
     week () {
-      this.getMealsInWeek()
+      this.loadMealsInWeek(this.currentWeek)
+      this.loadMealsInWeek(this.prevWeek)
+      this.loadMealsInWeek(this.nextWeek)
     }
   },
   methods: {
-    async getMealsInWeek () {
-      this.query = {
-        week: this.week,
-        year: this.year
-      }
-      const response = await MealsService.fetchMealsInWeek(this.query)
-      this.meals = response.data.meals
+    loadMealsInWeek (query) {
+      this.$store.dispatch('meals/loadMealsInWeek', query)
     }
   }
 }
