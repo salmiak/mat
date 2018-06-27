@@ -10,6 +10,9 @@ const state = {
 const getters = {
   recipeList (state) {
     return state.list
+  },
+  recipeById: (state) => (id) => {
+    return _.find(state.list, {_id: id})
   }
 }
 

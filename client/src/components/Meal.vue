@@ -5,17 +5,13 @@
       <p>
         {{meal.comment}}
       </p>
-      <ul>
-        <li v-for="recipe in meal.recipes" :key="recipe">
-          {{recipe}}
-        </li>
-      </ul>
+      <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
       <button @click="editMode = true">Edit</button>
     </div>
     <div v-if="editMode">
       <input type="text" v-model="meal.title" />
       <textarea v-model="meal.comment"></textarea>
-      <input type="text" v-model="meal.recipes" />
+      <!-- <input type="text" v-model="meal.recipes" /> 5b2e10051ee55c6720327bb6, 5b2e106826cf2567256dfc53-->
       <button @click="updateMeal()">Save</button>
     </div>
   </div>
@@ -23,10 +19,12 @@
 
 <script>
 import MealsService from '@/services/MealsService'
+import Recipe from './Recipe'
 
 export default {
   name: 'meal',
   props: ['meal'],
+  components: {Recipe},
   data () {
     return {
       editMode: false
