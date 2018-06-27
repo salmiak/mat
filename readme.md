@@ -1,8 +1,6 @@
 # Beckmans Matplanering
 
 ## Todo
-- Connect Week view to VUEX
-  - Update week list when adding meal
 - Show recipes on meal
 - Add support to connect recipes to meals
 - Add recipes search

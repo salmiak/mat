@@ -42,16 +42,16 @@ app.post('/meals', (req, res) => {
     index: req.body.index
   }
 
-  var new_post = new Meal(payload)
+  var new_meal = new Meal(payload)
 
-  new_post.save(function (error, meal) {
+  new_meal.save(function (error, meal) {
     if (error) {
       console.log(error)
     }
     res.send({
       success: true,
       message: 'Post saved successfully!',
-      meal: meal
+      meal: new_meal
     })
   })
 })
