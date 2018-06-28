@@ -46,6 +46,7 @@ const actions = {
       MealsService.addMeal({
         title: data.title,
         comment: data.comment,
+        recipes: data.recipes,
         date: data.date
       }).then((response) => {
         commit('addMeal', { meal: response.data.meal })
@@ -75,7 +76,7 @@ const mutations = {
     if (index !== -1) {
       state.list.splice(index, 1)
     }
-    state.list.push(meal)
+    state.list.unshift(meal)
   }
 }
 
