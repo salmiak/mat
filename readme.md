@@ -1,7 +1,6 @@
 # Beckmans Matplanering
 
 ## Todo
-- Show recipes on meal
 - Add support to connect recipes to meals
 - Add recipes search
 - Bring SexyBack (Design)

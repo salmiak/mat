@@ -73,10 +73,9 @@ const mutations = {
   addMeal (state, {meal}) {
     var index = _.findIndex(state.list, {_id: meal._id})
     if (index !== -1) {
-      state.list[index] = meal
-    } else {
-      state.list.push(meal)
+      state.list.splice(index, 1)
     }
+    state.list.push(meal)
   }
 }
 
