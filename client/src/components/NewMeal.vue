@@ -3,19 +3,37 @@
     <h1>Add Meal</h1>
       <div>
         <div>
-          <input type="text" name="title" placeholder="TITLE" v-model="title">
+          <input type="text" name="title" placeholder="TITLE" v-model="mealData.title">
         </div>
         <div>
-          <textarea rows="15" cols="15" placeholder="COMMENT" v-model="comment"></textarea>
+          <textarea rows="15" cols="15" placeholder="COMMENT" v-model="mealData.comment"></textarea>
         </div>
 
         <div>
-          <div v-for="recipe in recipeList" :key="recipe._id" @click="selectRecipe(recipe._id)">
-            <span v-if="recipe.selected">
-              Selected
-            </span>
-            {{recipe.title}}
-          </div>
+          <vue-fuse :placeholder="'Search recipe'" :list="recipeList" :keys="searchKeys" event-name="searchChanged" input-change-event-name="searchInputChanged" :defaultAll="false" :value="searchTerm"></vue-fuse>
+
+          <ul v-if="recipeSearchResultsList.length">
+             <li v-for="recipe in recipeSearchResultsList" :key="recipe._id" @click="selectRecipe(recipe._id)">
+              {{recipe.title}} <span>Add</span>
+            </li>
+          </ul>
+          <p v-if="!searchTerm && recipeSearchResultsList.length === 0">
+            Type to search
+          </p>
+          <p v-if="searchTerm && recipeSearchResultsList.length === 0">
+            No results
+          </p>
+
+          <h2>Selected recipes</h2>
+          <ul v-if="selectedRecipes.length">
+            <li v-for="recipe in selectedRecipes" :key="recipe._id">
+              {{recipe.title}} <span @click="removeRecipe(recipe._id)">Remove</span>
+            </li>
+          </ul>
+          <p v-if="selectedRecipes.length === 0">
+            No recipe selected
+          </p>
+
         </div>
 
         <div>
@@ -29,15 +47,30 @@
 import _ from 'lodash'
 import moment from 'moment'
 
+var emptyData = {
+  title: '',
+  comment: '',
+  recipes: []
+}
+
 export default {
   name: 'NewMeal',
   props: ['week', 'year'],
   data () {
     return {
-      title: '',
-      comment: '',
-      recipes: []
+      mealData: _.clone(emptyData),
+      searchKeys: ['title', 'comment'],
+      searchTerm: '',
+      recipeSearchResults: undefined
     }
+  },
+  created () {
+    this.$on('searchChanged', results => {
+      this.recipeSearchResults = results
+    })
+    this.$on('searchInputChanged', string => {
+      this.searchTerm = string
+    })
   },
   computed: {
     recipeList () {
@@ -45,10 +78,18 @@ export default {
         return {
           _id: recipe._id,
           title: recipe.title,
-          selected: (this.recipes.indexOf(recipe._id) !== -1)
+          selected: (this.mealData.recipes.indexOf(recipe._id) !== -1)
         }
       })
       return list
+    },
+    recipeSearchResultsList () {
+      return _.filter(this.recipeSearchResults, recipe => {
+        return this.mealData.recipes.indexOf(recipe._id) === -1
+      })
+    },
+    selectedRecipes () {
+      return _.filter(this.recipeList, {selected: true})
     },
     date () {
       if (this.week && this.year) {
@@ -60,23 +101,15 @@ export default {
   },
   methods: {
     selectRecipe (id) {
-      var index = this.recipes.indexOf(id)
-      if (index !== -1) {
-        this.recipes.splice(index, 1)
-      } else {
-        this.recipes.push(id)
-      }
+      this.mealData.recipes.push(id)
+    },
+    removeRecipe (id) {
+      this.mealData.recipes.splice(this.mealData.recipes.indexOf(id), 1)
     },
     addMeal () {
-      this.$store.dispatch('meals/addMeal', {
-        title: this.title,
-        comment: this.comment,
-        recipes: this.recipes,
-        date: this.date
-      }).then(() => {
-        this.title = ''
-        this.comment = ''
-        this.recipes = []
+      this.mealData.date = this.date
+      this.$store.dispatch('meals/addMeal', this.mealData).then(() => {
+        this.mealData = _.clone(emptyData)
       })
     }
   }

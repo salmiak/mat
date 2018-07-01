@@ -4,6 +4,9 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import store from './store'
+import VueFuse from 'vue-fuse'
+
+Vue.use(VueFuse)
 
 Vue.config.productionTip = false
 
