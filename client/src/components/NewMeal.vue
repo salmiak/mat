@@ -8,6 +8,7 @@
         <div>
           <textarea rows="15" cols="15" placeholder="COMMENT" v-model="comment"></textarea>
         </div>
+
         <div>
           <div v-for="recipe in recipeList" :key="recipe._id" @click="selectRecipe(recipe._id)">
             <span v-if="recipe.selected">
@@ -16,6 +17,7 @@
             {{recipe.title}}
           </div>
         </div>
+
         <div>
           <button class="app_meal_btn" @click="addMeal">Add</button>
         </div>

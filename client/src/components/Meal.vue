@@ -41,7 +41,14 @@ export default {
 
 <style>
 .meal {
-  padding: 12px 0;
-  border-bottom: 1px solid #DDD;
+  background: #FFF;
+  padding: 0 16px 16px;
+  border: 1px solid #EEE;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+  width: 90%;
+  max-width: 400px;
+  border-radius: 12px;
+  margin: 12px auto;
+  text-align: left;
 }
 </style>
