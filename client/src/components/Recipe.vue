@@ -14,21 +14,19 @@
         </p>
         <button @click="editMode = true">Edit</button>
       </div>
-      <div v-if="editMode">
-        <input type="text" v-model="recipe.title" />
-        <textarea v-model="recipe.comment"></textarea>
-        <button @click="updateRecipe()">Save</button>
-      </div>
+      <edit-recipe v-if="editMode" :recipeData="recipe" @save-recipe="updateRecipe"></edit-recipe>
     </div>
   </div>
 </template>
 
 <script>
 import RecipesService from '@/services/RecipesService'
+import EditRecipe from './EditRecipe'
 
 export default {
   name: 'recipe',
   props: ['id'],
+  components: {EditRecipe},
   data () {
     return {
       editMode: false
@@ -40,8 +38,8 @@ export default {
     }
   },
   methods: {
-    async updateRecipe () {
-      await RecipesService.updateRecipe(this.recipe)
+    async updateRecipe (recipe) {
+      await RecipesService.updateRecipe(recipe)
       this.editMode = false
     }
   }

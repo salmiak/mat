@@ -23,6 +23,10 @@ body {
   background: #FAFEFE;
   padding-bottom: 30px;
 }
+a {
+  color: blue;
+  text-decoration: none;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

@@ -10,7 +10,7 @@ export default {
   },
 
   updateRecipe (params) {
-    return Api().put('recipes/' + params.id, params)
+    return Api().put('recipes/' + params._id, params)
   },
 
   /*
