@@ -128,7 +128,8 @@ app.post('/recipes', (req, res) => {
   var payload = {
     title: req.body.title,
     comment: req.body.comment,
-    url: req.body.url
+    url: req.body.url,
+    wpId: req.body.wpId
   }
 
   var new_post = new Recipe(payload)
@@ -189,7 +190,20 @@ app.delete('/recipes/:id', (req, res) => {
   })
 })
 
+/**
+  * UTILS
+  */
 
+// Map over wpId and _id
+app.get('/wpidmap', (req, res) => {
+  var db = req.db;
+  Recipe.find({}, 'title wpId', function (error, recipes) {
+    if (error) { console.error(error); }
+    res.send({
+      map: _.keyBy(recipes, 'wpId')
+    })
+  }).sort({_id:-1})
+})
 
 /**
   * POST

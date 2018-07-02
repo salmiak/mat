@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
 
 import ImportRecipes from '@/components/ImportRecipes'
+import ImportMeals from '@/components/ImportMeals'
 
 import Week from '@/components/Week'
 
@@ -31,6 +32,11 @@ export default new Router({
       path: '/import/recipes',
       name: 'ImportRecipes',
       component: ImportRecipes
+    },
+    {
+      path: '/import/meals',
+      name: 'ImportMeals',
+      component: ImportMeals
     },
 
     {
