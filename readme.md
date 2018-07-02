@@ -2,7 +2,8 @@
 
 ## Todo
 - Add recipes search
-- Bring SexyBack (Design)
 - Add edit recipe
 - From recipe create meals
-- Import recipes and meal from Wordpress :o
+- Bring SexyBack (Design)
+- Import meals from Wordpress :o
+- Find hosting

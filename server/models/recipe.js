@@ -4,7 +4,8 @@ var Schema = mongoose.Schema;
 var RecipeSchema = new Schema({
   title: String,
   comment: String,
-  url: String
+  url: String,
+  wpId: Number
 }, {
   timestamps: true
 });

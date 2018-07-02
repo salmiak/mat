@@ -32,7 +32,8 @@ const actions = {
       RecipesService.addRecipe({
         title: data.title,
         comment: data.comment,
-        url: data.url
+        url: data.url,
+        wpId: data.wpId
       }).then((response) => {
         resolve()
       }, (err) => {
