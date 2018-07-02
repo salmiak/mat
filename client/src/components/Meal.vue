@@ -1,6 +1,6 @@
 <template>
-  <div class="meal">
-    <div v-if="!editMode">
+  <div class="meal" :class="{made: meal.made}">
+    <div v-if="!editMode && !meal.made">
       <h2>{{meal.title}}</h2>
       <p>
         {{meal.comment}}
@@ -10,6 +10,11 @@
       <button @click="deleteMeal(meal._id)">Delete</button>
       <button @click="moveToPrevWeek">Move to previous week</button>
       <button @click="moveToNextWeek">Move to next week</button>
+      <button @click="toggleMade">Mark as made</button>
+    </div>
+    <div v-if="!editMode && meal.made">
+      <h2>{{meal.title}}</h2>
+      <button @click="toggleMade">Mark as not made</button>
     </div>
     <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal"></edit-meal>
   </div>
@@ -46,6 +51,10 @@ export default {
     moveToNextWeek () {
       this.meal.date = moment(this.meal.date).add(1, 'w').toDate()
       this.updateMeal(this.meal)
+    },
+    toggleMade () {
+      this.meal.made = !this.meal.made
+      this.updateMeal(this.meal)
     }
   }
 }
@@ -62,5 +71,9 @@ export default {
   border-radius: 12px;
   margin: 12px auto;
   text-align: left;
+}
+.meal.made {
+  color: #9AA;
+  text-decoration: line-through;
 }
 </style>
