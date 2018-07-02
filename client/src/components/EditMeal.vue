@@ -51,7 +51,7 @@ export default {
     return {
       searchKeys: ['title', 'comment'],
       searchTerm: '',
-      recipeSearchResults: undefined
+      recipeSearchResults: []
     }
   },
   created () {
