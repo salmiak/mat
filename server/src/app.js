@@ -152,7 +152,7 @@ app.get('/recipes', (req, res) => {
     res.send({
       recipes: recipes
     })
-  }).sort({_id:-1})
+  }).sort({title:1})
 })
 
 // Update a recipe

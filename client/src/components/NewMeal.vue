@@ -58,8 +58,7 @@ export default {
 .meal .closeBtn {
   display: block;
   text-align: center;
-  text-decoration: underline;
-  color: blue;
+  color: #4d7ef7;
   margin: 16px 0;
   cursor: pointer;
 }
