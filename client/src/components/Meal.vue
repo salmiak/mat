@@ -8,12 +8,15 @@
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
       <button @click="editMode = true">Edit</button>
       <button @click="deleteMeal(meal._id)">Delete</button>
+      <button @click="moveToPrevWeek">Move to previous week</button>
+      <button @click="moveToNextWeek">Move to next week</button>
     </div>
     <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal"></edit-meal>
   </div>
 </template>
 
 <script>
+import moment from 'moment'
 import {mapActions} from 'vuex'
 import MealsService from '@/services/MealsService'
 import Recipe from './Recipe'
@@ -35,6 +38,14 @@ export default {
     async updateMeal (meal) {
       await MealsService.updateMeal(meal)
       this.editMode = false
+    },
+    moveToPrevWeek () {
+      this.meal.date = moment(this.meal.date).add(-1, 'w').toDate()
+      this.updateMeal(this.meal)
+    },
+    moveToNextWeek () {
+      this.meal.date = moment(this.meal.date).add(1, 'w').toDate()
+      this.updateMeal(this.meal)
     }
   }
 }
