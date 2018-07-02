@@ -13,7 +13,7 @@ const getters = {
     return state.list
   },
   mealsInWeek: (state) => (query) => {
-    return _.filter(state.list, (meal) => {
+    return state.list.filter(meal => {
       var m = moment(meal.date)
       return (m.isoWeek() === query.week && m.isoWeekYear() === query.year)
     })

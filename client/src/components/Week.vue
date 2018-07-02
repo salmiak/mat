@@ -28,10 +28,10 @@ export default {
   },
   computed: {
     week () {
-      return this.$route.params.week || moment().isoWeek()
+      return parseInt(this.$route.params.week) || moment().isoWeek()
     },
     year () {
-      return this.$route.params.year || moment().isoWeekYear()
+      return parseInt(this.$route.params.year) || moment().isoWeekYear()
     },
     currentWeek () {
       return {

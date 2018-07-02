@@ -74,7 +74,7 @@ export default {
       return list
     },
     recipeSearchResultsList () {
-      return _.filter(this.recipeSearchResults, recipe => {
+      return this.recipeSearchResults.filter(recipe => {
         return this.mealData.recipes.indexOf(recipe._id) === -1
       })
     },
