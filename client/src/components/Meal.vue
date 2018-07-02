@@ -7,32 +7,33 @@
       </p>
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
       <button @click="editMode = true">Edit</button>
+      <button @click="deleteMeal(meal._id)">Delete</button>
     </div>
-    <div v-if="editMode">
-      <input type="text" v-model="meal.title" />
-      <textarea v-model="meal.comment"></textarea>
-      <!-- <input type="text" v-model="meal.recipes" /> 5b2e10051ee55c6720327bb6, 5b2e106826cf2567256dfc53-->
-      <button @click="updateMeal()">Save</button>
-    </div>
+    <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal"></edit-meal>
   </div>
 </template>
 
 <script>
+import {mapActions} from 'vuex'
 import MealsService from '@/services/MealsService'
 import Recipe from './Recipe'
+import EditMeal from './EditMeal'
 
 export default {
   name: 'meal',
   props: ['meal'],
-  components: {Recipe},
+  components: {Recipe, EditMeal},
   data () {
     return {
       editMode: false
     }
   },
   methods: {
-    async updateMeal () {
-      await MealsService.updateMeal(this.meal)
+    ...mapActions('meals', {
+      deleteMeal: 'deleteMeal'
+    }),
+    async updateMeal (meal) {
+      await MealsService.updateMeal(meal)
       this.editMode = false
     }
   }

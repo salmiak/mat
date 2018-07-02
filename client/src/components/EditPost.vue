@@ -65,7 +65,8 @@ export default {
   text-transform: uppercase;
   font-size: 12px;
   font-weight: bold;
-  width: 520px;
+  width: 90%;
+  margin: 0 auto;
   border: none;
   cursor: pointer;
 }
