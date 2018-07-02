@@ -5,7 +5,10 @@
     </div>
     <div v-else>
       <div v-if="!editMode">
-        <h2>{{recipe.title}}</h2>
+        <h2>
+          <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
+          <span v-else>{{recipe.title}}</span>
+        </h2>
         <p>
           {{recipe.comment}}
         </p>
