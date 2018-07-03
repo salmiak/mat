@@ -21,7 +21,9 @@ const actions = {
 
   loadRecipeList ({commit}) {
     RecipesService.fetchRecipes().then((response) => {
-      commit('setRecipeList', { list: response.data.recipes })
+      if (response.data.recipes) {
+        commit('setRecipeList', { list: response.data.recipes })
+      }
     }, (err) => {
       console.log(err)
     })

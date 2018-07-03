@@ -1,8 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import Auth from '@okta/okta-vue'
+
 import ImportRecipes from '@/components/ImportRecipes'
 import ImportMeals from '@/components/ImportMeals'
+
+import Welcome from '@/components/Welcome'
 
 import Week from '@/components/Week'
 
@@ -14,13 +18,24 @@ import NewRecipe from '@/components/NewRecipe'
 
 Vue.use(Router)
 
+Vue.use(Auth, {
+  issuer: 'https://dev-633272.oktapreview.com/oauth2/default',
+  client_id: '0oafngul4tDd4FKLX0h7',
+  redirect_uri: 'http://localhost:8080/implicit/callback',
+  scope: 'openid profile email'
+})
+
 export default new Router({
   mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'Start page',
-      component: Week
+      name: 'Welcome',
+      component: Welcome
+    },
+    {
+      path: '/implicit/callback',
+      component: Auth.handleCallback()
     },
 
     {

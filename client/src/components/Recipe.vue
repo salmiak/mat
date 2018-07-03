@@ -32,6 +32,9 @@ export default {
       editMode: false
     }
   },
+  mounted () {
+    this.$store.dispatch('recipes/loadRecipeList')
+  },
   computed: {
     recipe () {
       return this.$store.getters['recipes/recipeById'](this.id)
