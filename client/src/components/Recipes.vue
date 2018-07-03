@@ -5,13 +5,16 @@
       <div>
         <router-link v-bind:to="{ name: 'NewRecipe' }" class="">Add Recipe</router-link>
       </div>
+
+      <vue-fuse :placeholder="'Search recipe'" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
+
       <table>
         <tr>
           <td>Title</td>
           <td width="550">Comment</td>
           <td width="100" align="center">Action</td>
         </tr>
-        <tr v-for="recipe in recipes" :key="recipe._id" :class="{made:recipe.made}">
+        <tr v-for="recipe in recipeSearchResults" :key="recipe._id" :class="{made:recipe.made}">
           <td v-if="recipe.url"><a :href="recipe.url">{{ recipe.title }}</a></td>
           <td v-else>{{ recipe.title }}</td>
           <td>{{ recipe.comment }}</td>
@@ -34,9 +37,20 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'recipes',
+  data () {
+    return {
+      searchKeys: ['title', 'comment'],
+      recipeSearchResults: []
+    }
+  },
   computed: {
     ...mapState('recipes', {
       recipes: 'list'
+    })
+  },
+  created () {
+    this.$on('searchChanged', results => {
+      this.recipeSearchResults = results
     })
   },
   mounted () {
@@ -65,7 +79,7 @@ table tr td {
   padding: 10px;
 }
 table tr:nth-child(odd) {
-  background: #f2f2f2;
+  background: rgba(0,20,20,0.02);
 }
 table tr:nth-child(1) {
   background: #4d7ef7;
