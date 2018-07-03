@@ -1,9 +1,11 @@
 import _ from 'lodash'
+import moment from 'moment'
 import RecipesService from '@/services/RecipesService'
 
 // initial state
 const state = {
-  list: []
+  list: [],
+  syncTimestamp: undefined
 }
 
 // getters
@@ -19,7 +21,12 @@ const getters = {
 // actions
 const actions = {
 
-  loadRecipeList ({commit}) {
+  loadRecipeList ({commit, state}) {
+    var diff = moment().diff(state.syncTimestamp, 'minutes')
+    console.log(diff)
+    if (state.syncTimestamp && diff < 5) {
+      return console.log('Recipes Cached not updated')
+    }
     RecipesService.fetchRecipes().then((response) => {
       if (response.data.recipes) {
         commit('setRecipeList', { list: response.data.recipes })
@@ -57,6 +64,7 @@ const actions = {
 const mutations = {
   setRecipeList (state, {list}) {
     state.list = list
+    state.syncTimestamp = moment()
   }
 }
 

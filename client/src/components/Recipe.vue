@@ -33,7 +33,7 @@ export default {
     }
   },
   mounted () {
-    this.$store.dispatch('recipes/loadRecipeList')
+    // TODO: If a recipe that isn't loaded is requested, fetch from server.
   },
   computed: {
     recipe () {
