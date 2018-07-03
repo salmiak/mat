@@ -1,6 +1,5 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
 
 import ImportRecipes from '@/components/ImportRecipes'
 import ImportMeals from '@/components/ImportMeals'
@@ -13,10 +12,6 @@ import NewMeal from '@/components/NewMeal'
 import Recipes from '@/components/Recipes'
 import NewRecipe from '@/components/NewRecipe'
 
-import Posts from '@/components/Posts'
-import NewPost from '@/components/NewPost'
-import EditPost from '@/components/EditPost'
-
 Vue.use(Router)
 
 export default new Router({
@@ -24,8 +19,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
-      component: HelloWorld
+      name: 'Start page',
+      component: Week
     },
 
     {
@@ -70,22 +65,6 @@ export default new Router({
       path: '/recipes/new',
       name: 'NewRecipe',
       component: NewRecipe
-    },
-
-    {
-      path: '/posts',
-      name: 'Posts',
-      component: Posts
-    },
-    {
-      path: '/posts/new',
-      name: 'NewPost',
-      component: NewPost
-    },
-    {
-      path: '/posts/:id',
-      name: 'EditPost',
-      component: EditPost
     }
   ]
 })
