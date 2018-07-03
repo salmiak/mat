@@ -10,6 +10,14 @@ Vue.use(VueFuse)
 
 Vue.config.productionTip = false
 
+Vue.directive('focus', {
+  // When the bound element is inserted into the DOM...
+  inserted: function (el) {
+    // Focus the element
+    el.focus()
+  }
+})
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

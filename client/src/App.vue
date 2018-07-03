@@ -1,19 +1,35 @@
 <template>
   <div id="app">
     <nav>
+      <router-link v-if="loggedIn" to="/logout">Log out</router-link>
+      <router-link v-if="!loggedIn" to="/login">Log in</router-link> |
       <router-link to="/week">Meals</router-link> |
       <!-- <router-link to="/meals">Go to Meals</router-link> -->
       <router-link to="/recipes">Recipes</router-link>
     </nav>
-    <router-view/>
+    <template v-if="$route.matched.length">
+      <router-view></router-view>
+    </template>
+    <template v-else>
+      <p>You are logged {{ loggedIn ? 'in' : 'out' }}</p>
+    </template>
   </div>
 </template>
 
 <script>
+import auth from './auth'
 export default {
   name: 'App',
+  data () {
+    return {
+      loggedIn: auth.loggedIn()
+    }
+  },
   created () {
     this.$store.dispatch('recipes/loadRecipeList')
+    auth.onChange = loggedIn => {
+      this.loggedIn = loggedIn
+    }
   }
 }
 </script>

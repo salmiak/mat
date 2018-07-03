@@ -1,5 +1,8 @@
 <template>
   <div>
+    <p>
+      Welcome {{userName}}
+    </p>
     <h1>Week {{week}} in {{year}}</h1>
 
     <router-link :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}">Prev week</router-link> |
@@ -13,8 +16,8 @@
 </template>
 
 <script>
-// import MealsService from '@/services/MealsService'
 import moment from 'moment'
+import auth from '../auth'
 import Meal from './Meal'
 import NewMeal from './NewMeal'
 
@@ -27,6 +30,9 @@ export default {
     this.loadMealsInWeek(this.nextWeek)
   },
   computed: {
+    userName () {
+      return auth.getName()
+    },
     week () {
       return parseInt(this.$route.params.week) || moment().isoWeek()
     },
