@@ -25,7 +25,7 @@ const actions = {
 
   loadMealList ({commit}) {
     MealsService.fetchMeals().then((response) => {
-      commit('setMealList', { list: response.data.meals })
+      commit('setMealList', { list: response.meals })
     }, (err) => {
       console.log(err)
     })
@@ -33,7 +33,7 @@ const actions = {
 
   loadMealsInWeek ({commit}, query) {
     MealsService.fetchMealsInWeek(query).then((response) => {
-      response.data.meals.forEach((meal) => {
+      response.meals.forEach((meal) => {
         commit('addMeal', { meal: meal })
       })
     }, (err) => {
@@ -49,7 +49,7 @@ const actions = {
         recipes: data.recipes,
         date: data.date
       }).then((response) => {
-        commit('addMeal', { meal: response.data.meal })
+        commit('addMeal', { meal: response.meal })
         resolve()
       }, (err) => {
         console.log(err)

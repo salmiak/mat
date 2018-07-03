@@ -4,7 +4,7 @@
       <router-link to="/week">Meals</router-link> |
       <!-- <router-link to="/meals">Go to Meals</router-link> -->
       <router-link to="/recipes">Recipes</router-link>
-      <button v-if='authenticated' v-on:click='logout' id='logout-button'> Logout </button>
+      <button v-if='activeUser' v-on:click='logout' id='logout-button'> Logout </button>
       <button v-else v-on:click='login' id='login-button'> Login </button>
     </nav>
     <router-view/>
@@ -12,36 +12,31 @@
 </template>
 
 <script>
-import axios from 'axios'
-
 export default {
   name: 'App',
   data () {
     return {
-      authenticated: false
+      activeUser: null
     }
   },
-  created () {
-    this.isAuthenticated()
+  async created () {
+    await this.refreshActiveUser()
   },
   watch: {
     // Everytime the route changes, check for auth status
-    '$route': 'isAuthenticated'
+    '$route': 'refreshActiveUser'
   },
   methods: {
-    async isAuthenticated () {
-      this.authenticated = await this.$auth.isAuthenticated()
-      axios.defaults.headers.common['Authorization'] = `Bearer ${await this.$auth.getAccessToken()}`
-    },
     login () {
-      this.$auth.loginRedirect('/week')
+      this.$auth.loginRedirect()
+    },
+    async refreshActiveUser () {
+      this.activeUser = await this.$auth.getUser()
     },
     async logout () {
       await this.$auth.logout()
-      await this.isAuthenticated()
-
-      // Navigate back to home
-      this.$router.push({ path: '/' })
+      await this.refreshActiveUser()
+      this.$router.push('/')
     }
   }
 }

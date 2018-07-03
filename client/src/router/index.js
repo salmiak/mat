@@ -25,7 +25,7 @@ Vue.use(Auth, {
   scope: 'openid profile email'
 })
 
-export default new Router({
+let router = new Router({
   mode: 'history',
   routes: [
     {
@@ -41,45 +41,73 @@ export default new Router({
     {
       path: '/import/recipes',
       name: 'ImportRecipes',
-      component: ImportRecipes
+      component: ImportRecipes,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/import/meals',
       name: 'ImportMeals',
-      component: ImportMeals
+      component: ImportMeals,
+      meta: {
+        requiresAuth: true
+      }
     },
 
     {
       path: '/week/:year/:week',
       name: 'Week',
-      component: Week
+      component: Week,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/week',
       name: 'Current Week',
-      component: Week
+      component: Week,
+      meta: {
+        requiresAuth: true
+      }
     },
 
     {
       path: '/meals',
       name: 'Meals',
-      component: Meals
+      component: Meals,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/meals/new',
       name: 'NewMeal',
-      component: NewMeal
+      component: NewMeal,
+      meta: {
+        requiresAuth: true
+      }
     },
 
     {
       path: '/recipes',
       name: 'Recipes',
-      component: Recipes
+      component: Recipes,
+      meta: {
+        requiresAuth: true
+      }
     },
     {
       path: '/recipes/new',
       name: 'NewRecipe',
-      component: NewRecipe
+      component: NewRecipe,
+      meta: {
+        requiresAuth: true
+      }
     }
   ]
 })
+
+router.beforeEach(Vue.prototype.$auth.authRedirectGuard())
+
+export default router

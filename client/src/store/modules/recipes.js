@@ -23,13 +23,13 @@ const actions = {
 
   loadRecipeList ({commit, state}) {
     var diff = moment().diff(state.syncTimestamp, 'minutes')
-    console.log(diff)
     if (state.syncTimestamp && diff < 5) {
       return console.log('Recipes Cached not updated')
     }
+
     RecipesService.fetchRecipes().then((response) => {
-      if (response.data.recipes) {
-        commit('setRecipeList', { list: response.data.recipes })
+      if (response.recipes) {
+        commit('setRecipeList', { list: response.recipes })
       }
     }, (err) => {
       console.log(err)

@@ -2,24 +2,24 @@ import Api from '@/services/Api'
 
 export default {
   fetchRecipes () {
-    return Api().get('recipes')
+    return Api.execute('get', '/recipes')
   },
 
   addRecipe (params) {
-    return Api().post('recipes', params)
+    return Api.execute('post', '/recipes', params)
   },
 
   updateRecipe (params) {
-    return Api().put('recipes/' + params._id, params)
+    return Api.execute('put', '/recipes/' + params._id, params)
   },
 
   /*
   getRecipe (params) {
-    return Api().get('recipe/' + params.id)
+    return Api.execute('get('recipe/' + params.id)
   },
   */
 
   deleteRecipe (id) {
-    return Api().delete('recipes/' + id)
+    return Api.execute('delete', '/recipes/' + id)
   }
 }
