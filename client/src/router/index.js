@@ -20,8 +20,8 @@ Vue.use(Router)
 
 Vue.use(Auth, {
   issuer: 'https://dev-633272.oktapreview.com/oauth2/default',
-  client_id: '0oafngul4tDd4FKLX0h7',
-  redirect_uri: 'http://localhost:8080/implicit/callback',
+  client_id: '0oafnx0ia8m18WlAR0h7',
+  redirect_uri: window.location.origin + '/implicit/callback',
   scope: 'openid profile email'
 })
 

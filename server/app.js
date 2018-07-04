@@ -7,15 +7,20 @@ const morgan = require('morgan')
 const mongoose = require('mongoose')
 const OktaJwtVerifier = require('@okta/jwt-verifier');
 
-const app = express()
+let app = express()
 app.use(morgan('combined'))
 app.use(bodyParser.json())
 app.use(cors())
 
-const Recipe = require("../models/recipe");
-const Meal = require("../models/meal");
+const Recipe = require("./models/recipe");
+const Meal = require("./models/meal");
 
-mongoose.connect('mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat');
+let bd_host = 'mongodb://mat-user:YD22aq2obhA5x1ETRZ2D@ds123258.mlab.com:23258/mat-prod'
+if (process.env.NODE_ENV === 'dev') {
+  bd_host = 'mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat'
+}
+
+mongoose.connect(bd_host);
 var db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
 db.once("open", function(callback){
@@ -35,7 +40,7 @@ const oktaJwtVerifier = new OktaJwtVerifier({
  * if the token is not present or fails validation.  If the token is valid its
  * contents are attached to req.jwt
  */
-function authenticationRequired(req, res, next) {
+const authenticationRequired = (req, res, next) => {
   const authHeader = req.headers.authorization || '';
   const match = authHeader.match(/Bearer (.+)/);
 
@@ -234,3 +239,5 @@ app.get('/wpidmap', (req, res) => {
     })
   }).sort({_id:-1})
 })
+
+module.exports = app
