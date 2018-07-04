@@ -19,6 +19,9 @@ export default {
       }
     }).then(req => {
       return req.data
+    }, (err) => {
+      console.lgo('API error')
+      console.log(err)
     })
   }
 }

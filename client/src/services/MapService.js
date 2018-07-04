@@ -2,6 +2,6 @@ import Api from '@/services/Api'
 
 export default {
   fetchWpIdMap () {
-    return Api().get('wpidmap')
+    return Api.execute('get', '/wpidmap')
   }
 }

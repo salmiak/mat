@@ -28,13 +28,17 @@ export default {
   },
   created () {
     MapService.fetchWpIdMap().then(response => {
-      this.wpIdMap = response.data.map
+      this.wpIdMap = response.map
     }, err => {
       console.log(err)
     })
   },
   methods: {
     importJSON () {
+      if (!this.wpIdMap) {
+        return alert('Something is wrong with the map. Aborted import.')
+      }
+
       var imported = JSON.parse(this.theText.replace(/\r?\n|\r/g, ' '))
       var items = imported.rss.channel.item
 
