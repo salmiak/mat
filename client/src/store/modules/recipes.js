@@ -44,8 +44,26 @@ const actions = {
         url: data.url,
         wpId: data.wpId
       }).then((response) => {
+        commit('setRecipe', { recipe: response.recipe })
         resolve()
       }, (err) => {
+        console.log(err)
+      })
+    })
+  },
+
+  updateRecipe ({commit, state}, data) {
+    return new Promise((resolve, reject) => {
+      RecipesService.updateRecipe({
+        _id: data._id,
+        title: data.title,
+        comment: data.comment,
+        url: data.url,
+        wpId: data.wpId
+      }).then(response => {
+        commit('setRecipe', { recipe: response.recipe })
+        resolve()
+      }, err => {
         console.log(err)
       })
     })
@@ -65,6 +83,13 @@ const mutations = {
   setRecipeList (state, {list}) {
     state.list = list
     state.syncTimestamp = moment()
+  },
+  setRecipe (state, {recipe}) {
+    var index = _.findIndex(state.list, {_id: recipe._id})
+    if (index !== -1) {
+      state.list.splice(index, 1)
+    }
+    state.list.unshift(recipe)
   }
 }
 

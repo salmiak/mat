@@ -1,19 +1,20 @@
 <template>
   <div>
-    <span v-if="!wpIdMap">Map not loaded</span>
+    <span v-if="!recipesWpIdMap || !mealsWpIdMap">Map not loaded</span>
     <textarea v-model="theText"></textarea>
-    <button @click="importJSON">Go</button>
+    <button @click="importXML">Go</button>
     <p>
       Parsed: {{parsed}}
     </p>
     <p>
-      Stored: {{stored}}
+      Stored: {{stored}} | Updated: {{updated}}
     </p>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import convert from 'xml-js'
 import MapService from '@/services/MapService'
 
 export default {
@@ -23,27 +24,34 @@ export default {
       theText: '',
       parsed: 0,
       stored: 0,
-      wpIdMap: undefined
+      updated: 0,
+      recipesWpIdMap: undefined,
+      mealsWpIdMap: undefined
     }
   },
   created () {
-    MapService.fetchWpIdMap().then(response => {
-      this.wpIdMap = response.map
+    MapService.fetchRecipesWpIdMap().then(response => {
+      this.recipesWpIdMap = response.map
+    }, err => {
+      console.log(err)
+    })
+    MapService.fetchMealsWpIdMap().then(response => {
+      this.mealsWpIdMap = response.map
     }, err => {
       console.log(err)
     })
   },
   methods: {
-    importJSON () {
-      if (!this.wpIdMap) {
+    importXML () {
+      if (!this.recipesWpIdMap) {
         return alert('Something is wrong with the map. Aborted import.')
       }
 
-      var imported = JSON.parse(this.theText.replace(/\r?\n|\r/g, ' '))
-      var items = imported.rss.channel.item
+      var imported = JSON.parse(convert.xml2json(this.theText, {compact: true, spaces: 4}))
+      var items = _.filter(imported.rss.channel.item, {'wp:post_type': {'_cdata': 'meal'}})
 
       var getMeta = (item, key) => {
-        return _.filter(item['wp:postmeta'], {'wp:meta_key': key})[0] ? _.filter(item['wp:postmeta'], {'wp:meta_key': key})[0]['wp:meta_value'] : undefined
+        return _.filter(item['wp:postmeta'], {'wp:meta_key': {'_cdata': key}})[0] ? _.filter(item['wp:postmeta'], {'wp:meta_key': {'_cdata': key}})[0]['wp:meta_value']._cdata : undefined
       }
 
       items.forEach(item => {
@@ -58,7 +66,7 @@ export default {
             recipes = JSON.parse(recipes)
 
             recipes = recipes.map(r => {
-              var map = this.wpIdMap[parseInt(r)]
+              var map = this.recipesWpIdMap[parseInt(r)]
               if (map) {
                 return map._id
               }
@@ -68,18 +76,28 @@ export default {
         }
 
         var mealItem = {
-          title: item.title,
+          title: item.title._text,
           made: (getMeta(item, 'made') !== undefined),
           comment: getMeta(item, 'comment'),
           date: new Date(getMeta(item, 'date')),
-          recipes: recipes
+          recipes: recipes,
+          wpId: item['wp:post_id']._text
         }
-        console.log(mealItem)
         this.parsed++
 
-        this.$store.dispatch('meals/addMeal', mealItem).then(() => {
-          this.stored++
-        })
+        if (this.mealsWpIdMap[parseInt(mealItem.wpId)]) {
+          // Meal in map, update it
+          mealItem._id = this.mealsWpIdMap[parseInt(mealItem.wpId)]._id
+          this.$store.dispatch('meals/updateMeal', mealItem).then(() => {
+            this.updated++
+          })
+        } else {
+          // Meal not in map, store it.
+          this.$store.dispatch('meals/addMeal', mealItem).then(() => {
+            this.stored++
+          })
+        }
+        console.log(mealItem)
       })
     }
   }

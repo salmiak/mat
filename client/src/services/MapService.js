@@ -1,7 +1,10 @@
 import Api from '@/services/Api'
 
 export default {
-  fetchWpIdMap () {
-    return Api.execute('get', '/wpidmap')
+  fetchRecipesWpIdMap () {
+    return Api.execute('get', '/recipes/wpidmap')
+  },
+  fetchMealsWpIdMap () {
+    return Api.execute('get', '/meals/wpidmap')
   }
 }

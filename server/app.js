@@ -74,7 +74,8 @@ app.post('/meals', authenticationRequired, (req, res) => {
     comment: req.body.comment,
     date: req.body.date,
     recipes: req.body.recipes,
-    index: req.body.index
+    index: req.body.index,
+    wpId: req.body.wpId
   }
 
   var new_meal = new Meal(payload)
@@ -105,7 +106,7 @@ app.get('/meals', authenticationRequired, (req, res) => {
     }
   }
 
-  Meal.find(query, 'title comment date recipes index made', function (error, meals) {
+  Meal.find(query, 'title comment date recipes index made wpId', function (error, meals) {
     if (error) { console.error(error); }
     res.send({
       meals: _.orderBy(meals, ['date','index'], ['desc','asc'])
@@ -116,7 +117,7 @@ app.get('/meals', authenticationRequired, (req, res) => {
 // Update a meal
 app.put('/meals/:id', authenticationRequired, (req, res) => {
   var db = req.db;
-  Meal.findById(req.params.id, 'title comment date recipes index made', function (error, meal) {
+  Meal.findById(req.params.id, 'title comment date recipes index made wpId', function (error, meal) {
     if (error) { console.error(error); }
 
     meal.title = req.body.title
@@ -124,14 +125,16 @@ app.put('/meals/:id', authenticationRequired, (req, res) => {
     meal.date = req.body.date
     meal.recipes = req.body.recipes
     meal.index = req.body.index
-    meal.made = req.body.made
+    meal.made = req.body.made,
+    meal.wpId = req.body.wpId
 
     meal.save(function (error) {
       if (error) {
         console.log(error)
       }
       res.send({
-        success: true
+        success: true,
+        meal: meal
       })
     })
   })
@@ -175,7 +178,8 @@ app.post('/recipes', authenticationRequired, (req, res) => {
     }
     res.send({
       success: true,
-      message: 'Post saved successfully!'
+      message: 'Post saved successfully!',
+      recipe: new_post
     })
   })
 })
@@ -205,7 +209,8 @@ app.put('/recipes/:id', authenticationRequired, (req, res) => {
         console.log(error)
       }
       res.send({
-        success: true
+        success: true,
+        recipe: recipe
       })
     })
   })
@@ -230,12 +235,23 @@ app.delete('/recipes/:id', authenticationRequired, (req, res) => {
   */
 
 // Map over wpId and _id
-app.get('/wpidmap', (req, res) => {
+app.get('/recipes/wpidmap', (req, res) => {
   var db = req.db;
   Recipe.find({}, 'title wpId', function (error, recipes) {
     if (error) { console.error(error); }
     res.send({
       map: _.keyBy(recipes, 'wpId')
+    })
+  }).sort({_id:-1})
+})
+
+// Map over wpId and _id
+app.get('/meals/wpidmap', (req, res) => {
+  var db = req.db;
+  Meal.find({}, 'title wpId', function (error, meals) {
+    if (error) { console.error(error); }
+    res.send({
+      map: _.keyBy(meals, 'wpId')
     })
   }).sort({_id:-1})
 })

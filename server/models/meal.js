@@ -7,7 +7,8 @@ var MealSchema = new Schema({
   date: Date,
   index: { type: Number, default: 0 },
   made: { type: Boolean, default: false },
-  recipes: [ String ]
+  recipes: [ String ],
+  wpId: Number
 }, {
   timestamps: true
 });

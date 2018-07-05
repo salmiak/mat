@@ -34,7 +34,7 @@ const actions = {
   loadMealsInWeek ({commit}, query) {
     MealsService.fetchMealsInWeek(query).then((response) => {
       response.meals.forEach((meal) => {
-        commit('addMeal', { meal: meal })
+        commit('setMeal', { meal: meal })
       })
     }, (err) => {
       console.log(err)
@@ -47,11 +47,30 @@ const actions = {
         title: data.title,
         comment: data.comment,
         recipes: data.recipes,
-        date: data.date
+        date: data.date,
+        wpId: data.wpId
       }).then((response) => {
-        commit('addMeal', { meal: response.meal })
+        commit('setMeal', { meal: response.meal })
         resolve()
       }, (err) => {
+        console.log(err)
+      })
+    })
+  },
+
+  updateMeal ({commit, state}, data) {
+    return new Promise((resolve, reject) => {
+      MealsService.updateMeal({
+        _id: data._id,
+        title: data.title,
+        comment: data.comment,
+        recipes: data.recipes,
+        date: data.date,
+        wpId: data.wpId
+      }).then(response => {
+        commit('setMeal', { meal: response.meal })
+        resolve()
+      }, err => {
         console.log(err)
       })
     })
@@ -71,7 +90,7 @@ const mutations = {
   setMealList (state, {list}) {
     state.list = list
   },
-  addMeal (state, {meal}) {
+  setMeal (state, {meal}) {
     var index = _.findIndex(state.list, {_id: meal._id})
     if (index !== -1) {
       state.list.splice(index, 1)
