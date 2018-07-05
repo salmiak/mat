@@ -1,8 +1,8 @@
 <template>
   <div>
     <span v-if="!wpIdMap">Map not loaded</span>
-    <textarea v-model="theText"></textarea>
-    <button @click="importXML">Go</button>
+    <input type="file" name="fileToUpload" id="fileToUpload" @change="fileUploaded">
+    <button :disabled="!fileLoaded" @click="importXML">Go</button>
     <p>
       Parsed: {{parsed}}
     </p>
@@ -22,6 +22,7 @@ export default {
   data () {
     return {
       theText: '',
+      fileLoaded: false,
       parsed: 0,
       stored: 0,
       updated: 0,
@@ -36,6 +37,15 @@ export default {
     })
   },
   methods: {
+    fileUploaded (event) {
+      var file = event.target.files[0]
+      var reader = new FileReader()
+      reader.readAsText(file)
+      reader.onloadend = () => {
+        this.theText = reader.result
+        this.fileLoaded = true
+      }
+    },
     importXML () {
       if (!this.wpIdMap) {
         return alert('Something is wrong with the map. Aborted import.')
