@@ -63,7 +63,7 @@ export default {
   }
 }
 </script>
-<style type="text/css">
+<style type="text/css" scoped>
 .table-wrap {
   width: 90%;
   margin: 0 auto;

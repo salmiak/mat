@@ -60,20 +60,18 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+@import "../assets/global.less";
 .meal {
-  background: #FFF;
-  padding: 0 16px 16px;
-  border: 1px solid #EEE;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-  width: 90%;
-  max-width: 400px;
-  border-radius: 12px;
-  margin: 12px auto;
-  text-align: left;
-}
-.meal.made {
-  color: #9AA;
-  text-decoration: line-through;
+  background: @cMealBg;
+  padding: @bu;
+  width: 95%;
+  max-width: @bu * 25;
+  border-radius: @radius;
+  margin: @bu/2 auto;
+  &.made {
+    color: fade(@cText, 50%);
+    text-decoration: line-through;
+  }
 }
 </style>

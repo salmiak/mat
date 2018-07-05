@@ -1,0 +1,57 @@
+@import '../../node_modules/lesshat/lesshat.less';
+
+// Colors
+
+@cPrimary: saturate(darken(@cBackground, 40%), 30%);
+@cSecondary: #fbafaf;
+@cBackground: #99e1e5;
+@cMealBg: lighten(@cBackground, 20%);
+@cRecipeBg: #FFF;
+@cText: fade(#333, 66%);
+@cHeading: fade(#333, 87%);
+
+// Units
+
+@rem: 16px;
+@bu: 1rem;
+@radius: 4px;
+
+// Typography
+
+.capitals {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+h1, .h1 {
+  font-size: 2rem;
+  color: @cHeading;
+  text-align: center;
+  margin: @bu 0;
+}
+h2, .h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: @cHeading;
+  .capitals;
+}
+h3, .h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  .capitals;
+  color: @cHeading;
+}
+
+button, submit, .btn {
+  display: inline-block;
+  border: 1px solid fade(@cPrimary, 20%);
+  padding: 0.2em @bu 0;
+  border-radius: @radius;
+  line-height: 2em;
+  font-size: 0.8em;
+  font-family: inherit;
+  color: @cPrimary;
+  .capitals;
+  background: none;
+  cursor: pointer;
+}

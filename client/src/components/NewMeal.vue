@@ -1,7 +1,7 @@
 <template>
   <div class="meal">
     <div v-if="expanded">
-      <h1>Add Meal</h1>
+      <h2>Add Meal</h2>
       <edit-meal :week="week" :year="year" :mealData="mealData" @save-meal="addMeal"></edit-meal>
       <span @click="expanded = false" class="closeBtn">Close</span>
     </div>
@@ -40,26 +40,20 @@ export default {
   }
 }
 </script>
-<style type="text/css" scoped>
+<style lang="less" scoped>
+@import "../assets/global.less";
 .meal {
-  background: #FFF;
-  padding: 16px;
-  border: 1px solid #EEE;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-  width: 90%;
-  max-width: 400px;
-  border-radius: 12px;
-  margin: 12px auto;
-  text-align: left;
-}
-.meal h1 {
-  margin-top: 8px;
-}
-.meal .closeBtn {
-  display: block;
-  text-align: center;
-  color: #4d7ef7;
-  margin: 16px 0;
-  cursor: pointer;
+  background: @cMealBg;
+  padding: @bu;
+  width: 95%;
+  max-width: @bu * 25;
+  border-radius: @radius;
+  margin: @bu/2 auto;
+  h1 {
+    margin-top: 8px;
+  }
+  .closeBtn {
+    .btn;
+  }
 }
 </style>

@@ -2,9 +2,11 @@
   <div>
     <h1>Week {{week}} in {{year}}</h1>
 
-    <router-link :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}">Prev week</router-link> |
-    <router-link to="/week">Today</router-link> |
-    <router-link :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}">Next week</router-link>
+    <nav>
+      <router-link :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}">Prev week</router-link> |
+      <router-link to="/week">Today</router-link> |
+      <router-link :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}">Next week</router-link>
+    </nav>
 
     <new-meal :week="week" :year="year"></new-meal>
 

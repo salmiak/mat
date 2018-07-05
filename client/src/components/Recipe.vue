@@ -49,16 +49,24 @@ export default {
 }
 </script>
 
-<style>
+<style lang="less" scoped>
+@import "../assets/global.less";
 .recipe {
-  background: #F5FAFA;
-  padding: 0 16px 16px;
-  border: 1px solid #EEE;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
-  width: 90%;
-  max-width: 400px;
-  border-radius: 12px;
-  margin: 12px auto;
-  text-align: left;
+  background: @cRecipeBg;
+  padding: @bu;
+  width: 95%;
+  max-width: @bu * 25;
+  border-radius: @radius;
+  margin: @bu/2 auto;
+}
+.meal {
+  .recipe {
+    width: auto;
+    margin: @bu/2 -@bu/2;
+    padding: @bu/2;
+    h2 {
+      .h3;
+    }
+  }
 }
 </style>
