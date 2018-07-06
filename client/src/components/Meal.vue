@@ -79,6 +79,9 @@ export default {
     padding-right: calc(5rem);
     margin: 0 0 @bu/2;
     .noselect;
+    .fal {
+      color:@cText;
+    }
   }
   h2:last-child {
     margin-bottom: 0;
