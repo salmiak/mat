@@ -51,6 +51,7 @@ export default {
 
 html {
   font-size: 16px;
+  background: @cHeading;
   @media only screen and (min-device-width : 300px) and (max-device-width : 370px) {
     font-size: 14px;
   }
@@ -109,17 +110,23 @@ a, .a {
 }
 
 footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
   background: @cHeading;
   text-align: center;
-  padding: @bu;
   color: @cBackground;
   .capitals;
   font-size: 0.75rem;
   font-weight: 700;
   margin-top: @bu;
+  line-height: @bu*4;
 }
 #app {
-  margin: calc(2rem + @bu) 0 0;
+  position: relative;
+  padding: 2rem 0 5*@bu;
+  min-height: 100vh;
 }
 
 input, textarea {

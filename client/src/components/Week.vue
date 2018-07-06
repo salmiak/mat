@@ -1,12 +1,10 @@
 <template>
-  <div>
-    <h1>Week {{week}} in {{year}}</h1>
-
-    <nav>
-      <router-link :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}">Prev week</router-link> |
-      <router-link to="/week">Today</router-link> |
-      <router-link :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}">Next week</router-link>
-    </nav>
+  <div class="week">
+    <header>
+      <router-link class="weekNav" :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}"><i class="fa fa-arrow-left"></i></router-link>
+      <h1><router-link to="/week">Week {{week}}</router-link></h1>
+      <router-link class="weekNav" :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}"><i class="fa fa-arrow-right"></i></router-link>
+    </header>
 
     <new-meal :week="week" :year="year"></new-meal>
 
@@ -74,3 +72,29 @@ export default {
   }
 }
 </script>
+
+<style lang="less" scoped>
+@import "../assets/global.less";
+.week {
+  padding-top: 3rem;
+}
+header {
+  position: fixed;
+  top: 2rem;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: @cMealBg;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-content: stretch;
+  box-shadow: 0 0 1px rgba(0,0,0,0.2);
+  a.weekNav {
+    width: 3rem;
+    line-height: 3rem;
+    text-align: center;
+  }
+}
+</style>
