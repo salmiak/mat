@@ -45,7 +45,7 @@ h3, .h3 {
 button, submit, .btn {
   display: inline-block;
   border: 1px solid fade(@cPrimary, 20%);
-  padding: 0.2em @bu 0;
+  padding: 0.2em @bu/1.5 0;
   border-radius: @radius;
   line-height: 2em;
   font-size: 0.8em;
@@ -54,4 +54,21 @@ button, submit, .btn {
   .capitals;
   background: none;
   cursor: pointer;
+  .noselect;
+}
+
+// Utils
+
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.pull-right {
+  float: right;
 }

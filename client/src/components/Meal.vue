@@ -1,20 +1,20 @@
 <template>
   <div class="meal" :class="{made: meal.made}">
     <div v-if="!editMode && !meal.made">
-      <h2>{{meal.title}}</h2>
-      <p>
+      <div class="toolbar">
+        <i class="fal fa-pen" @click="editMode = true"></i>
+        <i class="fal fa-trash-alt" @click="deleteMeal(meal._id)"></i>
+      </div>
+      <h2 @click="toggleMade"><i class="fal fa-square"></i> {{meal.title}}</h2>
+      <p v-if="meal.comment">
         {{meal.comment}}
       </p>
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
-      <button @click="editMode = true">Edit</button>
-      <button @click="deleteMeal(meal._id)">Delete</button>
-      <button @click="moveToPrevWeek">Move to previous week</button>
-      <button @click="moveToNextWeek">Move to next week</button>
-      <button @click="toggleMade">Mark as made</button>
+      <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> To prev. week</span>
+      <span class="btn pull-right" @click="moveToNextWeek">To next week <i class="fal fa-arrow-right"></i></span>
     </div>
     <div v-if="!editMode && meal.made">
-      <h2>{{meal.title}}</h2>
-      <button @click="toggleMade">Mark as not made</button>
+      <h2 @click="toggleMade"><i class="fal fa-check-square"></i> {{meal.title}}</h2>
     </div>
     <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal"></edit-meal>
   </div>
@@ -63,6 +63,7 @@ export default {
 <style lang="less" scoped>
 @import "../assets/global.less";
 .meal {
+  position: relative;
   background: @cMealBg;
   padding: @bu;
   width: 95%;
@@ -71,7 +72,26 @@ export default {
   margin: @bu/2 auto;
   &.made {
     color: fade(@cText, 50%);
-    text-decoration: line-through;
+    padding-bottom: @bu/1.5;
+    // text-decoration: line-through;
+  }
+  h2 {
+    padding-right: calc(5rem);
+    margin: 0 0 @bu/2;
+    .noselect;
+  }
+  h2:last-child {
+    margin-bottom: 0;
+  }
+  .toolbar {
+    .noselect;
+    position: absolute;
+    top: 0;
+    right: @bu/2;
+    .fal {
+      padding: @bu @bu/2;
+      cursor: pointer;
+    }
   }
 }
 </style>

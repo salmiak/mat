@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="welcome">
     <h1>Welcome</h1>
     <button v-on:click="$auth.loginRedirect('/week')" id='login-button'> Login </button>
   </div>
@@ -16,3 +16,9 @@ export default {
   }
 }
 </script>
+
+<style scoped>
+.welcome {
+  text-align: center;
+}
+</style>
