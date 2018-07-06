@@ -45,20 +45,30 @@ export default {
 <style lang="less">
 @import (css) url('https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,700,700i');
 @import '../node_modules/reset-css/less/reset';
+* { box-sizing: border-box; }
 @import "./assets/global.less";
+
+html {
+  font-size: 16px;
+  @media only screen and (min-device-width : 300px) and (max-device-width : 370px) {
+    font-size: 14px;
+  }
+  @media only screen and (max-device-width : 319px) {
+    font-size: 12px;
+  }
+}
 
 body {
   background: @cBackground;
-
   font-family: 'Josefin Sans', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  font-size: @rem;
+  font-size: 1rem;
   line-height: 1.5em;
   font-weight: 300;
-
   color: @cText;
 }
+
 a, .a {
   color: @cPrimary;
   text-decoration: none;
