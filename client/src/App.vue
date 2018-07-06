@@ -1,13 +1,14 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link to="/week">Meals</router-link> |
-      <!-- <router-link to="/meals">Go to Meals</router-link> -->
-      <router-link to="/recipes">Recipes</router-link> |
-      <span class="a" v-if='activeUser' v-on:click='logout' id='logout-button'>Logout </span>
-      <span v-else class="a" v-on:click='login' id='login-button'> Login </span>
-    </nav>
+    <div class="top">
+      <router-link to="/week">Planning</router-link>
+      <router-link to="/recipes">Recipes</router-link>
+    </div>
     <router-view/>
+    <footer>
+      <span v-if='activeUser' v-on:click='logout' id='logout-button'>Logout </span>
+      <span v-else v-on:click='login' id='login-button'> Login </span>
+    </footer>
   </div>
 </template>
 
@@ -74,11 +75,51 @@ a, .a {
   text-decoration: none;
   cursor: pointer;
 }
-nav {
+
+.top {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  height: 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-content: stretch;
+  background: @cBackground;
+  > a {
+    .capitals;
+    font-size: 0.75rem;
+    font-weight: 700;
+    width: 50%;
+    display: block;
+    line-height: 2rem;
+    flex-grow: 1;
+    padding: 0 @bu/1.5;
+    margin-left: 2px;
+    background: fade(lighten(@cSecondary, 10%), 34%);
+    &:first-child {
+      margin-left: 0;
+    }
+    &.router-link-active {
+      color: darken(@cSecondary, 20%);
+      background: @cSecondary;
+    }
+  }
+}
+
+footer {
+  background: @cHeading;
   text-align: center;
+  padding: @bu;
+  color: @cBackground;
+  .capitals;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: @bu;
 }
 #app {
-  margin: 60px 0;
+  margin: calc(2rem + @bu) 0 0;
 }
 
 input, textarea {
