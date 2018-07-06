@@ -125,8 +125,23 @@ footer {
 }
 #app {
   position: relative;
-  padding: 2rem 0 5*@bu;
+  padding: 5rem 0 5*@bu;
   min-height: 100vh;
+}
+
+header {
+  position: fixed;
+  top: 2rem;
+  left: 0;
+  right: 0;
+  z-index: 900;
+  background: @cMealBg;
+  padding: 0;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-content: stretch;
+  box-shadow: 0 0 1px rgba(0,0,0,0.2);
 }
 
 input, textarea {

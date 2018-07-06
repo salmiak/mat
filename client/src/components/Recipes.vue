@@ -1,6 +1,9 @@
 <template>
   <div class="recipes">
-    <h1>Recipes</h1>
+    <header>
+      <h1>Recipes</h1>
+    </header>
+
     <div v-if="recipes.length > 0" class="table-wrap">
       <div>
         <router-link v-bind:to="{ name: 'NewRecipe' }" class="">Add Recipe</router-link>

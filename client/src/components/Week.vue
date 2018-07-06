@@ -75,22 +75,7 @@ export default {
 
 <style lang="less" scoped>
 @import "../assets/global.less";
-.week {
-  padding-top: 3rem;
-}
 header {
-  position: fixed;
-  top: 2rem;
-  left: 0;
-  right: 0;
-  z-index: 900;
-  background: @cMealBg;
-  padding: 0;
-  text-align: center;
-  display: flex;
-  justify-content: space-between;
-  align-content: stretch;
-  box-shadow: 0 0 1px rgba(0,0,0,0.2);
   a.weekNav {
     width: 3rem;
     line-height: 3rem;
