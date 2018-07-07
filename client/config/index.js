@@ -4,6 +4,8 @@
 
 const path = require('path')
 
+console.log('Building for ' + process.env.BUILD_TARGET || 'aws')
+
 module.exports = {
   dev: {
 
@@ -50,7 +52,7 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/mat/',
+    assetsPublicPath: (process.env.BUILD_TARGET === 'github' ? '/mat/' : '/'),
 
     /**
      * Source Maps
