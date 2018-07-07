@@ -1,5 +1,5 @@
 <template>
-  <div class="meal" :class="{made: meal.made}">
+  <div class="meal">
     <div v-if="!editMode && !meal.made">
       <div class="toolbar">
         <i class="fal fa-pen" @click="editMode = true"></i>
@@ -14,7 +14,7 @@
       <span class="btn pull-right" @click="moveToNextWeek">To next week <i class="fal fa-arrow-right"></i></span>
     </div>
     <div v-if="!editMode && meal.made">
-      <h2 @click="toggleMade"><i class="fal fa-check-square"></i> {{meal.title}}</h2>
+      <h2 @click="toggleMade"><i class="fal fa-check-square"></i> <span class="text-disabled">{{meal.title}}</span></h2>
     </div>
     <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal"></edit-meal>
   </div>

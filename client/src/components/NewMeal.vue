@@ -1,9 +1,11 @@
 <template>
   <div class="meal">
     <div v-if="expanded">
+      <div class="toolbar">
+        <i class="fal fa-times" @click="expanded = false"></i>
+      </div>
       <h2>Add Meal</h2>
       <edit-meal :week="week" :year="year" :mealData="mealData" @save-meal="addMeal"></edit-meal>
-      <span @click="expanded = false" class="closeBtn">Close</span>
     </div>
     <div v-else>
       <button @click="expanded = true">Add meal</button>
@@ -49,11 +51,19 @@ export default {
   max-width: @bu * 25;
   border-radius: @radius;
   margin: @bu/2 auto;
+  position: relative;
   h1 {
     margin-top: 8px;
   }
-  .closeBtn {
-    .btn;
+  .toolbar {
+    .noselect;
+    position: absolute;
+    top: 0;
+    right: @bu/2;
+    .fal {
+      padding: @bu @bu/2;
+      cursor: pointer;
+    }
   }
 }
 </style>

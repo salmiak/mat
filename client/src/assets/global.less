@@ -49,7 +49,7 @@ button, submit, .btn {
   display: inline-block;
   border: 1px solid fade(@cPrimary, 20%);
   padding: 0.2em @bu/1.5 0;
-  border-radius: @radius;
+  border-radius: @radius/2;
   line-height: 2em;
   font-size: 0.8em;
   font-family: inherit;
@@ -58,6 +58,15 @@ button, submit, .btn {
   background: none;
   cursor: pointer;
   .noselect;
+  &-sm {
+    line-height: 1.7em;
+    padding: 0.2em @bu/2 0;
+    font-size: 0.7em;
+  }
+  &-primary {
+    background: @cPrimary;
+    color: @cMealBg;
+  }
 }
 
 // Utils

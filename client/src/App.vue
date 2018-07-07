@@ -145,11 +145,34 @@ header {
 }
 
 input, textarea {
-  width: 90%;
-  padding: 10px;
-  border: 1px solid #e0dede;
+  width: calc(100% + @bu);
+  margin: 0 -@bu/2 @bu/2;
+  padding: @bu/2 @bu/2;
+  border: 1px solid fade(@cBackground, 40%);
   outline: none;
-  font-size: 12px;
-  margin: 0 0 4px;
+  font-size: 1rem;
+  border-radius: @radius;
+  font-family: inherit;
+  line-height: 1.5em;
+  color: @cText;
+  display: block;
+  &::placeholder {
+    color: fade(@cPrimary, 30%);
+  }
+}
+
+.text {
+  &-center { text-align: center; }
+  &-disabled { opacity: 0.66; }
+}
+
+.clear {
+  &::after {
+    clear: both;
+    content: '';
+    display: block;
+    width: 100%;
+    height: 0;
+  }
 }
 </style>
