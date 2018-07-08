@@ -40,6 +40,9 @@ import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'recipes',
+  metaInfo: {
+    title: 'Recieps'
+  },
   data () {
     return {
       searchKeys: ['title', 'comment'],

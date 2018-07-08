@@ -15,6 +15,10 @@
 <script>
 export default {
   name: 'App',
+  metaInfo: {
+    title: 'Hem',
+    titleTemplate: '%s | Beckmans matsajt'
+  },
   data () {
     return {
       activeUser: null

@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Meta from 'vue-meta'
 
 import Auth from '@okta/okta-vue'
 
@@ -17,6 +18,7 @@ import Recipes from '@/components/Recipes'
 import NewRecipe from '@/components/NewRecipe'
 
 Vue.use(Router)
+Vue.use(Meta)
 
 Vue.use(Auth, {
   issuer: 'https://dev-633272.oktapreview.com/oauth2/default',
