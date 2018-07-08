@@ -13,7 +13,7 @@
     "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
     "build": "node build/build.js",
     "gh-build": "BUILD_TARGET=github node build/build.js",
-    "deploy": "aws s3 sync ./dist s3://mat-client"
+    "deploy": "node build/build.js; aws s3 sync ./dist s3://mat2.familjenbeckman.se"
   },
   "dependencies": {
     "@okta/okta-vue": "^1.0.1",
