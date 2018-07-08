@@ -28,8 +28,8 @@ export default {
   components: { Meal, NewMeal },
   mounted () {
     this.loadMealsInWeek(this.currentWeek)
-    // this.loadMealsInWeek(this.prevWeek)
-    // this.loadMealsInWeek(this.nextWeek)
+    this.loadMealsInWeek(this.prevWeek)
+    this.loadMealsInWeek(this.nextWeek)
     this.$store.dispatch('recipes/loadRecipeList')
   },
   computed: {

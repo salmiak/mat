@@ -31,28 +31,32 @@ h1, .h1 {
   text-align: center;
   margin: 0;
   padding: 0;
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 h2, .h2 {
   font-size: 1.1rem;
   font-weight: 700;
   color: @cHeading;
   .capitals;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
 }
 h3, .h3 {
   font-size: 0.9rem;
   font-weight: 700;
   .capitals;
   color: @cHeading;
+  font-family: 'IBM Plex Sans', sans-serif;
 }
 
 button, submit, .btn {
   display: inline-block;
   border: 1px solid fade(@cPrimary, 20%);
-  padding: 0.2em @bu/1.5 0;
+  padding: 0 @bu/1.5;
   border-radius: @radius/2;
   line-height: 2em;
   font-size: 0.8em;
-  font-family: inherit;
+  font-weight: 500;
+  font-family: 'IBM Plex Sans Condensed', sans-serif;
   color: @cPrimary;
   .capitals;
   background: none;

@@ -86,15 +86,5 @@ export default {
   h2:last-child {
     margin-bottom: 0;
   }
-  .toolbar {
-    .noselect;
-    position: absolute;
-    top: 0;
-    right: @bu/2;
-    .fal {
-      padding: @bu @bu/2;
-      cursor: pointer;
-    }
-  }
 }
 </style>

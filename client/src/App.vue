@@ -48,7 +48,7 @@ export default {
 </script>
 
 <style lang="less">
-@import (css) url('https://fonts.googleapis.com/css?family=Josefin+Sans:400,400i,700,700i');
+@import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:300,300i');
 @import '../node_modules/reset-css/less/reset';
 * { box-sizing: border-box; }
 @import "./assets/global.less";
@@ -66,7 +66,7 @@ html {
 
 body {
   background: @cBackground;
-  font-family: 'Josefin Sans', Helvetica, Arial, sans-serif;
+  font-family: 'IBM Plex Serif', serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 1rem;
@@ -92,13 +92,14 @@ a, .a {
   justify-content: space-between;
   align-content: stretch;
   background: @cBackground;
+  font-family: 'IBM Plex Mono', sans-serif;
+  font-weight: 700;
+  font-size: 0.75rem;
+  line-height: 2rem;
   > a {
     .capitals;
-    font-size: 0.75rem;
-    font-weight: 700;
     width: 50%;
     display: block;
-    line-height: 2rem;
     flex-grow: 1;
     padding: 0 @bu/1.5;
     margin-left: 2px;
@@ -114,6 +115,7 @@ a, .a {
 }
 
 footer {
+  .h3;
   position: absolute;
   bottom: 0;
   left: 0;
@@ -156,7 +158,8 @@ input, textarea {
   outline: none;
   font-size: 1rem;
   border-radius: @radius;
-  font-family: inherit;
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 500;
   line-height: 1.5em;
   color: @cText;
   display: block;
@@ -177,6 +180,18 @@ input, textarea {
     display: block;
     width: 100%;
     height: 0;
+  }
+}
+
+.toolbar {
+  .noselect;
+  position: absolute;
+  top: 0;
+  right: @bu/2;
+  .fal {
+    font-size: @bu;
+    padding: @bu @bu/2;
+    cursor: pointer;
   }
 }
 </style>

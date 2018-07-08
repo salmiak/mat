@@ -37,6 +37,7 @@ export default {
     addMeal (mealData) {
       this.$store.dispatch('meals/addMeal', mealData).then(() => {
         this.mealData = _.clone(emptyData)
+        this.expanded = false
       })
     }
   }
@@ -54,16 +55,6 @@ export default {
   position: relative;
   h1 {
     margin-top: 8px;
-  }
-  .toolbar {
-    .noselect;
-    position: absolute;
-    top: 0;
-    right: @bu/2;
-    .fal {
-      padding: @bu @bu/2;
-      cursor: pointer;
-    }
   }
 }
 </style>
