@@ -27,7 +27,6 @@ export default {
   },
   components: { Meal, NewMeal },
   mounted () {
-    this.metaInfo.title = 'Week ' + this.week
     this.loadMealsInWeek(this.currentWeek)
     // this.loadMealsInWeek(this.prevWeek)
     // this.loadMealsInWeek(this.nextWeek)
