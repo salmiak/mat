@@ -16,14 +16,13 @@
     <div v-if="!editMode && meal.made">
       <h2 @click="toggleMade"><i class="fal fa-check-square"></i> <span class="text-disabled">{{meal.title}}</span></h2>
     </div>
-    <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal"></edit-meal>
+    <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal" @cancel-edit="editMode = false"></edit-meal>
   </div>
 </template>
 
 <script>
 import moment from 'moment'
 import {mapActions} from 'vuex'
-import MealsService from '@/services/MealsService'
 import Recipe from './Recipe'
 import EditMeal from './EditMeal'
 
@@ -41,7 +40,7 @@ export default {
       deleteMeal: 'deleteMeal'
     }),
     async updateMeal (meal) {
-      await MealsService.updateMeal(meal)
+      await this.$store.dispatch('meals/updateMeal', meal)
       this.editMode = false
     },
     moveToPrevWeek () {
@@ -70,11 +69,6 @@ export default {
   max-width: @bu * 25;
   border-radius: @radius;
   margin: @bu/2 auto;
-  &.made {
-    color: fade(@cText, 50%);
-    padding-bottom: @bu/1.5;
-    // text-decoration: line-through;
-  }
   h2 {
     padding-right: calc(5rem);
     margin: 0 0 @bu/2;

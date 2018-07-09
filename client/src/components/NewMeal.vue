@@ -5,7 +5,7 @@
         <i class="fal fa-times" @click="expanded = false"></i>
       </div>
       <h2>Add Meal</h2>
-      <edit-meal :week="week" :year="year" :mealData="mealData" @save-meal="addMeal"></edit-meal>
+      <edit-meal :week="week" :year="year" :resetOnSave="true" @save-meal="addMeal" @cancel-edit="expanded = false"></edit-meal>
     </div>
     <div v-else>
       <button @click="expanded = true">Add meal</button>
@@ -14,14 +14,8 @@
 </template>
 
 <script>
-import _ from 'lodash'
+// import _ from 'lodash'
 import EditMeal from './EditMeal'
-
-var emptyData = {
-  title: '',
-  comment: '',
-  recipes: []
-}
 
 export default {
   name: 'NewMeal',
@@ -29,15 +23,15 @@ export default {
   components: { EditMeal },
   data () {
     return {
-      mealData: _.clone(emptyData),
+      // mealData: _.clone(emptyData),
       expanded: false
     }
   },
   methods: {
     addMeal (mealData) {
       this.$store.dispatch('meals/addMeal', mealData).then(() => {
-        this.mealData = _.clone(emptyData)
-        this.expanded = false
+        // this.mealData = _.clone(emptyData)
+        // this.expanded = false
       })
     }
   }

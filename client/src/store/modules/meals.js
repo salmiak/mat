@@ -13,10 +13,10 @@ const getters = {
     return state.list
   },
   mealsInWeek: (state) => (query) => {
-    return state.list.filter(meal => {
+    return _.orderBy(state.list.filter(meal => {
       var m = moment(meal.date)
       return (m.isoWeek() === query.week && m.isoWeekYear() === query.year)
-    })
+    }), ['_id'], ['desc'])
   }
 }
 
@@ -47,6 +47,7 @@ const actions = {
         title: data.title,
         comment: data.comment,
         recipes: data.recipes,
+        made: data.made,
         date: data.date,
         wpId: data.wpId
       }).then((response) => {
@@ -65,6 +66,7 @@ const actions = {
         title: data.title,
         comment: data.comment,
         recipes: data.recipes,
+        made: data.made,
         date: data.date,
         wpId: data.wpId
       }).then(response => {

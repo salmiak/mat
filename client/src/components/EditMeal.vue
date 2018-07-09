@@ -1,24 +1,24 @@
 <template>
   <div class="editMeal">
     <div>
-      <input type="text" name="title" placeholder="Title" v-model="mealData.title">
+      <input type="text" name="title" placeholder="Title" v-model="meal.title">
     </div>
     <div>
-      <textarea placeholder="Comment" v-model="mealData.comment" @focus="expandTextarea = true" @blur="expandTextarea = (mealData.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
+      <textarea placeholder="Comment" v-model="meal.comment" @focus="expandTextarea = true" @blur="expandTextarea = (meal.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
     </div>
     <div>
-      <vue-fuse :placeholder="'Search recipe'" :list="recipeList" :keys="searchKeys" event-name="searchChanged" input-change-event-name="searchInputChanged" :defaultAll="false" :value="searchTerm"></vue-fuse>
+      <input type="search" v-model="recipeSearchTerm" placeholder="Type to search" />
 
-      <ul v-if="recipeSearchResultsList.length">
-         <li v-for="recipe in recipeSearchResultsList.slice(sliceStart,sliceEnd+1)" :key="recipe._id" @click="selectRecipe(recipe._id)">
+      <ul v-if="recipeResultsNotSelected.length">
+         <li v-for="recipe in recipeResultsNotSelected.slice(sliceStart,sliceEnd+1)" :key="recipe._id" @click="selectRecipe(recipe._id)">
            <div class="btn btn-sm pull-right">Add</div>
           {{recipe.title}}
         </li>
-        <li v-if="sliceEnd < recipeSearchResultsList.length" class="text-center">
+        <li v-if="sliceEnd < recipeResultsNotSelected.length" class="text-center">
           <span class="btn btn-sm" @click="resultPage++">Show more</span>
         </li>
       </ul>
-      <p v-if="searchTerm && recipeSearchResultsList.length === 0">
+      <p v-if="recipeSearchTerm && recipeResultsNotSelected.length === 0">
         No results
       </p>
 
@@ -35,6 +35,7 @@
     </div>
 
     <div class="clear">
+      <button @click="cancelEdit">Cancel</button>
       <button class="btn-primary pull-right" @click="saveMeal">Save</button>
     </div>
   </div>
@@ -44,52 +45,83 @@
 import _ from 'lodash'
 import moment from 'moment'
 
+var emptyData = {
+  title: '',
+  comment: '',
+  recipes: []
+}
+
 export default {
   name: 'EditMeal',
-  props: ['week', 'year', 'mealData'],
+  props: {
+    week: {
+      type: Number
+    },
+    year: {
+      type: Number
+    },
+    mealData: {
+      default () {
+        return _.cloneDeep(emptyData)
+      }
+    },
+    resetOnSave: {
+      type: Boolean
+    }
+  },
   data () {
     return {
+      recipeSearchTerm: '',
       searchKeys: ['title', 'comment'],
-      searchTerm: '',
-      recipeSearchResults: [],
+      recipeResults: [],
       resultPage: 0,
       resultsPerPage: 5,
-      expandTextarea: false
+      expandTextarea: false,
+      meal: {}
     }
   },
   created () {
-    this.$on('searchChanged', results => {
-      this.recipeSearchResults = results
-    })
-    this.$on('searchInputChanged', string => {
-      this.searchTerm = string
-      this.resultPage = 0
-    })
+    this.resetMeal()
+  },
+  mounted () {
+    this.resetMeal()
+  },
+  watch: {
+    recipeSearchTerm () {
+      this.$search(this.recipeSearchTerm, this.recipeList, {keys: this.searchKeys, defaultAll: false}).then(results => {
+        this.recipeResults = results
+      })
+    }
   },
   computed: {
-    sliceStart () { return this.resultPage * this.resultsPerPage },
-    sliceEnd () { return (this.resultPage + 1) * this.resultsPerPage },
+    sliceStart () {
+      return this.resultPage * this.resultsPerPage
+    },
+    sliceEnd () {
+      return (this.resultPage + 1) * this.resultsPerPage
+    },
     recipeList () {
       var list = _.map(this.$store.getters['recipes/recipeList'], (recipe) => {
         return {
           _id: recipe._id,
-          title: recipe.title,
-          selected: (this.mealData.recipes.indexOf(recipe._id) !== -1)
+          title: recipe.title
         }
       })
       return list
     },
-    recipeSearchResultsList () {
-      return this.recipeSearchResults.filter(recipe => {
-        return this.mealData.recipes.indexOf(recipe._id) === -1
+    recipeResultsNotSelected () {
+      return this.recipeResults.filter(recipe => {
+        return this.meal.recipes.indexOf(recipe._id) === -1
       })
     },
     selectedRecipes () {
-      return _.filter(this.recipeList, {selected: true})
+      return this.recipeList.filter(recipe => {
+        return this.meal.recipes.indexOf(recipe._id) !== -1
+      })
     },
     date () {
-      if (this.mealData.date) {
-        return this.mealData.date
+      if (this.meal.date) {
+        return this.meal.date
       } else if (this.week && this.year) {
         return moment().isoWeek(this.week).isoWeekYear(this.year).startOf('isoWeek').toDate()
       } else {
@@ -99,14 +131,25 @@ export default {
   },
   methods: {
     selectRecipe (id) {
-      this.mealData.recipes.push(id)
+      this.meal.recipes.push(id)
     },
     removeRecipe (id) {
-      this.mealData.recipes.splice(this.mealData.recipes.indexOf(id), 1)
+      this.meal.recipes.splice(this.meal.recipes.indexOf(id), 1)
+    },
+    resetMeal () {
+      this.meal = _.cloneDeep(this.mealData)
+      this.recipeSearchTerm = ''
+    },
+    cancelEdit  () {
+      this.resetMeal()
+      this.$emit('cancel-edit')
     },
     saveMeal () {
-      this.mealData.date = this.date
-      this.$emit('save-meal', this.mealData)
+      this.meal.date = this.date
+      this.$emit('save-meal', this.meal)
+      if (this.resetOnSave) {
+        this.resetMeal()
+      }
     }
   }
 }
