@@ -2,7 +2,10 @@
   <div class="week">
     <header>
       <router-link class="weekNav" :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}"><i class="fa fa-arrow-left"></i></router-link>
-      <h1><router-link to="/week">Week {{week}}</router-link></h1>
+      <h1>
+        <router-link v-if="!isCurrentWeek" to="/week">Week {{week}}</router-link>
+        <router-link v-if="isCurrentWeek" :to="'/week/'+year+'/'+(week+1)">This week</router-link>
+      </h1>
       <router-link class="weekNav" :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}"><i class="fa fa-arrow-right"></i></router-link>
     </header>
 
@@ -33,6 +36,9 @@ export default {
     this.$store.dispatch('recipes/loadRecipeList')
   },
   computed: {
+    isCurrentWeek () {
+      return (this.week === moment().isoWeek() && this.year === moment().isoWeekYear())
+    },
     week () {
       return parseInt(this.$route.params.week) || moment().isoWeek()
     },
