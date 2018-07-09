@@ -8,7 +8,7 @@
 
     <vue-fuse :placeholder="'Search recipe'" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
 
-    <recipe v-for="recipe in searchResults" :key="recipe._id" :id="recipe._id" :showDelete="true"></recipe>
+    <recipe v-for="recipe in searchResults" :key="recipe._id" :id="recipe._id" :showDelete="true" :showCreate="true"></recipe>
   </div>
 </template>
 

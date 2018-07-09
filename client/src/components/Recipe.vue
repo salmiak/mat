@@ -8,6 +8,8 @@
         <div class="toolbar">
           <i class="fal fa-pen" @click="editMode = true"></i>
           <i v-if="showDelete" class="fal fa-trash-alt" @click="deleteRecipe(recipe._id)"></i>
+          <i v-if="showCreate && !recipe.added" class="fal fa-plus-square" @click="mealFromRecipe(recipe)"></i>
+          <i v-if="showCreate && recipe.added" class="fal fa-check-square"></i>
         </div>
         <h2>
           <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
@@ -23,12 +25,13 @@
 </template>
 
 <script>
+import moment from 'moment'
 import EditRecipe from './EditRecipe'
 import {mapActions} from 'vuex'
 
 export default {
   name: 'recipe',
-  props: ['id', 'showDelete'],
+  props: ['id', 'showDelete', 'showCreate'],
   components: {EditRecipe},
   data () {
     return {
@@ -50,6 +53,18 @@ export default {
     async updateRecipe (recipe) {
       await this.$store.dispatch('recipes/updateRecipe', recipe)
       this.editMode = false
+    },
+    async mealFromRecipe (recipe) {
+      var meal = {
+        title: recipe.title,
+        date: moment().add(1, 'w').startOf('isoWeek').toDate()
+      }
+      this.$store.dispatch('meals/addMeal', meal).then(() => {
+        this.$set(recipe, 'added', true)
+        setTimeout(() => {
+          this.$set(recipe, 'added', false)
+        }, 5000)
+      })
     }
   }
 }
