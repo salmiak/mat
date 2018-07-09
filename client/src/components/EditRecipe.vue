@@ -7,7 +7,7 @@
       <input type="url" name="url" placeholder="Url" v-model="recipe.url">
     </div>
     <div>
-      <textarea placeholder="Comment" v-model="recipe.comment" @focus="expandTextarea = true" @blur="expandTextarea = (recipe.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
+      <textarea placeholder="Comment" v-model="recipe.comment" @focus="expandTextarea = true" @blur="expandTextarea = (recipe.comment && recipe.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
     </div>
     <div class="clear">
       <button @click="cancelEdit">Cancel</button>
