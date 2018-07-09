@@ -145,7 +145,7 @@ header {
   padding: 0;
   text-align: center;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-content: stretch;
   box-shadow: 0 0 1px rgba(0,0,0,0.2);
 }

@@ -1,36 +1,50 @@
 <template>
-  <div class="recipes">
-    <h1>Add Recipe</h1>
-    <edit-recipe :recipeData="recipeData" @save-recipe="addRecipe"></edit-recipe>
+  <div class="recipe">
+    <div v-if="expanded">
+      <div class="toolbar">
+        <i class="fal fa-times" @click="expanded = false"></i>
+      </div>
+      <h2>Add Recipe</h2>
+      <edit-recipe @save-recipe="addRecipe" @cancel-edit="expanded = false"></edit-recipe>
+    </div>
+    <div v-else>
+      <button @click="expanded = true">Add recipe</button>
+    </div>
   </div>
 </template>
 
 <script>
-import _ from 'lodash'
 import EditRecipe from './EditRecipe'
-
-var emptyData = {
-  title: '',
-  comment: '',
-  url: ''
-}
 
 export default {
   name: 'NewRecipe',
   components: { EditRecipe },
   data () {
     return {
-      recipeData: _.clone(emptyData)
+      expanded: false
     }
   },
   methods: {
     addRecipe (recipeData) {
       this.$store.dispatch('recipes/addRecipe', recipeData).then(() => {
-        this.$router.push({ name: 'Recipes' })
+        this.expanded = false
       })
     }
   }
 }
 </script>
-<style type="text/css">
+<style lang="less" scoped>
+@import "../assets/global.less";
+.recipe {
+  background: @cRecipeBg;
+  padding: @bu;
+  width: 95%;
+  max-width: @bu * 25;
+  border-radius: @radius;
+  margin: @bu/2 auto;
+  position: relative;
+  h1 {
+    margin-top: 8px;
+  }
+}
 </style>

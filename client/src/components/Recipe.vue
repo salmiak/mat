@@ -7,6 +7,7 @@
       <div v-if="!editMode">
         <div class="toolbar">
           <i class="fal fa-pen" @click="editMode = true"></i>
+          <i v-if="showDelete" class="fal fa-trash-alt" @click="deleteRecipe(recipe._id)"></i>
         </div>
         <h2>
           <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
@@ -16,18 +17,18 @@
           {{recipe.comment}}
         </p>
       </div>
-      <edit-recipe v-if="editMode" :recipeData="recipe" @save-recipe="updateRecipe"></edit-recipe>
+      <edit-recipe v-if="editMode" :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
     </div>
   </div>
 </template>
 
 <script>
-import RecipesService from '@/services/RecipesService'
 import EditRecipe from './EditRecipe'
+import {mapActions} from 'vuex'
 
 export default {
   name: 'recipe',
-  props: ['id'],
+  props: ['id', 'showDelete'],
   components: {EditRecipe},
   data () {
     return {
@@ -43,8 +44,11 @@ export default {
     }
   },
   methods: {
+    ...mapActions('recipes', {
+      deleteRecipe: 'deleteRecipe'
+    }),
     async updateRecipe (recipe) {
-      await RecipesService.updateRecipe(recipe)
+      await this.$store.dispatch('recipes/updateRecipe', recipe)
       this.editMode = false
     }
   }

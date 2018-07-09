@@ -23,15 +23,13 @@ export default {
   components: { EditMeal },
   data () {
     return {
-      // mealData: _.clone(emptyData),
       expanded: false
     }
   },
   methods: {
     addMeal (mealData) {
       this.$store.dispatch('meals/addMeal', mealData).then(() => {
-        // this.mealData = _.clone(emptyData)
-        // this.expanded = false
+        this.expanded = false
       })
     }
   }

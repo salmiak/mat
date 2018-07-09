@@ -1,52 +1,32 @@
 <template>
   <div class="recipes">
     <header>
-      <h1>Recipes</h1>
+      <h1 class="text-center">Recipes</h1>
     </header>
 
-    <div v-if="recipes.length > 0" class="table-wrap">
-      <div>
-        <router-link v-bind:to="{ name: 'NewRecipe' }" class="">Add Recipe</router-link>
-      </div>
+    <new-recipe></new-recipe>
 
-      <vue-fuse :placeholder="'Search recipe'" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
+    <vue-fuse :placeholder="'Search recipe'" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
 
-      <table>
-        <tr>
-          <td>Title</td>
-          <td width="550">Comment</td>
-          <td width="100" align="center">Action</td>
-        </tr>
-        <tr v-for="recipe in recipeSearchResults" :key="recipe._id" :class="{made:recipe.made}">
-          <td v-if="recipe.url"><a :href="recipe.url">{{ recipe.title }}</a></td>
-          <td v-else>{{ recipe.title }}</td>
-          <td>{{ recipe.comment }}</td>
-          <td align="center">
-            <router-link v-bind:to="{ name: 'EditRecipe', params: { id: recipe._id } }">Edit</router-link> |
-            <a href="#" @click="deleteRecipe(recipe._id)">Delete</a>
-          </td>
-        </tr>
-      </table>
-    </div>
-    <div v-else>
-      There are no recipes.. Lets add one now <br /><br />
-      <router-link v-bind:to="{ name: 'NewRecipe' }" class="add_recipe_link">Add Recipe</router-link>
-    </div>
+    <recipe v-for="recipe in searchResults" :key="recipe._id" :id="recipe._id" :showDelete="true"></recipe>
   </div>
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
+import Recipe from './Recipe'
+import NewRecipe from './NewRecipe'
 
 export default {
   name: 'recipes',
   metaInfo: {
     title: 'Recieps'
   },
+  components: {Recipe, NewRecipe},
   data () {
     return {
       searchKeys: ['title', 'comment'],
-      recipeSearchResults: []
+      searchResults: []
     }
   },
   computed: {
@@ -56,19 +36,18 @@ export default {
   },
   created () {
     this.$on('searchChanged', results => {
-      this.recipeSearchResults = results
+      this.searchResults = results
     })
   },
   mounted () {
     this.$store.dispatch('recipes/loadRecipeList')
-  },
-  methods: {
-    ...mapActions('recipes', {
-      deleteRecipe: 'deleteRecipe'
-    })
   }
 }
 </script>
-<style type="text/css" scoped>
-
+<style lang="less" scoped>
+input {
+  margin: 0 calc(2px + .5rem);
+  width: calc(100% - 1rem - 4px);
+  border: none;
+}
 </style>
