@@ -1,0 +1,15 @@
+{
+  "name": "Beckmans Matplanering",
+  "short_name": "Matplanering",
+  "display": "standalone",
+  "background_color": "#eaf9fa",
+  "description": "Familjen Beckmans app för matplanering.",
+  "icons": [{
+    "src": "icon.png",
+    "sizes": "192x192",
+    "type": "image/png"
+  }],
+  "start_url": "../",
+  "orientation": "portrait",
+  "theme_color": "#fbafaf"
+}

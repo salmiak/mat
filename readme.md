@@ -3,9 +3,8 @@
 ## Todo
 - Add touch events
 - Add Facebook login: https://saml-doc.okta.com/IdentityProvider_Docs/Facebook_Identity_Provider_Setup.html
-- Add manifest to make it an application
 - Add markdown support in comments
-- Translate to swedish
+- Translate to Swedish
 
 
 ## Auth alternatives to look at https://medium.com/@michaljurkowski/how-to-make-basic-authentication-in-vue-js-using-google-firebase-e3ec7dad274
