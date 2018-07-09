@@ -5,7 +5,6 @@
 - Bring SexyBack (Design)
 - Add touch events
 - Add Facebook login: https://saml-doc.okta.com/IdentityProvider_Docs/Facebook_Identity_Provider_Setup.html
-- Bug: Edit meal not reseting when edit is done. Add flag for add meal and handle reset inside edit meal component instead.
 - Add verify on delete buttons
 - Add manifest to make it an application
 
