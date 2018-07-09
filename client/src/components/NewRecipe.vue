@@ -4,11 +4,11 @@
       <div class="toolbar">
         <i class="fal fa-times" @click="expanded = false"></i>
       </div>
-      <h2>Add Recipe</h2>
+      <h2>{{ $t('Add Recipe') }}</h2>
       <edit-recipe @save-recipe="addRecipe" @cancel-edit="expanded = false"></edit-recipe>
     </div>
     <div v-else>
-      <button @click="expanded = true">Add recipe</button>
+      <button @click="expanded = true">{{ $t('Add Recipe') }}</button>
     </div>
   </div>
 </template>

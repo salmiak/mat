@@ -1,17 +1,17 @@
 <template>
   <div class="editRecipe">
     <div>
-      <input type="text" name="title" placeholder="Title" v-model="recipe.title">
+      <input type="text" name="title" :placeholder="$t('Title')" v-model="recipe.title">
     </div>
     <div>
-      <input type="url" name="url" placeholder="Url" v-model="recipe.url">
+      <input type="url" name="url" :placeholder="$t('Url')" v-model="recipe.url">
     </div>
     <div>
-      <textarea placeholder="Comment" v-model="recipe.comment" @focus="expandTextarea = true" @blur="expandTextarea = (recipe.comment && recipe.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
+      <textarea :placeholder="$t('Comment')" v-model="recipe.comment" @focus="expandTextarea = true" @blur="expandTextarea = (recipe.comment && recipe.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
     </div>
     <div class="clear">
-      <button @click="cancelEdit">Cancel</button>
-      <button class="btn-primary pull-right" @click="saveRecipe">Save</button>
+      <button @click="cancelEdit">{{$t('Cancel')}}</button>
+      <button class="btn-primary pull-right" @click="saveRecipe">{{$t('Save')}}</button>
     </div>
   </div>
 </template>

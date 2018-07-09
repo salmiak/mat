@@ -1,16 +1,31 @@
 <template>
   <div id="app">
     <div class="top">
-      <router-link to="/week">Planning</router-link>
-      <router-link to="/recipes">Recipes</router-link>
+      <router-link to="/week">{{ $t('Planning') }}</router-link>
+      <router-link to="/recipes">{{ $t('Recipes') }}</router-link>
     </div>
     <router-view/>
     <footer>
-      <span v-if='activeUser' v-on:click='logout' id='logout-button'>Logout </span>
-      <span v-else v-on:click='login' id='login-button'> Login </span>
+      <span v-if='activeUser' v-on:click='logout' id='logout-button'>{{ $t('Logout') }} </span>
+      <span v-else v-on:click='login' id='login-button'>{{ $t('Login') }}</span>
     </footer>
   </div>
 </template>
+
+<i18n>
+  {
+    "en": {
+      "Planning": "Planning",
+      "Logout": "Logout",
+      "Login": "Login"
+    },
+    "se": {
+      "Planning": "Plannering",
+      "Logout": "Logga ut",
+      "Login": "Logga in"
+    }
+  }
+</i18n>
 
 <script>
 export default {

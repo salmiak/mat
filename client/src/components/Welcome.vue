@@ -1,9 +1,22 @@
 <template>
   <div class="welcome">
-    <h1>Welcome</h1>
-    <button v-on:click="$auth.loginRedirect('/week')" id='login-button'> Login </button>
+    <h1>{{$t('Welcome')}}</h1>
+    <button v-on:click="$auth.loginRedirect('/week')" id='login-button'> {{$t('Login')}} </button>
   </div>
 </template>
+
+<i18n>
+  {
+    "en": {
+      "Welcome": "Welcome",
+      "Login": "Login"
+    },
+    "se": {
+      "Welcome": "Välkommen",
+      "Login": "Logga in"
+    }
+  }
+</i18n>
 
 <script>
 

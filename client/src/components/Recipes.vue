@@ -1,12 +1,12 @@
 <template>
   <div class="recipes">
     <header>
-      <h1 class="text-center">Recipes</h1>
+      <h1 class="text-center">{{$t('Recipes')}}</h1>
     </header>
 
     <new-recipe></new-recipe>
 
-    <vue-fuse :placeholder="'Search recipe'" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
+    <vue-fuse :placeholder="$t('Type to search')" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
 
     <recipe v-for="recipe in searchResults" :key="recipe._id" :id="recipe._id" :showDelete="true" :showCreate="true"></recipe>
   </div>

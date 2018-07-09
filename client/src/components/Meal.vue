@@ -10,8 +10,8 @@
         {{meal.comment}}
       </p>
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
-      <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> To prev. week</span>
-      <span class="btn pull-right" @click="moveToNextWeek">To next week <i class="fal fa-arrow-right"></i></span>
+      <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> {{ $t('toPrevWeek') }}</span>
+      <span class="btn pull-right" @click="moveToNextWeek">{{ $t('toNextWeek') }} <i class="fal fa-arrow-right"></i></span>
     </div>
     <div v-if="!editMode && meal.made">
       <h2 @click="toggleMade"><i class="fal fa-check-square"></i> <span class="text-disabled">{{meal.title}}</span></h2>
@@ -19,6 +19,19 @@
     <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal" @cancel-edit="editMode = false"></edit-meal>
   </div>
 </template>
+
+<i18n>
+  {
+    "en": {
+      "toPrevWeek": "To prev. week",
+      "toNextWeek": "To next week"
+    },
+    "se": {
+      "toPrevWeek": "Till förra veckan",
+      "toNextWeek": "Till nästa vecka"
+    }
+  }
+</i18n>
 
 <script>
 import moment from 'moment'

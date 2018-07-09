@@ -1,6 +1,6 @@
 <template>
   <div class="meals">
-    <h1>Meals</h1>
+    <h1>{{$t('Meals')}}</h1>
     <div v-if="meals.length > 0" class="table-wrap">
       <div>
         <router-link v-bind:to="{ name: 'NewMeal' }" class="">Add Meal</router-link>

@@ -1,45 +1,66 @@
 <template>
   <div class="editMeal">
     <div>
-      <input type="text" name="title" placeholder="Title" v-model="meal.title">
+      <input type="text" name="title" :placeholder="$t('Title')" v-model="meal.title">
     </div>
     <div>
-      <textarea placeholder="Comment" v-model="meal.comment" @focus="expandTextarea = true" @blur="expandTextarea = (meal.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
+      <textarea :placeholder="$t('Comment')" v-model="meal.comment" @focus="expandTextarea = true" @blur="expandTextarea = (meal.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
     </div>
     <div>
-      <input type="search" v-model="recipeSearchTerm" placeholder="Type to search" />
+      <input type="search" v-model="recipeSearchTerm" :placeholder="$t('Type to search')" />
 
       <ul v-if="recipeResultsNotSelected.length">
          <li v-for="recipe in recipeResultsNotSelected.slice(sliceStart,sliceEnd+1)" :key="recipe._id" @click="selectRecipe(recipe._id)">
-           <div class="btn btn-sm pull-right">Add</div>
+           <div class="btn btn-sm pull-right">{{$t('Add')}}</div>
           {{recipe.title}}
         </li>
         <li v-if="sliceEnd < recipeResultsNotSelected.length" class="text-center">
-          <span class="btn btn-sm" @click="resultPage++">Show more</span>
+          <span class="btn btn-sm" @click="resultPage++">{{$t('Show more')}}</span>
         </li>
       </ul>
       <p v-if="recipeSearchTerm && recipeResultsNotSelected.length === 0">
-        No results
+        {{$t('No results')}}
       </p>
 
-      <h3>Selected recipes</h3>
+      <h3>{{$t('Selected recipes')}}</h3>
       <ul v-if="selectedRecipes.length">
         <li v-for="recipe in selectedRecipes" :key="recipe._id">
-          <span class="btn btn-sm pull-right" @click="removeRecipe(recipe._id)">Remove</span>
+          <span class="btn btn-sm pull-right" @click="removeRecipe(recipe._id)">{{$t('Remove')}}</span>
           {{recipe.title}}
         </li>
       </ul>
       <p v-if="selectedRecipes.length === 0" class="text-disabled">
-        Search to add recipes to this meal.
+        {{$t('searchEmptyMsg')}}
       </p>
     </div>
 
     <div class="clear">
-      <button @click="cancelEdit">Cancel</button>
-      <button class="btn-primary pull-right" @click="saveMeal">Save</button>
+      <button @click="cancelEdit">{{$t('Cancel')}}</button>
+      <button class="btn-primary pull-right" @click="saveMeal">{{$t('Save')}}</button>
     </div>
   </div>
 </template>
+
+<i18n>
+  {
+    "en": {
+      "Show more": "Show more",
+      "No results": "No results",
+      "Selected recipes": "Selected recipes",
+      "searchEmptyMsg": "Search to add recipes to this meal.",
+      "Add": "Add",
+      "Remove": "Remove"
+    },
+    "se": {
+      "Show more": "Visa fler",
+      "No results": "Inga träffar",
+      "Selected recipes": "Valda recept",
+      "searchEmptyMsg": "Sök recept att lägga till denna måltid",
+      "Add": "Lägg till",
+      "Remove": "Ta bort"
+    }
+  }
+</i18n>
 
 <script>
 import _ from 'lodash'

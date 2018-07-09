@@ -3,8 +3,8 @@
     <header>
       <router-link class="weekNav" :to="{ name: 'Week', params: { week: prevWeek.week, year:prevWeek.year }}"><i class="fa fa-arrow-left"></i></router-link>
       <h1>
-        <router-link v-if="!isCurrentWeek" to="/week">Week {{week}}</router-link>
-        <router-link v-if="isCurrentWeek" :to="'/week/'+year+'/'+(week+1)">This week</router-link>
+        <router-link v-if="!isCurrentWeek" to="/week">{{ $t("Week") }} {{week}}</router-link>
+        <router-link v-if="isCurrentWeek" :to="'/week/'+year+'/'+(week+1)">{{ $t('This week') }}</router-link>
       </h1>
       <router-link class="weekNav" :to="{ name: 'Week', params: { week: nextWeek.week, year:nextWeek.year }}"><i class="fa fa-arrow-right"></i></router-link>
     </header>
@@ -14,6 +14,19 @@
     <meal v-for="meal in mealsInCurrentWeek" :key="meal._id" :meal="meal"></meal>
   </div>
 </template>
+
+<i18n>
+{
+  "en": {
+    "Week": "Week",
+    "This week": "This week"
+  },
+  "se": {
+    "Week": "Vecka",
+    "This week": "Denna vecka"
+  }
+}
+</i18n>
 
 <script>
 // import MealsService from '@/services/MealsService'

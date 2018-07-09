@@ -4,11 +4,11 @@
       <div class="toolbar">
         <i class="fal fa-times" @click="expanded = false"></i>
       </div>
-      <h2>Add Meal</h2>
+      <h2>{{$t('Add Meal')}}</h2>
       <edit-meal :week="week" :year="year" :resetOnSave="true" @save-meal="addMeal" @cancel-edit="expanded = false"></edit-meal>
     </div>
     <div v-else>
-      <button @click="expanded = true">Add meal</button>
+      <button @click="expanded = true">{{$t('Add Meal')}}</button>
     </div>
   </div>
 </template>
