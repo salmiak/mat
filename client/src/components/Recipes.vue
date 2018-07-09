@@ -45,9 +45,15 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+@import "../assets/global.less";
 input {
-  margin: 0 calc(2px + .5rem);
-  width: calc(100% - 1rem - 4px);
+  width: calc(100% - @bu - 4px);
   border: none;
+  max-width: 25rem;
+  margin: 0 auto;
+  background: @cMealBg;
+  &:focus {
+    background: @cRecipeBg;
+  }
 }
 </style>
