@@ -3,7 +3,7 @@
     <div v-if="!editMode && !meal.made">
       <div class="toolbar">
         <i class="fal fa-pen" @click="editMode = true"></i>
-        <i class="fal fa-trash-alt" @click="deleteMeal(meal._id)"></i>
+        <sure-button @clicked="deleteMeal(meal._id)" type="i" class="fal fa-trash-alt"></sure-button>
       </div>
       <h2 @click="toggleMade"><i class="fal fa-square"></i> {{meal.title}}</h2>
       <p v-if="meal.comment">
@@ -25,11 +25,12 @@ import moment from 'moment'
 import {mapActions} from 'vuex'
 import Recipe from './Recipe'
 import EditMeal from './EditMeal'
+import SureButton from './SureButton'
 
 export default {
   name: 'meal',
   props: ['meal'],
-  components: {Recipe, EditMeal},
+  components: {Recipe, EditMeal, SureButton},
   data () {
     return {
       editMode: false

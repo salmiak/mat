@@ -7,7 +7,7 @@
       <div v-if="!editMode">
         <div class="toolbar">
           <i class="fal fa-pen" @click="editMode = true"></i>
-          <i v-if="showDelete" class="fal fa-trash-alt" @click="deleteRecipe(recipe._id)"></i>
+          <sure-button v-if="showDelete" @clicked="deleteRecipe(recipe._id)" type="i" class="fal fa-trash-alt"></sure-button>
           <i v-if="showCreate && !recipe.added" class="fal fa-plus-square" @click="mealFromRecipe(recipe)"></i>
           <i v-if="showCreate && recipe.added" class="fal fa-check-square"></i>
         </div>
@@ -26,13 +26,14 @@
 
 <script>
 import moment from 'moment'
-import EditRecipe from './EditRecipe'
 import {mapActions} from 'vuex'
+import EditRecipe from './EditRecipe'
+import SureButton from './SureButton'
 
 export default {
   name: 'recipe',
   props: ['id', 'showDelete', 'showCreate'],
-  components: {EditRecipe},
+  components: {EditRecipe, SureButton},
   data () {
     return {
       editMode: false
@@ -81,7 +82,7 @@ export default {
   border-radius: @radius;
   margin: @bu/2 auto;
   h2 {
-    padding-right: @bu*2;
+    padding-right: @bu*2 * 3;
     &:not(:last-child) {
       margin-bottom: @bu/2;
     }

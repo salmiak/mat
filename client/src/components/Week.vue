@@ -11,7 +11,7 @@
 
     <new-meal :week="week" :year="year"></new-meal>
 
-    <meal v-for="meal in mealsInCurrentWeek" :key="meal.id" :meal="meal"></meal>
+    <meal v-for="meal in mealsInCurrentWeek" :key="meal._id" :meal="meal"></meal>
   </div>
 </template>
 
