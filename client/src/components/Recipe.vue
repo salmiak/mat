@@ -15,9 +15,12 @@
           <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
           <span v-else>{{recipe.title}}</span>
         </h2>
-        <div class="comment" v-if="recipe.comment">
+
+        <expander class="comment" v-if="recipe.comment && recipe.comment.length > 70">
           <vue-markdown>{{recipe.comment}}</vue-markdown>
-        </div>
+        </expander>
+        <vue-markdown v-else class="comment">{{recipe.comment}}</vue-markdown>
+
       </div>
       <edit-recipe v-if="editMode" :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
     </div>
@@ -30,11 +33,12 @@ import {mapActions} from 'vuex'
 import VueMarkdown from 'vue-markdown'
 import EditRecipe from './EditRecipe'
 import SureButton from './SureButton'
+import Expander from './Expander'
 
 export default {
   name: 'recipe',
   props: ['id', 'showDelete', 'showCreate'],
-  components: {EditRecipe, SureButton, VueMarkdown},
+  components: {EditRecipe, SureButton, VueMarkdown, Expander},
   data () {
     return {
       editMode: false

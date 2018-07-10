@@ -6,9 +6,12 @@
         <sure-button @clicked="deleteMeal(meal._id)" type="i" class="fal fa-trash-alt"></sure-button>
       </div>
       <h2 @click="toggleMade"><i class="fal fa-square"></i> {{meal.title}}</h2>
-      <div class="comment" v-if="meal.comment">
+
+      <expander class="comment" v-if="meal.comment && meal.comment.length > 70">
         <vue-markdown>{{meal.comment}}</vue-markdown>
-      </div>
+      </expander>
+      <vue-markdown v-else class="comment">{{meal.comment}}</vue-markdown>
+
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
       <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> {{ $t('toPrevWeek') }}</span>
       <span class="btn pull-right" @click="moveToNextWeek">{{ $t('toNextWeek') }} <i class="fal fa-arrow-right"></i></span>
@@ -40,11 +43,12 @@ import VueMarkdown from 'vue-markdown'
 import Recipe from './Recipe'
 import EditMeal from './EditMeal'
 import SureButton from './SureButton'
+import Expander from './Expander'
 
 export default {
   name: 'meal',
   props: ['meal'],
-  components: {Recipe, EditMeal, SureButton, VueMarkdown},
+  components: {Recipe, EditMeal, SureButton, VueMarkdown, Expander},
   data () {
     return {
       editMode: false
