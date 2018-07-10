@@ -6,16 +6,18 @@ import router from './router'
 import store from './store'
 import VueFuse from 'vue-fuse'
 import VueI18n from 'vue-i18n'
+import VueCookie from 'vue-cookie'
 
 Vue.use(VueI18n)
 Vue.use(VueFuse)
+Vue.use(VueCookie)
 
 Vue.config.productionTip = false
 
 /* eslint-disable no-new */
 new Vue({
   i18n: new VueI18n({
-    locale: 'se', // set locale
+    // locale: 'se', // set locale
     messages: {
       'en': {
         'Recipes': 'Recipes',
@@ -43,6 +45,20 @@ new Vue({
       }
     }
   }),
+  data () {
+    return {
+      locale: this.$cookie.get('locale') || 'se'
+    }
+  },
+  mounted () {
+    this.$i18n.locale = this.locale
+  },
+  watch: {
+    locale (newValue) {
+      this.$i18n.locale = newValue
+      this.$cookie.set('locale', newValue, 365)
+    }
+  },
   el: '#app',
   router,
   store,

@@ -7,7 +7,9 @@
     <router-view/>
     <footer>
       <span v-if='activeUser' v-on:click='logout' id='logout-button'>{{ $t('Logout') }} </span>
-      <span v-else v-on:click='login' id='login-button'>{{ $t('Login') }}</span>
+      <span v-else v-on:click='login' id='login-button'>{{ $t('Login') }}</span> |
+      <span v-if="$root.locale!=='en'" v-on:click="$root.locale='en'">🇬🇧</span>
+      <span v-if="$root.locale!=='se'" v-on:click="$root.locale='se'">🇸🇪</span>
     </footer>
   </div>
 </template>
@@ -15,11 +17,13 @@
 <i18n>
   {
     "en": {
+      "Recipes": "Recipes",
       "Planning": "Planning",
       "Logout": "Logout",
       "Login": "Login"
     },
     "se": {
+      "Recipes": "Recept",
       "Planning": "Plannering",
       "Logout": "Logga ut",
       "Login": "Logga in"
