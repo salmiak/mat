@@ -16,6 +16,7 @@ Vue.config.productionTip = false
 new Vue({
   i18n: new VueI18n({
     locale: 'se', // set locale
+    silentTranslationWarn: true,
     messages: {
       'en': {
         'Recipes': 'Recipes',
