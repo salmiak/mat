@@ -6,13 +6,14 @@
 
     <new-recipe></new-recipe>
 
-    <vue-fuse :placeholder="$t('Type to search')" :list="recipes" :keys="searchKeys" event-name="searchChanged" :defaultAll="true"></vue-fuse>
+    <input type="search" v-model="searchTerm" :placeholder="$t('Type to search')" />
 
-    <recipe v-for="recipe in searchResults" :key="recipe._id" :id="recipe._id" :showDelete="true" :showCreate="true"></recipe>
+    <recipe v-for="recipe in list" :key="recipe._id" :id="recipe._id" :showDelete="true" :showCreate="true"></recipe>
   </div>
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState } from 'vuex'
 import Recipe from './Recipe'
 import NewRecipe from './NewRecipe'
@@ -26,20 +27,36 @@ export default {
   data () {
     return {
       searchKeys: ['title', 'comment'],
-      searchResults: []
+      searchResults: [],
+      searchTerm: ''
     }
   },
   computed: {
     ...mapState('recipes', {
       recipes: 'list'
-    })
+    }),
+    list () {
+      if (this.searchTerm) {
+        return this.searchResults
+      } else {
+        return _.orderBy(this.recipes, 'title', 'asc')
+      }
+    }
+  },
+  watch: {
+    searchTerm () {
+      this.$search(this.searchTerm, this.recipes, {keys: this.searchKeys, defaultAll: false}).then(results => {
+        this.searchResults = results
+      })
+    }
   },
   created () {
-    this.$on('searchChanged', results => {
-      this.searchResults = results
-    })
+    this.searchResults = this.recipes
+    this.searchTerm = ''
   },
   mounted () {
+    this.searchResults = this.recipes
+    this.searchTerm = ''
     this.$store.dispatch('recipes/loadRecipeList')
   }
 }
