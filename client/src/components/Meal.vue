@@ -6,9 +6,9 @@
         <sure-button @clicked="deleteMeal(meal._id)" type="i" class="fal fa-trash-alt"></sure-button>
       </div>
       <h2 @click="toggleMade"><i class="fal fa-square"></i> {{meal.title}}</h2>
-      <p v-if="meal.comment">
-        {{meal.comment}}
-      </p>
+      <div class="comment" v-if="meal.comment">
+        <vue-markdown>{{meal.comment}}</vue-markdown>
+      </div>
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
       <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> {{ $t('toPrevWeek') }}</span>
       <span class="btn pull-right" @click="moveToNextWeek">{{ $t('toNextWeek') }} <i class="fal fa-arrow-right"></i></span>
@@ -36,6 +36,7 @@
 <script>
 import moment from 'moment'
 import {mapActions} from 'vuex'
+import VueMarkdown from 'vue-markdown'
 import Recipe from './Recipe'
 import EditMeal from './EditMeal'
 import SureButton from './SureButton'
@@ -43,7 +44,7 @@ import SureButton from './SureButton'
 export default {
   name: 'meal',
   props: ['meal'],
-  components: {Recipe, EditMeal, SureButton},
+  components: {Recipe, EditMeal, SureButton, VueMarkdown},
   data () {
     return {
       editMode: false

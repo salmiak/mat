@@ -63,7 +63,7 @@ export default {
 </script>
 
 <style lang="less">
-@import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:300,300i');
+@import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:400,400i,600,600i');
 @import '../node_modules/reset-css/less/reset';
 * { box-sizing: border-box; }
 @import "./assets/global.less";
@@ -182,6 +182,10 @@ input, textarea {
     color: fade(@cPrimary, 30%);
   }
 }
+textarea {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88rem;
+}
 
 .text {
   &-center { text-align: center; }
@@ -215,5 +219,30 @@ input, textarea {
       background-color: darken(@cMealBg, 5%);
     }
   }
+}
+
+.comment {
+  line-height: 1.5em;
+  font-size: .88rem;
+  p { margin-bottom: @bu/2; }
+  ul, ol {
+    margin-bottom: @bu/2;
+    li {
+      list-style: square;
+      padding: 0 0 0 0em;
+      margin: 0 0 0 1.2em;
+    }
+  }
+  ol li {
+    list-style: decimal;
+    margin-bottom: @bu/4;
+  }
+}
+strong { font-weight: bold; }
+em { font-style: italic; }
+hr {
+  border: none;
+  border-bottom: 1px solid @cBackground;
+  margin: @bu 0;
 }
 </style>

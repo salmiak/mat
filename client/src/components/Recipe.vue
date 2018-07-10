@@ -15,9 +15,9 @@
           <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
           <span v-else>{{recipe.title}}</span>
         </h2>
-        <p v-if="recipe.comment">
-          {{recipe.comment}}
-        </p>
+        <div class="comment" v-if="recipe.comment">
+          <vue-markdown>{{recipe.comment}}</vue-markdown>
+        </div>
       </div>
       <edit-recipe v-if="editMode" :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
     </div>
@@ -27,13 +27,14 @@
 <script>
 import moment from 'moment'
 import {mapActions} from 'vuex'
+import VueMarkdown from 'vue-markdown'
 import EditRecipe from './EditRecipe'
 import SureButton from './SureButton'
 
 export default {
   name: 'recipe',
   props: ['id', 'showDelete', 'showCreate'],
-  components: {EditRecipe, SureButton},
+  components: {EditRecipe, SureButton, VueMarkdown},
   data () {
     return {
       editMode: false
