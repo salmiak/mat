@@ -45,7 +45,7 @@ const actions = {
         wpId: data.wpId
       }).then((response) => {
         commit('setRecipe', { recipe: response.recipe })
-        resolve()
+        resolve(response.recipe)
       }, (err) => {
         console.log(err)
       })

@@ -190,6 +190,12 @@ input, textarea {
 textarea {
   font-family: 'IBM Plex Mono', monospace;
   font-size: 0.88rem;
+  &::placeholder {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 500;
+    line-height: 1.5em;
+    font-size: 1rem;
+  }
 }
 
 .text {
@@ -224,6 +230,11 @@ textarea {
       background-color: darken(@cMealBg, 5%);
     }
   }
+}
+
+.cardfooter {
+  .clear;
+  margin-top: @bu;
 }
 
 .comment {

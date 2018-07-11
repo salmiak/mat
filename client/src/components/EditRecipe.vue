@@ -10,7 +10,7 @@
       <textarea :placeholder="$t('Comment')" v-model="recipe.comment" @focus="expandTextarea" @blur="collapsTextarea" @keydown="growTextarea" :style="commentStyle"></textarea>
       <pre class="textareameasure">{{recipe.comment}}</pre>
     </div>
-    <div class="clear">
+    <div class="cardfooter">
       <button @click="cancelEdit">{{$t('Cancel')}}</button>
       <button class="btn-primary pull-right" @click="saveRecipe">{{$t('Save')}}</button>
     </div>

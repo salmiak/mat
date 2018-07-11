@@ -22,10 +22,25 @@
         <vue-markdown v-else class="comment">{{recipe.comment}}</vue-markdown>
 
       </div>
-      <edit-recipe v-if="editMode" :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
+      <div v-if="editMode">
+        <h2>{{$t('Edit recipe')}}</h2>
+        <edit-recipe :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
+      </div>
+
     </div>
   </div>
 </template>
+
+<i18n>
+  {
+    "en": {
+      "Edit recipe": "Edit recipe"
+    },
+    "se": {
+      "Edit recipe": "Redigera recept"
+    }
+  }
+</i18n>
 
 <script>
 import moment from 'moment'
@@ -97,7 +112,6 @@ export default {
   .recipe {
     width: auto;
     margin: @bu/2 -@bu/2;
-    padding: @bu @bu;
     h2 {
       .h3;
       line-height: @bu;

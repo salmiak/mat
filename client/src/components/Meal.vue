@@ -13,8 +13,10 @@
       <vue-markdown v-else class="comment">{{meal.comment}}</vue-markdown>
 
       <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
-      <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> {{ $t('toPrevWeek') }}</span>
-      <span class="btn pull-right" @click="moveToNextWeek">{{ $t('toNextWeek') }} <i class="fal fa-arrow-right"></i></span>
+      <div class="cardfooter">
+        <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> {{ $t('toPrevWeek') }}</span>
+        <span class="btn pull-right" @click="moveToNextWeek">{{ $t('toNextWeek') }} <i class="fal fa-arrow-right"></i></span>
+      </div>
     </div>
     <div v-if="!editMode && meal.made">
       <h2 @click="toggleMade"><i class="fal fa-check-square"></i> <span class="text-disabled">{{meal.title}}</span></h2>
