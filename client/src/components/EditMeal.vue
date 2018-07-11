@@ -4,7 +4,8 @@
       <input type="text" name="title" :placeholder="$t('Title')" v-model="meal.title">
     </div>
     <div>
-      <textarea :placeholder="$t('Comment')" v-model="meal.comment" @focus="expandTextarea = true" @blur="expandTextarea = (meal.comment.length !== 0)" :class="{collapsed: !expandTextarea}"></textarea>
+      <textarea :placeholder="$t('Comment')" v-model="meal.comment" @focus="expandTextarea" @blur="collapsTextarea" @keydown="growTextarea" :style="commentStyle"></textarea>
+      <pre class="textareameasure">{{meal.comment}}</pre>
     </div>
     <div>
       <input type="search" v-model="recipeSearchTerm" :placeholder="$t('Type to search')" />
@@ -97,7 +98,8 @@ export default {
       recipeResults: [],
       resultPage: 0,
       resultsPerPage: 5,
-      expandTextarea: false,
+      textareaExpanded: false,
+      commentHeight: 64,
       meal: {}
     }
   },
@@ -115,6 +117,12 @@ export default {
     }
   },
   computed: {
+    commentStyle () {
+      if (this.textareaExpanded || this.meal.comment.length) {
+        return {'height': (this.commentHeight + 24) + 'px'}
+      }
+      return undefined
+    },
     sliceStart () {
       return this.resultPage * this.resultsPerPage
     },
@@ -151,6 +159,16 @@ export default {
     }
   },
   methods: {
+    expandTextarea (e) {
+      this.growTextarea(e)
+      this.textareaExpanded = true
+    },
+    collapsTextarea (e) {
+      this.textareaExpanded = false
+    },
+    growTextarea (e) {
+      this.commentHeight = Math.max(e.path[0].nextElementSibling.offsetHeight, 64)
+    },
     selectRecipe (id) {
       this.meal.recipes.push(id)
     },
@@ -186,11 +204,8 @@ export default {
     margin: 0 0 @bu/2;
   }
   textarea{
-    height: 8rem;
+    height: calc(2.5rem + 2px);
     transition: height .3s;
-    &.collapsed {
-      height: calc(2.5em + 2px);
-    }
   }
   ul {
     margin: 0 -@bu/2 @bu/2;
@@ -206,5 +221,21 @@ export default {
       background: lighten(@cMealBg, 3%);
     }
   }
+}
+.textareameasure {
+  position: absolute;
+  top: 0;
+  left: 100vw;
+  width: calc(100% + @bu);
+  margin: 0 -@bu/2 @bu/2;
+  padding: @bu/2 @bu/2;
+  border: 1px solid fade(@cBackground, 40%);
+  border-radius: @radius;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.88rem;
+  line-height: 1.5em;
+  color: @cText;
+  display: block;
+  white-space: pre-line;
 }
 </style>

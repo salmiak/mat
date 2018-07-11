@@ -182,6 +182,7 @@ input, textarea {
   line-height: 1.5em;
   color: @cText;
   display: block;
+  resize: none;
   &::placeholder {
     color: fade(@cPrimary, 30%);
   }
