@@ -2,13 +2,26 @@
   <div class="expander" :class="{'collapsed':collapsed}">
     <slot></slot>
     <div v-if="collapsed" @click="collapsed = !collapsed" class="toggleCollapsed">
-      + Show more
+      + {{ $t('Show more') }}
     </div>
     <div v-if="!collapsed" @click="collapsed = !collapsed" class="toggleExpanded">
-      - Show less
+      - {{ $t('Show less') }}
     </div>
   </div>
 </template>
+
+<i18n>
+  {
+    "en": {
+      "Show more": "Show more",
+      "Show less": "Show less"
+    },
+    "se": {
+      "Show more": "Visa mer",
+      "Show less": "Visa mindre"
+    }
+  }
+</i18n>
 
 <script>
 export default {
