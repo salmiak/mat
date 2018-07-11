@@ -46,7 +46,7 @@ export default {
   },
   computed: {
     commentStyle () {
-      if (this.textareaExpanded || this.recipe.comment.length) {
+      if (this.textareaExpanded || this.recipe.comment) {
         return {'height': (this.commentHeight + 24) + 'px'}
       }
       return undefined

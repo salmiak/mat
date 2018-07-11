@@ -118,7 +118,7 @@ export default {
   },
   computed: {
     commentStyle () {
-      if (this.textareaExpanded || this.meal.comment.length) {
+      if (this.textareaExpanded || this.meal.comment) {
         return {'height': (this.commentHeight + 24) + 'px'}
       }
       return undefined
