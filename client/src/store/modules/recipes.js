@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import find from 'lodash/find'
+import reject from 'lodash/reject'
+import findIndex from 'lodash/findIndex'
 import moment from 'moment'
 import RecipesService from '@/services/RecipesService'
 
@@ -14,7 +16,7 @@ const getters = {
     return state.list
   },
   recipeById: (state) => (id) => {
-    return _.find(state.list, {_id: id})
+    return find(state.list, {_id: id})
   }
 }
 
@@ -71,7 +73,7 @@ const actions = {
 
   deleteRecipe ({commit, state}, id) {
     RecipesService.deleteRecipe(id).then((response) => {
-      commit('setRecipeList', { list: _.reject(state.list, {_id: id}) })
+      commit('setRecipeList', { list: reject(state.list, {_id: id}) })
     }, (err) => {
       console.log(err)
     })
@@ -85,7 +87,7 @@ const mutations = {
     state.syncTimestamp = moment()
   },
   setRecipe (state, {recipe}) {
-    var index = _.findIndex(state.list, {_id: recipe._id})
+    var index = findIndex(state.list, {_id: recipe._id})
     if (index !== -1) {
       state.list.splice(index, 1)
     }

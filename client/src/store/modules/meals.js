@@ -1,4 +1,6 @@
-import _ from 'lodash'
+import orderBy from 'lodash/orderBy'
+import reject from 'lodash/reject'
+import findIndex from 'lodash/findIndex'
 import moment from 'moment'
 import MealsService from '@/services/MealsService'
 
@@ -13,7 +15,7 @@ const getters = {
     return state.list
   },
   mealsInWeek: (state) => (query) => {
-    return _.orderBy(state.list.filter(meal => {
+    return orderBy(state.list.filter(meal => {
       var m = moment(meal.date)
       return (m.isoWeek() === query.week && m.isoWeekYear() === query.year)
     }), ['_id'], ['desc'])
@@ -80,7 +82,7 @@ const actions = {
 
   deleteMeal ({commit, state}, id) {
     MealsService.deleteMeal(id).then((response) => {
-      commit('setMealList', { list: _.reject(state.list, {_id: id}) })
+      commit('setMealList', { list: reject(state.list, {_id: id}) })
     }, (err) => {
       console.log(err)
     })
@@ -93,7 +95,7 @@ const mutations = {
     state.list = list
   },
   setMeal (state, {meal}) {
-    var index = _.findIndex(state.list, {_id: meal._id})
+    var index = findIndex(state.list, {_id: meal._id})
     if (index !== -1) {
       state.list.splice(index, 1)
     }

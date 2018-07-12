@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import orderBy from 'lodash/orderBy'
 import { mapState } from 'vuex'
 import Recipe from './Recipe'
 import NewRecipe from './NewRecipe'
@@ -39,7 +39,7 @@ export default {
       if (this.searchTerm) {
         return this.searchResults
       } else {
-        return _.orderBy(this.recipes, 'title', 'asc')
+        return orderBy(this.recipes, 'title', 'asc')
       }
     }
   },

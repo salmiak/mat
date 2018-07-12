@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
 import VueMarkdown from 'vue-markdown'
 
 var emptyData = {
@@ -33,7 +33,7 @@ export default {
   props: {
     recipeData: {
       default () {
-        return _.cloneDeep(emptyData)
+        return cloneDeep(emptyData)
       }
     }
   },
@@ -70,7 +70,7 @@ export default {
       this.commentHeight = Math.max(e.path[0].nextElementSibling.offsetHeight, 64)
     },
     resetRecipe () {
-      this.recipe = _.cloneDeep(this.recipeData)
+      this.recipe = cloneDeep(this.recipeData)
     },
     cancelEdit  () {
       this.resetRecipe()

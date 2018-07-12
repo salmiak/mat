@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import filter from 'lodash/filter'
 import convert from 'xml-js'
 import MapService from '@/services/MapService'
 
@@ -51,11 +51,11 @@ export default {
         return alert('Something is wrong with the map. Aborted import.')
       }
       var imported = JSON.parse(convert.xml2json(this.theText, {compact: true, spaces: 4}))
-      var items = _.filter(imported.rss.channel.item, {'wp:post_type': {'_cdata': 'recipe'}})
+      var items = filter(imported.rss.channel.item, {'wp:post_type': {'_cdata': 'recipe'}})
       console.log(items)
 
       items.forEach(item => {
-        var urlObject = _.filter(item['wp:postmeta'], {'wp:meta_key': {_cdata: 'url'}})[0]
+        var urlObject = filter(item['wp:postmeta'], {'wp:meta_key': {_cdata: 'url'}})[0]
         var recipeItem = {
           title: item.title._text,
           comment: item['content:encoded']._cdata,

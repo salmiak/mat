@@ -84,7 +84,8 @@
 </i18n>
 
 <script>
-import _ from 'lodash'
+import cloneDeep from 'lodash/cloneDeep'
+import map from 'lodash/map'
 import moment from 'moment'
 
 var emptyData = {
@@ -109,7 +110,7 @@ export default {
     },
     mealData: {
       default () {
-        return _.cloneDeep(emptyData)
+        return cloneDeep(emptyData)
       }
     },
     resetOnSave: {
@@ -156,7 +157,7 @@ export default {
       return (this.resultPage + 1) * this.resultsPerPage
     },
     recipeList () {
-      var list = _.map(this.$store.getters['recipes/recipeList'], (recipe) => {
+      var list = map(this.$store.getters['recipes/recipeList'], (recipe) => {
         return {
           _id: recipe._id,
           title: recipe.title
@@ -186,7 +187,7 @@ export default {
   },
   methods: {
     addNewRecipe () {
-      var recipeData = _.cloneDeep(emptyRecipeData)
+      var recipeData = cloneDeep(emptyRecipeData)
       recipeData.tmpId = (new Date()).getTime()
       this.newRecipes.push(recipeData)
     },
@@ -211,7 +212,7 @@ export default {
       this.meal.recipes.splice(this.meal.recipes.indexOf(id), 1)
     },
     resetMeal () {
-      this.meal = _.cloneDeep(this.mealData)
+      this.meal = cloneDeep(this.mealData)
       this.recipeSearchTerm = ''
     },
     cancelEdit  () {

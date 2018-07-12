@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import _ from 'lodash'
+import filter from 'lodash/filter'
 import convert from 'xml-js'
 import MapService from '@/services/MapService'
 
@@ -58,10 +58,10 @@ export default {
       }
 
       var imported = JSON.parse(convert.xml2json(this.theText, {compact: true, spaces: 4}))
-      var items = _.filter(imported.rss.channel.item, {'wp:post_type': {'_cdata': 'meal'}})
+      var items = filter(imported.rss.channel.item, {'wp:post_type': {'_cdata': 'meal'}})
 
       var getMeta = (item, key) => {
-        return _.filter(item['wp:postmeta'], {'wp:meta_key': {'_cdata': key}})[0] ? _.filter(item['wp:postmeta'], {'wp:meta_key': {'_cdata': key}})[0]['wp:meta_value']._cdata : undefined
+        return filter(item['wp:postmeta'], {'wp:meta_key': {'_cdata': key}})[0] ? filter(item['wp:postmeta'], {'wp:meta_key': {'_cdata': key}})[0]['wp:meta_value']._cdata : undefined
       }
 
       items.forEach(item => {
