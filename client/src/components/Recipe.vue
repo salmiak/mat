@@ -116,6 +116,9 @@ export default {
       .h3;
       line-height: @bu;
     }
+    &:last-child {
+      margin-bottom: -@bu/2;
+    }
   }
 }
 </style>

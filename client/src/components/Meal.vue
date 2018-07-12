@@ -1,56 +1,110 @@
 <template>
   <div class="meal">
-    <div v-if="!editMode && !meal.made">
+
+    <swipe-action-item
+      v-if="!editMode"
+      v-bind:rightActions="2"
+      v-bind:leftActions="2"
+      v-on:rightprimary="toggleMade"
+      v-on:rightsecondary="toNextWeek"
+      v-on:leftprimary="toggleEditMode"
+      v-on:leftsecondary="moveToPrevWeek">
+
+      <span slot="rightprimary">
+        <span v-if="meal.made">
+          <i class="fal fa-square"></i> {{$t('Not made')}}
+        </span>
+        <span v-else>
+          <i class="fal fa-check-square"></i> {{$t('Made')}}
+        </span>
+      </span>
+      <span slot="rightsecondary">
+        <span v-if="meal.made">
+          <i class="fal fa-copy"></i> {{$t('Copy')}}
+        </span>
+        <span v-else>
+          <i class="fal fa-arrow-right"></i> {{$t('Move')}}
+        </span>
+      </span>
+      <span slot="leftprimary">
+        <i class="fal fa-edit"></i> {{$t('Edit')}}
+      </span>
+      <span slot="leftsecondary">
+        <i class="fal fa-arrow-left"></i> {{$t('Move')}}
+      </span>
+
+      <div class="mealContent">
+        <div v-if="!meal.made">
+          <h2><i class="fal fa-square"></i> {{meal.title}}</h2>
+
+          <expander class="comment" v-if="meal.comment && meal.comment.length > 70">
+            <vue-markdown>{{meal.comment}}</vue-markdown>
+          </expander>
+          <vue-markdown v-if="meal.comment && meal.comment.length <= 70" class="comment">{{meal.comment}}</vue-markdown>
+
+          <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
+        </div>
+
+        <div v-if="meal.made">
+          <h2>
+            <i class="fal fa-check-square"></i>
+            <span class="text-disabled">{{meal.title}}</span>
+          </h2>
+        </div>
+      </div>
+    </swipe-action-item>
+
+    <div v-if="editMode" class="mealContent">
       <div class="toolbar">
-        <i class="fal fa-pen" @click="editMode = true"></i>
         <sure-button @clicked="deleteMeal(meal._id)" type="i" class="fal fa-trash-alt"></sure-button>
       </div>
-      <h2 @click="toggleMade"><i class="fal fa-square"></i> {{meal.title}}</h2>
-
-      <expander class="comment" v-if="meal.comment && meal.comment.length > 70">
-        <vue-markdown>{{meal.comment}}</vue-markdown>
-      </expander>
-      <vue-markdown v-else class="comment">{{meal.comment}}</vue-markdown>
-
-      <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
-      <div class="cardfooter">
-        <span class="btn" @click="moveToPrevWeek"><i class="fal fa-arrow-left"></i> {{ $t('toPrevWeek') }}</span>
-        <span class="btn pull-right" @click="moveToNextWeek">{{ $t('toNextWeek') }} <i class="fal fa-arrow-right"></i></span>
-      </div>
+      <h2>{{$t('Edit meal')}}</h2>
+      <edit-meal :mealData="meal" @save-meal="updateMeal" @cancel-edit="editMode = false"></edit-meal>
     </div>
-    <div v-if="!editMode && meal.made">
-      <h2 @click="toggleMade"><i class="fal fa-check-square"></i> <span class="text-disabled">{{meal.title}}</span></h2>
-    </div>
-    <edit-meal v-if="editMode" :mealData="meal" @save-meal="updateMeal" @cancel-edit="editMode = false"></edit-meal>
+
   </div>
 </template>
 
 <i18n>
   {
     "en": {
+      "Not made": "Not made",
+      "Made": "Made",
+      "Copy": "Copy",
+      "Edit": "Edit",
+      "Move": "Move",
       "toPrevWeek": "To prev. week",
-      "toNextWeek": "To next week"
+      "toNextWeek": "To next week",
+      "Edit meal": "Edit meal"
     },
     "se": {
+      "Not made": "Ogjord",
+      "Made": "Gjord",
+      "Copy": "Kopiera",
+      "Edit": "Redigera",
+      "Move": "Flytta",
       "toPrevWeek": "Till förra veckan",
-      "toNextWeek": "Till nästa vecka"
+      "toNextWeek": "Till nästa vecka",
+      "Edit meal": "Redigera måltid"
     }
   }
 </i18n>
 
 <script>
 import moment from 'moment'
+import cloneDeep from 'lodash/cloneDeep'
 import {mapActions} from 'vuex'
 import VueMarkdown from 'vue-markdown'
 import Recipe from './Recipe'
 import EditMeal from './EditMeal'
 import SureButton from './SureButton'
 import Expander from './Expander'
+import SwipeActionItem from './SwipeActionItem'
 
 export default {
   name: 'meal',
   props: ['meal'],
-  components: {Recipe, EditMeal, SureButton, VueMarkdown, Expander},
+  components: {Recipe, EditMeal, SureButton, VueMarkdown, Expander, SwipeActionItem},
   data () {
     return {
       editMode: false
@@ -64,6 +118,9 @@ export default {
       await this.$store.dispatch('meals/updateMeal', meal)
       this.editMode = false
     },
+    toggleEditMode () {
+      this.editMode = !this.editMode
+    },
     moveToPrevWeek () {
       this.meal.date = moment(this.meal.date).add(-1, 'w').toDate()
       this.updateMeal(this.meal)
@@ -71,6 +128,20 @@ export default {
     moveToNextWeek () {
       this.meal.date = moment(this.meal.date).add(1, 'w').toDate()
       this.updateMeal(this.meal)
+    },
+    copyToNextWeek () {
+      var newMeal = cloneDeep(this.meal)
+      newMeal.date = moment().add(1, 'w').startOf('isoWeek').toDate()
+      newMeal.made = false
+      this.$store.dispatch('meals/addMeal', newMeal)
+    },
+    toNextWeek () {
+      if (this.meal.made) {
+        // Copy to next week
+        this.copyToNextWeek()
+      } else {
+        this.moveToNextWeek()
+      }
     },
     toggleMade () {
       this.meal.made = !this.meal.made
@@ -84,10 +155,9 @@ export default {
 @import "../assets/global.less";
 .meal {
   position: relative;
-  background: @cMealBg;
-  padding: @bu;
   width: 95%;
   max-width: @bu * 25;
+  overflow: hidden;
   border-radius: @radius;
   margin: @bu/2 auto;
   h2 {
@@ -101,5 +171,10 @@ export default {
   h2:last-child {
     margin-bottom: 0;
   }
+}
+.mealContent {
+  background: @cMealBg;
+  padding: @bu;
+  border-radius: @radius;
 }
 </style>
