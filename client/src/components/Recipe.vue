@@ -96,7 +96,7 @@ export default {
 .recipe {
   position: relative;
   background: @cRecipeBg;
-  padding: @bu;
+  padding: @bu @bu @bu/2;
   width: 95%;
   max-width: @bu * 25;
   border-radius: @radius;

@@ -30,6 +30,7 @@
 
 <script>
 // import MealsService from '@/services/MealsService'
+import orderBy from 'lodash/orderBy'
 import moment from 'moment'
 import Meal from './Meal'
 import NewMeal from './NewMeal'
@@ -79,14 +80,14 @@ export default {
       }
     },
     mealsInCurrentWeek () {
-      return this.$store.getters['meals/mealsInWeek'](this.currentWeek)
+      return orderBy(this.$store.getters['meals/mealsInWeek'](this.currentWeek), 'made', 'asc')
     }
   },
   watch: {
     week () {
       this.loadMealsInWeek(this.currentWeek)
-      // this.loadMealsInWeek(this.prevWeek)
-      // this.loadMealsInWeek(this.nextWeek)
+      this.loadMealsInWeek(this.prevWeek)
+      this.loadMealsInWeek(this.nextWeek)
     }
   },
   methods: {
