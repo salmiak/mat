@@ -77,6 +77,7 @@ export default {
     },
     async mealFromRecipe (recipe) {
       var meal = {
+        recipes: [recipe._id],
         title: recipe.title,
         date: moment().add(1, 'w').startOf('isoWeek').toDate()
       }
