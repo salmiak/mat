@@ -22,7 +22,7 @@ let router = new Router({
     {
       path: '/',
       name: 'Welcome',
-      component: Week
+      redirect: '/week'
     },
     {
       path: '/import/recipes',
