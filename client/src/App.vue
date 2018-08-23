@@ -6,8 +6,6 @@
     </div>
     <router-view/>
     <footer>
-      <span v-if='activeUser' v-on:click='logout' id='logout-button'>{{ $t('Logout') }} </span>
-      <span v-else v-on:click='login' id='login-button'>{{ $t('Login') }}</span> |
       <span v-if="$root.locale!=='en'" v-on:click="$root.locale='en'">🇬🇧</span>
       <span v-if="$root.locale!=='se'" v-on:click="$root.locale='se'">🇸🇪</span>
     </footer>
@@ -18,15 +16,11 @@
   {
     "en": {
       "Recipes": "Recipes",
-      "Planning": "Planning",
-      "Logout": "Logout",
-      "Login": "Login"
+      "Planning": "Planning"
     },
     "se": {
       "Recipes": "Recept",
-      "Planning": "Plannering",
-      "Logout": "Logga ut",
-      "Login": "Logga in"
+      "Planning": "Plannering"
     }
   }
 </i18n>
@@ -37,31 +31,6 @@ export default {
   metaInfo: {
     title: 'Hem',
     titleTemplate: '%s | Beckmans matsajt'
-  },
-  data () {
-    return {
-      activeUser: null
-    }
-  },
-  async created () {
-    await this.refreshActiveUser()
-  },
-  watch: {
-    // Everytime the route changes, check for auth status
-    '$route': 'refreshActiveUser'
-  },
-  methods: {
-    login () {
-      this.$auth.loginRedirect()
-    },
-    async refreshActiveUser () {
-      this.activeUser = await this.$auth.getUser()
-    },
-    async logout () {
-      await this.$auth.logout()
-      await this.refreshActiveUser()
-      this.$router.push('/')
-    }
   }
 }
 </script>
