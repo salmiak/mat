@@ -20,7 +20,7 @@
     },
     "se": {
       "Recipes": "Recept",
-      "Planning": "Plannering"
+      "Planning": "Planering"
     }
   }
 </i18n>
