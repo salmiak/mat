@@ -2,12 +2,8 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Meta from 'vue-meta'
 
-import Auth from '@okta/okta-vue'
-
 import ImportRecipes from '@/components/ImportRecipes'
 import ImportMeals from '@/components/ImportMeals'
-
-import Welcome from '@/components/Welcome'
 
 import Week from '@/components/Week'
 
@@ -20,96 +16,58 @@ import NewRecipe from '@/components/NewRecipe'
 Vue.use(Router)
 Vue.use(Meta)
 
-Vue.use(Auth, {
-  issuer: 'https://dev-633272.oktapreview.com/oauth2/default',
-  client_id: '0oafnx0ia8m18WlAR0h7',
-  redirect_uri: window.location.origin + '/implicit/callback',
-  scope: 'openid profile email'
-})
-
 let router = new Router({
   mode: 'history',
   routes: [
     {
       path: '/',
       name: 'Welcome',
-      component: Welcome
+      redirect: '/week'
     },
-    {
-      path: '/implicit/callback',
-      component: Auth.handleCallback()
-    },
-
     {
       path: '/import/recipes',
       name: 'ImportRecipes',
-      component: ImportRecipes,
-      meta: {
-        requiresAuth: true
-      }
+      component: ImportRecipes
     },
     {
       path: '/import/meals',
       name: 'ImportMeals',
-      component: ImportMeals,
-      meta: {
-        requiresAuth: true
-      }
+      component: ImportMeals
     },
 
     {
       path: '/week/:year/:week',
       name: 'Week',
-      component: Week,
-      meta: {
-        requiresAuth: true
-      }
+      component: Week
     },
     {
       path: '/week',
       name: 'Current Week',
-      component: Week,
-      meta: {
-        requiresAuth: true
-      }
+      component: Week
     },
 
     {
       path: '/meals',
       name: 'Meals',
-      component: Meals,
-      meta: {
-        requiresAuth: true
-      }
+      component: Meals
     },
     {
       path: '/meals/new',
       name: 'NewMeal',
-      component: NewMeal,
-      meta: {
-        requiresAuth: true
-      }
+      component: NewMeal
     },
 
     {
       path: '/recipes',
       name: 'Recipes',
-      component: Recipes,
-      meta: {
-        requiresAuth: true
-      }
+      component: Recipes
     },
     {
       path: '/recipes/new',
       name: 'NewRecipe',
-      component: NewRecipe,
-      meta: {
-        requiresAuth: true
-      }
+      component: NewRecipe
     }
   ]
 })
-
-router.beforeEach(Vue.prototype.$auth.authRedirectGuard())
 
 export default router

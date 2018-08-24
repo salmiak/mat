@@ -5,7 +5,6 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
-const OktaJwtVerifier = require('@okta/jwt-verifier');
 
 let app = express()
 app.use(morgan('combined'))
@@ -30,43 +29,13 @@ db.once("open", function(callback){
   })
 });
 
-const oktaJwtVerifier = new OktaJwtVerifier({
-  issuer: 'https://dev-633272.oktapreview.com/oauth2/default',
-  clientId: '0oafngul4tDd4FKLX0h7'
-});
-
-/**
- * A simple middleware that asserts valid access tokens and sends 401 responses
- * if the token is not present or fails validation.  If the token is valid its
- * contents are attached to req.jwt
- */
-const authenticationRequired = (req, res, next) => {
-  const authHeader = req.headers.authorization || '';
-  const match = authHeader.match(/Bearer (.+)/);
-
-  if (!match) {
-    return res.status(401).end();
-  }
-
-  const accessToken = match[1];
-
-  return oktaJwtVerifier.verifyAccessToken(accessToken)
-    .then((jwt) => {
-      req.jwt = jwt;
-      next();
-    })
-    .catch((err) => {
-      res.status(401).send(err.message);
-    });
-}
-
 
 /**
   * MEAL
   **/
 
 // Create
-app.post('/meals', authenticationRequired, (req, res) => {
+app.post('/meals', (req, res) => {
   var db = req.db;
 
   var payload = {
@@ -93,7 +62,7 @@ app.post('/meals', authenticationRequired, (req, res) => {
 })
 
 // Read all meals
-app.get('/meals', authenticationRequired, (req, res) => {
+app.get('/meals', (req, res) => {
   var query = {}
   if(req.query.week && req.query.year) {
 
@@ -115,7 +84,7 @@ app.get('/meals', authenticationRequired, (req, res) => {
 })
 
 // Update a meal
-app.put('/meals/:id', authenticationRequired, (req, res) => {
+app.put('/meals/:id', (req, res) => {
   var db = req.db;
   Meal.findById(req.params.id, 'title comment date recipes index made wpId', function (error, meal) {
     if (error) { console.error(error); }
@@ -141,7 +110,7 @@ app.put('/meals/:id', authenticationRequired, (req, res) => {
 })
 
 // Delete a post
-app.delete('/meals/:id', authenticationRequired, (req, res) => {
+app.delete('/meals/:id', (req, res) => {
   var db = req.db;
   Meal.remove({
     _id: req.params.id
@@ -160,7 +129,7 @@ app.delete('/meals/:id', authenticationRequired, (req, res) => {
   **/
 
 // Create
-app.post('/recipes', authenticationRequired, (req, res) => {
+app.post('/recipes', (req, res) => {
   var db = req.db;
 
   var payload = {
@@ -185,7 +154,7 @@ app.post('/recipes', authenticationRequired, (req, res) => {
 })
 
 // Read all recipes
-app.get('/recipes', authenticationRequired, (req, res) => {
+app.get('/recipes', (req, res) => {
   Recipe.find({}, 'title comment url', function (error, recipes) {
     if (error) { console.error(error); }
     res.send({
@@ -195,7 +164,7 @@ app.get('/recipes', authenticationRequired, (req, res) => {
 })
 
 // Update a recipe
-app.put('/recipes/:id', authenticationRequired, (req, res) => {
+app.put('/recipes/:id', (req, res) => {
   var db = req.db;
   Recipe.findById(req.params.id, 'title comment url', function (error, recipe) {
     if (error) { console.error(error); }
@@ -217,7 +186,7 @@ app.put('/recipes/:id', authenticationRequired, (req, res) => {
 })
 
 // Delete a post
-app.delete('/recipes/:id', authenticationRequired, (req, res) => {
+app.delete('/recipes/:id', (req, res) => {
   var db = req.db;
   Recipe.remove({
     _id: req.params.id
