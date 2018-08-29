@@ -36,25 +36,31 @@ export default {
 </script>
 
 <style lang="less">
-@import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:400,400i,600,600i');
+// @import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:400,400i,600,600i');
+@import (css) url('https://rsms.me/inter/inter-ui.css');
 @import '../node_modules/reset-css/less/reset';
 * { box-sizing: border-box; }
 @import "./assets/global.less";
 
 html {
   font-size: 16px;
-  background: @cHeading;
+  letter-spacing: -0,004em;
+  font-feature-settings: "calt", "ss01", "case";
+  background: multiply(@cHeading, @cBackground);
   @media only screen and (min-device-width : 300px) and (max-device-width : 370px) {
     font-size: 14px;
+    letter-spacing: 0,001em;
   }
   @media only screen and (max-device-width : 319px) {
     font-size: 12px;
+    letter-spacing: 0,008em;
   }
 }
 
 body {
   background: @cBackground;
-  font-family: 'IBM Plex Serif', serif;
+  // font-family: 'IBM Plex Serif', serif;
+  font-family: 'Inter UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 1rem;
@@ -80,7 +86,8 @@ a, .a {
   justify-content: space-between;
   align-content: stretch;
   background: @cBackground;
-  font-family: 'IBM Plex Mono', sans-serif;
+  font-family: 'Inter UI', sans-serif;
+  // font-family: 'IBM Plex Mono', sans-serif;
   font-weight: 700;
   font-size: 0.75rem;
   line-height: 2rem;
@@ -146,7 +153,8 @@ input, textarea {
   outline: none;
   font-size: 1rem;
   border-radius: @radius;
-  font-family: 'IBM Plex Sans', sans-serif;
+  font-family: 'Inter UI', sans-serif;
+  // font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 500;
   line-height: 1.5em;
   color: @cText;
@@ -157,10 +165,12 @@ input, textarea {
   }
 }
 textarea {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: 'Inter UI', sans-serif;
+  // font-family: 'IBM Plex Mono', monospace;
   font-size: 0.88rem;
   &::placeholder {
-    font-family: 'IBM Plex Sans', sans-serif;
+    font-family: 'Inter UI', sans-serif;
+    // font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 500;
     line-height: 1.5em;
     font-size: 1rem;
