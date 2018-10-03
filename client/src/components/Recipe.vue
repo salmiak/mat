@@ -1,9 +1,9 @@
 <template>
-  <div class="recipe">
-    <div v-if="!recipe">
+  <context-menu class="recipe">
+    <template v-if="!recipe">
       Something is wrong with this recipe
-    </div>
-    <div v-else>
+    </template>
+    <template v-else>
       <div v-if="!editMode">
         <div class="toolbar">
           <i class="fal fa-pen" @click="editMode = true"></i>
@@ -27,8 +27,8 @@
         <edit-recipe :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
       </div>
 
-    </div>
-  </div>
+    </template>
+  </context-menu>
 </template>
 
 <i18n>
@@ -49,11 +49,12 @@ import VueMarkdown from 'vue-markdown'
 import EditRecipe from './EditRecipe'
 import SureButton from './SureButton'
 import Expander from './Expander'
+import ContextMenu from './ContextMenu'
 
 export default {
   name: 'recipe',
   props: ['id', 'showDelete', 'showCreate'],
-  components: {EditRecipe, SureButton, VueMarkdown, Expander},
+  components: {EditRecipe, SureButton, VueMarkdown, Expander, ContextMenu},
   data () {
     return {
       editMode: false
