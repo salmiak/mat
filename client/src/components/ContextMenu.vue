@@ -1,7 +1,9 @@
 <template>
   <div class="contextMenuArea" v-long-press="toggleMenu" @mousedown="tapStart" @mouseup="tapEnd" :style="{ zIndex: showMenu||showTapIndicator?900:0 }">
     <slot />
-    <div class="tapIndicator" :style="[pos, { opacity: showTapIndicator }]" />
+    <svg class="tapIndicator" :style="[pos]" height="64" width="64">
+      <circle :class="['circle', {'animate': showTapIndicator} ]" cx="32" cy="32" r="30" stroke="#fbafaf" stroke-width="4" fill-opacity="0" />
+    </svg>
     <div v-if="showMenu" class="contextMenu" :style="pos">
       <ul>
         <li>Option 1</li>
@@ -35,6 +37,7 @@ export default {
       this.$root.$emit('closeContextMenu')
       this.showTapIndicator = 1
       console.log(e)
+      // BUG: When tapping close to previous active area wrong layer trigger event??
       this.pos = {
         left: e.layerX + 'px',
         top: e.layerY + 'px'
@@ -44,24 +47,21 @@ export default {
       this.showTapIndicator = 0
     },
     toggleMenu () {
+      this.showTapIndicator = 0
       this.showMenu = true
     }
   }
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 .contextMenuArea {
   position: relative;
   .tapIndicator {
     position: absolute;
-    opacity: 0;
-    transition: opacity .5s .5s;
     z-index: 100;
     width: 64px;
     height: 64px;
-    border-radius: 100%;
-    border: 3px solid red;
     transform: translate(-32px, -32px);
   }
   .contextMenu {
@@ -74,6 +74,18 @@ export default {
       padding: 8px 16px;
       border-bottom: 1px solid fade(#000, 12%);
     }
+  }
+}
+.circle {
+  stroke-dasharray: 400;
+  stroke-dashoffset: 400;
+  &.animate {
+    animation: stroke 2s linear forwards;
+  }
+}
+@keyframes stroke {
+  to {
+    stroke-dashoffset: 0;
   }
 }
 </style>
