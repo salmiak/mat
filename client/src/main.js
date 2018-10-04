@@ -8,7 +8,7 @@ import VueFuse from 'vue-fuse'
 import VueI18n from 'vue-i18n'
 import VueCookie from 'vue-cookie'
 import VueTouch from 'vue-touch'
-import longpress from 'vue-long-press-directive'
+import longpress from './directives/long-press.js'
 
 Vue.use(longpress, { duration: 1000 })
 Vue.use(VueTouch)

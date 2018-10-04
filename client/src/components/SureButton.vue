@@ -33,10 +33,10 @@ export default {
 <style lang="less" scoped>
 @import "../assets/global.less";
 .clicked {
-  color: darken(@cSecondary, 20%);
-  background: @cSecondary;
+  color: darken(@cSecondary, 20%) !important;
+  background: @cSecondary !important;
   &:hover {
-    background-color: darken(@cSecondary, 5%);
+    background-color: darken(@cSecondary, 5%) !important;
   }
 }
 </style>

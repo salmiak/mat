@@ -1,20 +1,17 @@
 <template>
   <div class="contextMenuArea" v-long-press="toggleMenu" @mousedown="tapStart" @mouseup="tapEnd" :style="{ zIndex: showMenu||showTapIndicator?900:0 }">
     <slot />
-    <svg class="tapIndicator" :style="[pos]" height="64" width="64">
+    <svg v-if="showTapIndicator" class="tapIndicator" :style="[pos]" height="64" width="64">
       <circle :class="['circle', {'animate': showTapIndicator} ]" cx="32" cy="32" r="30" stroke="#fbafaf" stroke-width="4" fill-opacity="0" />
     </svg>
     <div v-if="showMenu" class="contextMenu" :style="pos">
-      <ul>
-        <li>Option 1</li>
-        <li>Option 2</li>
-        <li>Option 3</li>
-      </ul>
+      <slot name="contextMenu"></slot>
     </div>
   </div>
 </template>
 
 <script>
+import {findIndex} from 'lodash'
 export default {
   name: 'ContextMenu',
   data () {
@@ -34,13 +31,13 @@ export default {
   },
   methods: {
     tapStart (e) {
-      this.$root.$emit('closeContextMenu')
-      this.showTapIndicator = 1
-      console.log(e)
-      // BUG: When tapping close to previous active area wrong layer trigger event??
-      this.pos = {
-        left: e.layerX + 'px',
-        top: e.layerY + 'px'
+      if (!this.showMenu || findIndex(e.path, {className: 'contextMenu'}) === -1) {
+        this.$root.$emit('closeContextMenu')
+        this.showTapIndicator = 1
+        this.pos = {
+          left: e.layerX + 'px',
+          top: e.layerY + 'px'
+        }
       }
     },
     tapEnd () {
@@ -55,6 +52,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
+@import "../assets/global.less";
 .contextMenuArea {
   position: relative;
   .tapIndicator {
@@ -73,6 +71,10 @@ export default {
     li {
       padding: 8px 16px;
       border-bottom: 1px solid fade(#000, 12%);
+      white-space: nowrap;
+      &:hover {
+        background: @cMealBg;
+      }
     }
   }
 }
@@ -80,7 +82,7 @@ export default {
   stroke-dasharray: 400;
   stroke-dashoffset: 400;
   &.animate {
-    animation: stroke 2s linear forwards;
+    animation: stroke 1.2s .3s linear forwards;
   }
 }
 @keyframes stroke {

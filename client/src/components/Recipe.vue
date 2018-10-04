@@ -1,15 +1,13 @@
 <template>
-  <context-menu class="recipe">
+  <div class="recipe">
     <template v-if="!recipe">
       Something is wrong with this recipe
     </template>
     <template v-else>
-      <div v-if="!editMode">
+      <context-menu v-if="!editMode">
         <div class="toolbar">
-          <i class="fal fa-pen" @click="editMode = true"></i>
-          <sure-button v-if="showDelete" @clicked="deleteRecipe(recipe._id)" type="i" class="fal fa-trash-alt"></sure-button>
-          <i v-if="showCreate && !recipe.added" class="fal fa-plus-square" @click="mealFromRecipe(recipe)"></i>
-          <i v-if="showCreate && recipe.added" class="fal fa-check-square"></i>
+          <i v-if="showCreate && recipe.added === 'added'" class="fal fa-check-square"></i>
+          <i v-if="showCreate && recipe.added === 'inProgress'" class="fal fa-spinner fa-pulse"></i>
         </div>
         <h2>
           <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
@@ -21,14 +19,26 @@
         </expander>
         <vue-markdown v-else class="comment">{{recipe.comment}}</vue-markdown>
 
-      </div>
+        <template slot="contextMenu">
+          <ul>
+            <li @click="editMode = true">
+              <i class="fal fa-pen fa-fw"></i> Edit
+            </li>
+            <sure-button v-if="showDelete" @clicked="deleteRecipe(recipe._id)" type="li"><i class="fal fa-trash-alt fa-fw" /> Delete</sure-button>
+            <li @click="mealFromRecipe(recipe)">
+              <i v-if="showCreate" class="fal fa-plus-square fa-fw"></i> Add meal
+            </li>
+          </ul>
+        </template>
+
+      </context-menu>
       <div v-if="editMode">
         <h2>{{$t('Edit recipe')}}</h2>
         <edit-recipe :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
       </div>
 
     </template>
-  </context-menu>
+  </div>
 </template>
 
 <i18n>
@@ -44,7 +54,6 @@
 
 <script>
 import moment from 'moment'
-import {mapActions} from 'vuex'
 import VueMarkdown from 'vue-markdown'
 import EditRecipe from './EditRecipe'
 import SureButton from './SureButton'
@@ -69,21 +78,24 @@ export default {
     }
   },
   methods: {
-    ...mapActions('recipes', {
-      deleteRecipe: 'deleteRecipe'
-    }),
+    async deleteRecipe (id) {
+      await this.$store.dispatch('recipes/deleteRecipe', id)
+      this.$root.$emit('closeContextMenu')
+    },
     async updateRecipe (recipe) {
       await this.$store.dispatch('recipes/updateRecipe', recipe)
       this.editMode = false
     },
     async mealFromRecipe (recipe) {
+      this.$root.$emit('closeContextMenu')
       var meal = {
         recipes: [recipe._id],
         title: recipe.title,
         date: moment().add(1, 'w').startOf('isoWeek').toDate()
       }
+      this.$set(recipe, 'added', 'inProgress')
       this.$store.dispatch('meals/addMeal', meal).then(() => {
-        this.$set(recipe, 'added', true)
+        this.$set(recipe, 'added', 'added')
         setTimeout(() => {
           this.$set(recipe, 'added', false)
         }, 5000)
@@ -95,7 +107,7 @@ export default {
 
 <style lang="less" scoped>
 @import "../assets/global.less";
-.recipe {
+.recipe > div {
   position: relative;
   background: @cRecipeBg;
   padding: @bu @bu @bu/2;

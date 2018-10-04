@@ -39,7 +39,10 @@ export default {
 // @import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:400,400i,600,600i');
 @import (css) url('https://rsms.me/inter/inter-ui.css');
 @import '../node_modules/reset-css/less/reset';
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+  user-select: none;
+}
 @import "./assets/global.less";
 
 html {

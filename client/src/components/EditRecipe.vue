@@ -85,7 +85,7 @@ export default {
 <style lang="less" scoped>
 @import "../assets/global.less";
 .editRecipe {
-  padding: @bu/2 0 0;
+  padding: @bu/2 0;
   h3 {
     margin: @bu 0 @bu/2;
   }
