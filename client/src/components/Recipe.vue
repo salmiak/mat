@@ -4,25 +4,30 @@
       Something is wrong with this recipe
     </div>
     <div v-else>
-      <div v-if="!editMode">
+
+      <swipe-action-item
+        v-if="!editMode"
+        :rightActions="1"
+        :leftActions="1"
+        @rightprimary="mealFromRecipe(recipe)"
+        @leftprimary="editMode = true">
+
+        <span slot="rightprimary">
+          <i class="fal fa-plus-square"></i> {{$t('Add meal')}}
+        </span>
+        <span slot="leftprimary">
+          <i class="fal fa-edit"></i> {{$t('Edit')}}
+        </span>
+
+        <recipe-content :id="id" ></recipe-content>
+
+      </swipe-action-item>
+
+      <div v-if="editMode" class="recipeContent">
         <div class="toolbar">
-          <i class="fal fa-pen" @click="editMode = true"></i>
-          <sure-button v-if="showDelete" @clicked="deleteRecipe(recipe._id)" type="i" class="fal fa-trash-alt"></sure-button>
-          <i v-if="showCreate && !recipe.added" class="fal fa-plus-square" @click="mealFromRecipe(recipe)"></i>
-          <i v-if="showCreate && recipe.added" class="fal fa-check-square"></i>
-        </div>
-        <h2>
-          <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
-          <span v-else>{{recipe.title}}</span>
-        </h2>
+           <sure-button v-if="showDelete" @clicked="deleteRecipe(recipe._id)" type="i" class="fal fa-trash-alt"></sure-button>
+         </div>
 
-        <expander class="comment" v-if="recipe.comment && recipe.comment.length > 70">
-          <vue-markdown>{{recipe.comment}}</vue-markdown>
-        </expander>
-        <vue-markdown v-else class="comment">{{recipe.comment}}</vue-markdown>
-
-      </div>
-      <div v-if="editMode">
         <h2>{{$t('Edit recipe')}}</h2>
         <edit-recipe :recipeData="recipe" @save-recipe="updateRecipe" @cancel-edit="editMode = false"></edit-recipe>
       </div>
@@ -34,9 +39,11 @@
 <i18n>
   {
     "en": {
+      "Add meal": "Add meal",
       "Edit recipe": "Edit recipe"
     },
     "se": {
+      "Add meal": "Skapa måltid",
       "Edit recipe": "Redigera recept"
     }
   }
@@ -47,13 +54,15 @@ import moment from 'moment'
 import {mapActions} from 'vuex'
 import VueMarkdown from 'vue-markdown'
 import EditRecipe from './EditRecipe'
+import RecipeContent from './RecipeContent'
 import SureButton from './SureButton'
 import Expander from './Expander'
+import SwipeActionItem from './SwipeActionItem'
 
 export default {
   name: 'recipe',
   props: ['id', 'showDelete', 'showCreate'],
-  components: {EditRecipe, SureButton, VueMarkdown, Expander},
+  components: {EditRecipe, SureButton, VueMarkdown, Expander, SwipeActionItem, RecipeContent},
   data () {
     return {
       editMode: false
@@ -96,10 +105,9 @@ export default {
 @import "../assets/global.less";
 .recipe {
   position: relative;
-  background: @cRecipeBg;
-  padding: @bu @bu @bu/2;
   width: 95%;
   max-width: @bu * 25;
+  overflow: hidden;
   border-radius: @radius;
   margin: @bu/2 auto;
   h2 {
@@ -109,17 +117,9 @@ export default {
     }
   }
 }
-.meal {
-  .recipe {
-    width: auto;
-    margin: @bu/2 -@bu/2;
-    h2 {
-      .h3;
-      line-height: @bu;
-    }
-    &:last-child {
-      margin-bottom: -@bu/2;
-    }
-  }
+.recipeContent {
+  background: @cMealBg;
+  padding: @bu;
+  border-radius: @radius;
 }
 </style>

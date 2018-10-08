@@ -15,6 +15,7 @@ Vue.use(VueFuse)
 Vue.use(VueCookie)
 
 Vue.config.productionTip = false
+Vue.config.devtools = process.env.NODE_ENV === 'development'
 
 /* eslint-disable no-new */
 new Vue({
@@ -32,7 +33,8 @@ new Vue({
         'Title': 'Title',
         'Comment': 'Comment',
         'Url': 'Url',
-        'Type to search': 'Type to search'
+        'Type to search': 'Type to search',
+        'Edit': 'Edit'
       },
       'se': {
         'Recipes': 'Recept',
@@ -44,7 +46,8 @@ new Vue({
         'Title': 'Titel',
         'Comment': 'Kommentar',
         'Url': 'Url',
-        'Type to search': 'Skriv för att söka'
+        'Type to search': 'Skriv för att söka',
+        'Edit': 'Redigera'
       }
     }
   }),

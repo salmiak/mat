@@ -3,12 +3,12 @@
 
     <swipe-action-item
       v-if="!editMode"
-      v-bind:rightActions="2"
-      v-bind:leftActions="2"
-      v-on:rightprimary="toggleMade"
-      v-on:rightsecondary="toNextWeek"
-      v-on:leftprimary="toggleEditMode"
-      v-on:leftsecondary="moveToPrevWeek">
+      :rightActions="2"
+      :leftActions="2"
+      @rightprimary="toggleMade"
+      @rightsecondary="toNextWeek"
+      @leftprimary="toggleEditMode"
+      @leftsecondary="moveToPrevWeek">
 
       <span slot="rightprimary">
         <span v-if="meal.made">
@@ -42,7 +42,7 @@
           </expander>
           <vue-markdown v-if="meal.comment && meal.comment.length <= 70" class="comment">{{meal.comment}}</vue-markdown>
 
-          <recipe v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe>
+          <recipe-content v-for="recipe in meal.recipes" :key="recipe" :id="recipe"></recipe-content>
         </div>
 
         <div v-if="meal.made">
@@ -95,7 +95,7 @@ import moment from 'moment'
 import cloneDeep from 'lodash/cloneDeep'
 import {mapActions} from 'vuex'
 import VueMarkdown from 'vue-markdown'
-import Recipe from './Recipe'
+import RecipeContent from './RecipeContent'
 import EditMeal from './EditMeal'
 import SureButton from './SureButton'
 import Expander from './Expander'
@@ -104,7 +104,7 @@ import SwipeActionItem from './SwipeActionItem'
 export default {
   name: 'meal',
   props: ['meal'],
-  components: {Recipe, EditMeal, SureButton, VueMarkdown, Expander, SwipeActionItem},
+  components: {RecipeContent, EditMeal, SureButton, VueMarkdown, Expander, SwipeActionItem},
   data () {
     return {
       editMode: false
