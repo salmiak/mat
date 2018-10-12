@@ -75,7 +75,7 @@ app.get('/meals', (req, res) => {
     }
   }
 
-  Meal.find(query, 'title comment date recipes index made wpId', function (error, meals) {
+  Meal.find(query, 'title comment date recipes index made vote wpId', function (error, meals) {
     if (error) { console.error(error); }
     res.send({
       meals: _.orderBy(meals, ['date','index'], ['desc','asc'])
@@ -94,7 +94,8 @@ app.put('/meals/:id', (req, res) => {
     meal.date = req.body.date
     meal.recipes = req.body.recipes
     meal.index = req.body.index
-    meal.made = req.body.made,
+    meal.made = req.body.made
+    meal.vote = req.body.vote
     meal.wpId = req.body.wpId
 
     meal.save(function (error) {
@@ -155,7 +156,7 @@ app.post('/recipes', (req, res) => {
 
 // Read all recipes
 app.get('/recipes', (req, res) => {
-  Recipe.find({}, 'title comment url', function (error, recipes) {
+  Recipe.find({}, 'title comment url score votes', function (error, recipes) {
     if (error) { console.error(error); }
     res.send({
       recipes: recipes
@@ -169,9 +170,11 @@ app.put('/recipes/:id', (req, res) => {
   Recipe.findById(req.params.id, 'title comment url', function (error, recipe) {
     if (error) { console.error(error); }
 
-    recipe.title = req.body.title
-    recipe.comment = req.body.comment
-    recipe.url = req.body.url
+    recipe.title = req.body.title || recipe.title
+    recipe.comment = req.body.comment || recipe.comment
+    recipe.url = req.body.url || recipe.url
+    recipe.votes = req.body.votes || recipe.votes
+    recipe.score = req.body.score !== undefined ? req.body.score : recipe.score
 
     recipe.save(function (error) {
       if (error) {

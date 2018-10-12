@@ -46,6 +46,24 @@
         </div>
 
         <div v-if="meal.made">
+          <ul v-if="!meal.vote" class="voteButtons">
+            <li @click="vote(-1)">
+              <i class="fal fa-thumbs-down fa-fw" />
+            </li>
+            <li @click="vote(1)">
+              <i class="fal fa-thumbs-up fa-fw" />
+            </li>
+          </ul>
+          <ul v-if="meal.vote === 1" class="voteButtons">
+            <li @click="vote(0)">
+              <i class="fas fa-thumbs-up fa-fw" />
+            </li>
+          </ul>
+          <ul v-if="meal.vote === -1" class="voteButtons">
+            <li @click="vote(0)">
+              <i class="fas fa-thumbs-down fa-fw" />
+            </li>
+          </ul>
           <h2>
             <i class="fal fa-check-square"></i>
             <span class="text-disabled">{{meal.title}}</span>
@@ -146,6 +164,13 @@ export default {
     toggleMade () {
       this.meal.made = !this.meal.made
       this.updateMeal(this.meal)
+    },
+    vote (val) {
+      this.meal.vote = val
+      this.updateMeal(this.meal)
+      this.meal.recipes.forEach((recipe) => {
+        this.$store.dispatch('recipes/voteRecipe', {id: recipe, value: val, mealId: this.meal._id})
+      })
     }
   }
 }
@@ -170,6 +195,29 @@ export default {
   }
   h2:last-child {
     margin-bottom: 0;
+  }
+  .voteButtons {
+    position: absolute;
+    top:50%;
+    right: @bu;
+    transform: translate3d(0, -50% ,0);
+    margin: 0;
+    padding: 0;
+    li {
+      cursor: pointer;
+      list-style: none;
+      display: inline-flex;
+      justify-content: center;
+      align-content: center;
+      align-items: center;
+      width: @bu*2.2;
+      height: @bu*2.2;
+      text-align: center;
+      margin: 0;
+      padding: 0;
+      border: 1px solid fade(@cText,54%);
+      border-radius: @bu*2;
+    }
   }
 }
 .mealContent {

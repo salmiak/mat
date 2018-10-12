@@ -39,7 +39,7 @@ export default {
       if (this.searchTerm) {
         return this.searchResults
       } else {
-        return orderBy(this.recipes, 'title', 'asc')
+        return orderBy(this.recipes, 'score', 'desc')
       }
     }
   },

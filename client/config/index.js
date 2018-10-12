@@ -4,7 +4,7 @@
 
 const path = require('path')
 
-console.log('Building for ' + (process.env.BUILD_TARGET || 'aws'))
+// console.log('Building for ' + (process.env.BUILD_TARGET || 'aws'))
 
 module.exports = {
   dev: {

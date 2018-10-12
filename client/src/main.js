@@ -15,7 +15,7 @@ Vue.use(VueFuse)
 Vue.use(VueCookie)
 
 Vue.config.productionTip = false
-Vue.config.devtools = process.env.NODE_ENV === 'development'
+Vue.config.devtools = process.env.DEV_TOOLS
 
 /* eslint-disable no-new */
 new Vue({

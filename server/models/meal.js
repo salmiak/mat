@@ -8,6 +8,7 @@ var MealSchema = new Schema({
   index: { type: Number, default: 0 },
   made: { type: Boolean, default: false },
   recipes: [ String ],
+  vote: { type: Number, default: 0 },
   wpId: Number
 }, {
   timestamps: true

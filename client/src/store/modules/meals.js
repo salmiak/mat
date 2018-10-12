@@ -70,6 +70,7 @@ const actions = {
         recipes: data.recipes,
         made: data.made,
         date: data.date,
+        vote: data.vote,
         wpId: data.wpId
       }).then(response => {
         commit('setMeal', { meal: response.meal })

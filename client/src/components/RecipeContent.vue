@@ -7,6 +7,7 @@
       <h2>
         <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
         <span v-else>{{recipe.title}}</span>
+        <span class="score">({{recipe.score||'0'}})</span>
       </h2>
 
       <expander class="comment" v-if="recipe.comment && recipe.comment.length > 70">
@@ -57,6 +58,11 @@ export default {
     padding-right: @bu*2 * 3;
     &:not(:last-child) {
       margin-bottom: @bu/2;
+    }
+    .score {
+      font-size: @bu*.7;
+      letter-spacing: 0;
+      opacity: 0.54;
     }
   }
 }

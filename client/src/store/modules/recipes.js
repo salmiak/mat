@@ -1,5 +1,7 @@
 import find from 'lodash/find'
 import reject from 'lodash/reject'
+import map from 'lodash/map'
+import sum from 'lodash/sum'
 import findIndex from 'lodash/findIndex'
 import moment from 'moment'
 import RecipesService from '@/services/RecipesService'
@@ -62,6 +64,32 @@ const actions = {
         comment: data.comment,
         url: data.url,
         wpId: data.wpId
+      }).then(response => {
+        commit('setRecipe', { recipe: response.recipe })
+        resolve()
+      }, err => {
+        console.log(err)
+      })
+    })
+  },
+
+  voteRecipe ({commit, state}, data) {
+    var recipe = find(state.list, {_id: data.id})
+    if (!recipe) {
+      return console.error('something went wrong - recipe not found :(')
+    }
+    recipe.votes = recipe.votes || '{}'
+    var votes = JSON.parse(recipe.votes)
+    votes[data.mealId] = data.value
+    recipe.votes = JSON.stringify(votes)
+
+    recipe.score = sum(map(votes, (val) => { return val }))
+
+    return new Promise((resolve, reject) => {
+      RecipesService.updateRecipe({
+        _id: recipe._id,
+        score: recipe.score,
+        votes: recipe.votes
       }).then(response => {
         commit('setRecipe', { recipe: response.recipe })
         resolve()

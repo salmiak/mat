@@ -5,7 +5,9 @@ var RecipeSchema = new Schema({
   title: String,
   comment: String,
   url: String,
-  wpId: Number
+  wpId: Number,
+  votes: { type: String, default:'{}' },
+  score: { type: Number, default:0 }
 }, {
   timestamps: true
 });
