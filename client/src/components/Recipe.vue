@@ -119,7 +119,6 @@ export default {
 }
 .recipeContent {
   background: @cMealBg;
-  padding: @bu;
   border-radius: @radius;
 }
 </style>

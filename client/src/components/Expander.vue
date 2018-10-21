@@ -42,6 +42,7 @@ export default {
   overflow: hidden;
   transition: max-height .7s ease-in-out;
   max-height: 255rem;
+  border-radius: 0 0 @radius @radius;
   &.collapsed {
     max-height: @bu*4;
     transition: max-height .7s cubic-bezier(0, 1, 0, 1);
