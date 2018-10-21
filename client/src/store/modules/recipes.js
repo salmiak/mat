@@ -1,7 +1,6 @@
 import find from 'lodash/find'
 import reject from 'lodash/reject'
-import map from 'lodash/map'
-import sum from 'lodash/sum'
+import _ from 'lodash'
 import findIndex from 'lodash/findIndex'
 import moment from 'moment'
 import RecipesService from '@/services/RecipesService'
@@ -14,7 +13,12 @@ const state = {
 
 // getters
 const getters = {
-  recipeList (state) {
+  list (state) {
+    /*
+    state.list.forEach((r) => {
+      r.score = 123
+    })
+    */
     return state.list
   },
   recipeById: (state) => (id) => {
@@ -78,12 +82,42 @@ const actions = {
     if (!recipe) {
       return console.error('something went wrong - recipe not found :(')
     }
-    recipe.votes = recipe.votes || '{}'
+    recipe.votes = recipe.votes || '[]'
     var votes = JSON.parse(recipe.votes)
-    votes[data.mealId] = data.value
+
+    if (votes.length === undefined) {
+      // Votes is an object, transform to a collection
+      var newVotes = []
+      _.forIn(votes, (value, key) => {
+        newVotes.push({
+          mealId: key,
+          value: value,
+          date: moment()
+        })
+      })
+      votes = newVotes
+    }
+
+    votes = _(votes)
+      .reject({ 'mealId': data.mealId })
+      .value()
+
+    if (data.value !== 0) {
+      votes.push({
+        mealId: data.mealId,
+        value: data.value,
+        date: moment()
+      })
+    }
+
     recipe.votes = JSON.stringify(votes)
 
-    recipe.score = sum(map(votes, (val) => { return val }))
+    recipe.score = _.sum(_(votes)
+      .sortBy((vote) => { return moment(vote.date).valueOf() })
+      .reverse()
+      .take(3)
+      .map('value')
+      .value())
 
     return new Promise((resolve, reject) => {
       RecipesService.updateRecipe({

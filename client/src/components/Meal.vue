@@ -138,6 +138,7 @@ export default {
     },
     toggleEditMode () {
       this.editMode = !this.editMode
+      this.vote(0)
     },
     moveToPrevWeek () {
       this.meal.date = moment(this.meal.date).add(-1, 'w').toDate()
@@ -155,7 +156,6 @@ export default {
     },
     toNextWeek () {
       if (this.meal.made) {
-        // Copy to next week
         this.copyToNextWeek()
       } else {
         this.moveToNextWeek()
@@ -165,9 +165,9 @@ export default {
       this.meal.made = !this.meal.made
       this.updateMeal(this.meal)
     },
-    vote (val) {
+    async vote (val) {
       this.meal.vote = val
-      this.updateMeal(this.meal)
+      await this.$store.dispatch('meals/updateMeal', this.meal)
       this.meal.recipes.forEach((recipe) => {
         this.$store.dispatch('recipes/voteRecipe', {id: recipe, value: val, mealId: this.meal._id})
       })

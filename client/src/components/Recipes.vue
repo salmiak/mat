@@ -14,7 +14,7 @@
 
 <script>
 import orderBy from 'lodash/orderBy'
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import Recipe from './Recipe'
 import NewRecipe from './NewRecipe'
 
@@ -32,7 +32,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('recipes', {
+    ...mapGetters('recipes', {
       recipes: 'list'
     }),
     list () {

@@ -7,7 +7,9 @@
       <h2>
         <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
         <span v-else>{{recipe.title}}</span>
-        <span class="score">({{recipe.score||'0'}})</span>
+        <span class="score">
+          <i v-for="n in (recipe.score + 2)" class="fa fa-star" :key="'filled-'+n" /><i v-for="n in (5 - (recipe.score + 2))" class="far fa-star" :key="'open-'+n" />
+        </span>
       </h2>
 
       <expander class="comment" v-if="recipe.comment && recipe.comment.length > 70">
@@ -24,6 +26,7 @@
 </i18n>
 
 <script>
+import range from 'lodash/range'
 import VueMarkdown from 'vue-markdown'
 import Expander from './Expander'
 
@@ -41,6 +44,9 @@ export default {
   computed: {
     recipe () {
       return this.$store.getters['recipes/recipeById'](this.id)
+    },
+    stars () {
+      return range(this.recipe.score + 3)
     }
   }
 }
@@ -60,9 +66,10 @@ export default {
       margin-bottom: @bu/2;
     }
     .score {
-      font-size: @bu*.7;
-      letter-spacing: 0;
+      font-size: @bu*.6;
+      letter-spacing: 0.05rem;
       opacity: 0.54;
+      white-space: nowrap;
     }
   }
 }

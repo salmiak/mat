@@ -157,7 +157,7 @@ export default {
       return (this.resultPage + 1) * this.resultsPerPage
     },
     recipeList () {
-      var list = map(this.$store.getters['recipes/recipeList'], (recipe) => {
+      var list = map(this.$store.getters['recipes/list'], (recipe) => {
         return {
           _id: recipe._id,
           title: recipe.title
