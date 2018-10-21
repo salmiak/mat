@@ -23,8 +23,9 @@ To deploy, in the Server directory, run
 
 
 ## Todo
-- Add touch events to recipes
 - Refactor expanding-textarea to it's own component
 - Refactor New Recipes list to it's own component
-- Rate recipes
 - Upload image with recipe
+- Recalculate score on recipe
+- Order recipe list on score, name or last made
+- Loading state
