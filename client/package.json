@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@okta/okta-vue": "^1.0.2",
-    "axios": "^0.18.0",
+    "axios": "^0.18.1",
     "less": "^3.8.1",
     "less-loader": "^4.1.0",
     "lesshat": "^4.1.0",
