@@ -52,8 +52,10 @@ export default {
   methods: {
     onPanMove (e) {
       this.leftOffset = e.deltaX * friction
+      document.body.style.overflow = 'hidden'
     },
     onPanEnd (e) {
+      document.body.style.overflow = null
       if (this.direction && this.action) {
         this.$emit(this.direction + this.action)
       }
