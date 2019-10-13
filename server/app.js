@@ -14,13 +14,16 @@ app.use(cors())
 const Recipe = require("./models/recipe");
 const Meal = require("./models/meal");
 
-let bd_host = 'mongodb://mat-user:YD22aq2obhA5x1ETRZ2D@ds123258.mlab.com:23258/mat-prod'
+const host_prod = 'mongodb://mat-user:YD22aq2obhA5x1ETRZ2D@ds123258.mlab.com:23258/mat-prod'
+const host_dev = 'mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat'
+
+let bd_host = host_prod
 if (process.env.NODE_ENV === 'dev') {
-  bd_host = 'mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat'
+  bd_host =host_dev
 }
 
 mongoose.connect(bd_host);
-var db = mongoose.connection;
+const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
 db.once("open", function(callback){
   console.log("Connection Succeeded");
@@ -202,6 +205,104 @@ app.delete('/recipes/:id', (req, res) => {
 /**
   * UTILS
   */
+
+// Copy Prod to Dev database
+
+app.get('/cloneProd2Dev', (req, res) => {
+
+  let local_recipes, local_meals
+
+  if (process.env.NODE_ENV !== 'dev') {
+    return res.send('This only works in dev env.')
+  }
+
+  db.close()
+  console.log('Closed connection with dev-host')
+
+  let setDevData = _.after(2, () => {
+    console.log('time to write')
+
+    prodDB.close()
+    console.log('Closed connection with prod-host')
+
+    mongoose.connect(host_dev)
+    let devDB = mongoose.connection
+    devDB.on("error", console.error.bind(console, "connection error"));
+    devDB.once("open", function(callback){
+      console.log("Connection with dev-host Succeeded")
+
+      let uploadMeals = _.after(local_recipes.length, () => {
+        devDB.dropCollection("meals", (err,result) => {
+          local_meals.forEach((meal) => {
+            let payload = {
+              title: meal.title,
+              comment: meal.comment,
+              date: meal.date,
+              made: meal.made,
+              recipes: meal.recipes,
+              index: meal.index
+            }
+            let post = new Meal(payload)
+            post.save(function (error) {
+              if (error) {
+                console.log(error)
+              }
+            })
+          })
+
+          res.send("success")
+        })
+      })
+
+      devDB.dropCollection("recipes", (err,result) => {
+        local_recipes.forEach((recipe) => {
+          let payload = {
+            title: recipe.title,
+            comment: recipe.comment,
+            url: recipe.url
+          }
+          let post = new Recipe(payload)
+          post.save(function (error) {
+            if (error) {
+              console.log(error)
+            }
+            local_meals.forEach((meal) => {
+              let index = meal.recipes.indexOf(recipe.id)
+              if (index !== -1) {
+                meal.recipes[index] = post._id
+                console.log(recipe._id + ' = ' + post._id + ' updated')
+              }
+            })
+            uploadMeals()
+          })
+        })
+      })
+
+    })
+  })
+
+  mongoose.connect(host_prod)
+  let prodDB = mongoose.connection
+  prodDB.on("error", console.error.bind(console, "connection error"));
+  prodDB.once("open", function(callback){
+    console.log("Connection with prod-host Succeeded")
+
+    console.log('Getting all recipes')
+    Recipe.find({}, 'title comment url', function (error, recipes) {
+      if (error) { console.error(error); }
+      local_recipes = recipes
+      setDevData()
+    }).sort({title:1})
+
+    console.log('Getting all meals')
+    Meal.find({}, 'title comment date recipes index made wpId', function (error, meals) {
+      if (error) { console.error(error); }
+      local_meals = meals
+      setDevData()
+    }).sort({_id:-1})
+  });
+
+})
 
 // Map over wpId and _id
 app.get('/recipes/wpidmap', (req, res) => {
