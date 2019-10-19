@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@okta/jwt-verifier": "0.0.14",
+    "aws-sdk": "^2.553.0",
     "aws-serverless-express": "^3.3.5",
     "body-parser": "^1.18.3",
     "cors": "^2.8.4",

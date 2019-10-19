@@ -20,6 +20,13 @@ service: mat-server
 provider:
   name: aws
   runtime: nodejs10.x
+  
+  # Upload tutorial source: https://www.netlify.com/blog/2016/11/17/serverless-file-uploads/
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:*"
+      Resource: "arn:aws:s3:::mat-cdn/*"
 
 # you can overwrite defaults here
   stage: dev
