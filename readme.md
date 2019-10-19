@@ -21,6 +21,12 @@ To deploy, in the Server directory, run
 
 `npm run deploy`
 
+## Clone production db to dev db
+
+Start the server and visit http://localhost:8081/cloneProd2Dev
+
+This will drop the content in dev database and replace it with the content in the production database.
+
 
 ## Todo
 - Add touch events to recipes
