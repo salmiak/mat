@@ -29,8 +29,8 @@ This will drop the content in dev database and replace it with the content in th
 
 
 ## Todo
-- Add touch events to recipes
 - Refactor expanding-textarea to it's own component
 - Refactor New Recipes list to it's own component
 - Rate recipes
 - Upload image with recipe
+- https://auth0.com/
