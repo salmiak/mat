@@ -19,7 +19,7 @@ service: mat-server
 
 provider:
   name: aws
-  runtime: nodejs6.10
+  runtime: nodejs10.x
 
 # you can overwrite defaults here
   stage: dev
