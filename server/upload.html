@@ -45,6 +45,10 @@
     var list = document.getElementById('list');
     var apiBaseURL = "/dev";
 
+    if (window.location.href.indexOf('localhost') !== -1 ) {
+      apiBaseURL = "";
+    }
+
     function cancel(e) {
       e.preventDefault();
       return false;
