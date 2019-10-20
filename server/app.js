@@ -175,6 +175,7 @@ app.post('/recipes', (req, res) => {
     title: req.body.title,
     comment: req.body.comment,
     url: req.body.url,
+    fileUrl: req.body.fileUrl,
     wpId: req.body.wpId
   }
 
@@ -194,7 +195,7 @@ app.post('/recipes', (req, res) => {
 
 // Read all recipes
 app.get('/recipes', (req, res) => {
-  Recipe.find({}, 'title comment url', function (error, recipes) {
+  Recipe.find({}, 'title comment url fileUrl', function (error, recipes) {
     if (error) { console.error(error); }
     res.send({
       recipes: recipes
@@ -205,12 +206,13 @@ app.get('/recipes', (req, res) => {
 // Update a recipe
 app.put('/recipes/:id', (req, res) => {
   var db = req.db;
-  Recipe.findById(req.params.id, 'title comment url', function (error, recipe) {
+  Recipe.findById(req.params.id, 'title comment url fileUrl', function (error, recipe) {
     if (error) { console.error(error); }
 
     recipe.title = req.body.title
     recipe.comment = req.body.comment
     recipe.url = req.body.url
+    recipe.fileUrl = req.body.fileUrl
 
     recipe.save(function (error) {
       if (error) {

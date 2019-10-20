@@ -44,6 +44,7 @@ const actions = {
         title: data.title,
         comment: data.comment,
         url: data.url,
+        fileUrl: data.fileUrl,
         wpId: data.wpId
       }).then((response) => {
         commit('setRecipe', { recipe: response.recipe })
@@ -61,6 +62,7 @@ const actions = {
         title: data.title,
         comment: data.comment,
         url: data.url,
+        fileUrl: data.fileUrl,
         wpId: data.wpId
       }).then(response => {
         commit('setRecipe', { recipe: response.recipe })

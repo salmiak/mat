@@ -4,6 +4,9 @@
       <input type="text" name="title" :placeholder="$t('Title')" v-model="recipe.title">
     </div>
     <div>
+      <upload v-on:uploadStart="blockSave" v-on:uploadDone="fileAttached"></upload>
+    </div>
+    <div>
       <input type="url" name="url" :placeholder="$t('Url')" v-model="recipe.url">
     </div>
     <div>
@@ -20,16 +23,18 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep'
 import VueMarkdown from 'vue-markdown'
+import Upload from './Upload'
 
 var emptyData = {
   title: '',
   comment: '',
-  url: ''
+  url: '',
+  fileUrl: ''
 }
 
 export default {
   name: 'EditRecipe',
-  components: {VueMarkdown},
+  components: {VueMarkdown, Upload},
   props: {
     recipeData: {
       default () {
@@ -59,6 +64,13 @@ export default {
     this.resetRecipe()
   },
   methods: {
+    blockSave () {
+      this.disableSave = true
+    },
+    fileAttached (e) {
+      this.disableSave = false
+      this.recipe.fileUrl = e.fileUrl
+    },
     expandTextarea (e) {
       this.growTextarea(e)
       this.textareaExpanded = true

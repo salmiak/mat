@@ -1,13 +1,18 @@
 <template>
   <div class="recipeContent">
     <div v-if="!recipe">
-      Something is wrong with this recipe
+      …
     </div>
     <div v-else>
       <h2>
         <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
+        <a v-else-if="recipe.fileUrl" :href="recipe.fileUrl" target="_blank">{{recipe.title}}</a>
         <span v-else>{{recipe.title}}</span>
       </h2>
+
+      <a v-if="recipe.fileUrl" :href="recipe.fileUrl" target="_blank">
+        <img :src="recipe.fileUrl" class="recipe-thumbnail" />
+      </a>
 
       <expander class="comment" v-if="recipe.comment && recipe.comment.length > 70">
         <vue-markdown>{{recipe.comment}}</vue-markdown>
@@ -58,6 +63,18 @@ export default {
     &:not(:last-child) {
       margin-bottom: @bu/2;
     }
+  }
+  .recipe-thumbnail {
+    max-width: 120px;
+    height: auto;
+    float: left;
+    margin: 0 @bu @bu/2 0;
+  }
+
+  &::after {
+    content: '';
+    display: block;
+    clear: both;
   }
 }
 .meal {
