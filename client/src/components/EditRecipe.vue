@@ -4,7 +4,13 @@
       <input type="text" name="title" :placeholder="$t('Title')" v-model="recipe.title">
     </div>
     <div>
-      <upload v-on:uploadStart="blockSave" v-on:uploadDone="fileAttached"></upload>
+      <div v-if="recipe.fileUrl" style="position: relative; float:left; clear:both">
+        <img :src="recipe.fileUrl" class="recipe-thumbnail" />
+        <div class="toolbar">
+          <sure-button @clicked="recipe.fileUrl = ''" type="i" class="fal fa-trash-alt"></sure-button>
+        </div>
+      </div>
+      <upload v-else v-on:uploadStart="blockSave" v-on:uploadDone="fileAttached"></upload>
     </div>
     <div>
       <input type="url" name="url" :placeholder="$t('Url')" v-model="recipe.url">
@@ -25,6 +31,7 @@
 import cloneDeep from 'lodash/cloneDeep'
 import VueMarkdown from 'vue-markdown'
 import Upload from './Upload'
+import SureButton from './SureButton'
 
 var emptyData = {
   title: '',
@@ -35,7 +42,7 @@ var emptyData = {
 
 export default {
   name: 'EditRecipe',
-  components: {VueMarkdown, Upload},
+  components: {VueMarkdown, Upload, SureButton},
   props: {
     recipeData: {
       default () {
@@ -109,6 +116,10 @@ export default {
   textarea{
     height: calc(2.5rem + 2px);
     transition: height .3s;
+  }
+  .recipe-thumbnail {
+    max-width: 120px;
+    height: auto;
   }
 }
 .textareameasure {
