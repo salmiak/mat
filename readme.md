@@ -32,5 +32,7 @@ This will drop the content in dev database and replace it with the content in th
 - Refactor expanding-textarea to it's own component
 - Refactor New Recipes list to it's own component
 - Rate recipes
-- Upload image with recipe
+- Upload image when adding recipe from new meal
+- Smarter meal creation
+  - When writing title for new meal, automaticaly search for matching recipes and have a "add new recipe"-button that opens new recipe-editor with title prefilled.
 - https://auth0.com/
