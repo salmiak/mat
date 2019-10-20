@@ -15,7 +15,8 @@
     </div>
     <div class="cardfooter">
       <button @click="cancelEdit">{{$t('Cancel')}}</button>
-      <button class="btn-primary pull-right" @click="saveRecipe">{{$t('Save')}}</button>
+      <button v-if="!disableSave" class="btn-primary pull-right" @click="saveRecipe">{{$t('Save')}}</button>
+      <span v-else class="pull-right">Laddar upp bild</span>
     </div>
   </div>
 </template>
@@ -46,7 +47,8 @@ export default {
     return {
       textareaExpanded: false,
       recipe: {},
-      commentHeight: 64
+      commentHeight: 64,
+      disableSave: false
     }
   },
   computed: {
