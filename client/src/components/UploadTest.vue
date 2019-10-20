@@ -1,7 +1,11 @@
 <template>
   <div>
     <h1>Upload test</h1>
-    <Upload />
+    <p>{{status}}</p>
+    <img :src="fileUrl" v-if="fileUrl" />
+    <upload
+      v-on:uploadStart="status = 'started upload'"
+      v-on:uploadDone="handleDone"></upload>
   </div>
 </template>
 
@@ -10,7 +14,19 @@ import Upload from './Upload'
 
 export default {
   name: 'uploadTest',
-  components: { Upload }
+  data () {
+    return {
+      status: 'waiting on file',
+      fileUrl: undefined
+    }
+  },
+  components: { Upload },
+  methods: {
+    handleDone (e) {
+      this.fileUrl = e.fileUrl
+      this.status = 'done!'
+    }
+  }
 }
 </script>
 

@@ -1,8 +1,8 @@
 <template>
   <div>
-    <input type="file" ref="uploadInput" @change="readFile">
-    {{file}}
-    <img :src="uploadedFileUrl" v-if="uploadedFileUrl" />
+    <input v-if="!status" type="file" ref="uploadInput" @change="readFile">
+    <span v-if="status === 1">Laddar upp filen...</span>
+    <img :src="uploadedFileUrl" v-if="uploadedFileUrl" width="100px" />
   </div>
 </template>
 
@@ -15,12 +15,15 @@ export default {
   name: 'upload',
   data () {
     return {
-      file: 'not set',
+      status: 0,
       uploadedFileUrl: undefined
     }
   },
   methods: {
     readFile () {
+      this.status = 1
+      this.$emit('uploadStart')
+
       var _this = this
       _this.file = this.$refs.uploadInput.files[0]
 
@@ -51,6 +54,8 @@ export default {
             })
           })
           .then(function () {
+            _this.status = 2
+            _this.$emit('uploadDone', {fileUrl: cdnHost + _this.fileName})
             _this.uploadedFileUrl = cdnHost + _this.fileName
           })
       })
