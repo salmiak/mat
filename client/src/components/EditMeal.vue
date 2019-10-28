@@ -44,6 +44,15 @@
           <input type="text" name="title" :placeholder="$t('Title')" v-model="recipe.title">
         </div>
         <div>
+          <div v-if="recipe.fileUrl" style="position: relative; float:left; clear:both">
+            <img v-if="recipe.fileUrl" :src="recipe.fileUrl" class="recipe-thumbnail" />
+            <div class="toolbar">
+              <sure-button @clicked="clearFileUrl(index)" type="i" class="fal fa-trash-alt"></sure-button>
+            </div>
+          </div>
+          <upload v-else v-on:uploadStart="blockSave" v-on:uploadDone="fileAttached($event, index)"></upload>
+        </div>
+        <div>
           <input type="url" name="url" :placeholder="$t('Url')" v-model="recipe.url">
         </div>
         <div>
@@ -55,7 +64,9 @@
 
     <div class="cardfooter">
       <button @click="cancelEdit">{{$t('Cancel')}}</button>
-      <button class="btn-primary pull-right" @click="saveMeal">{{$t('Save')}}</button>
+      <!--<button class="btn-primary pull-right" @click="saveMeal">{{$t('Save')}}</button> -->
+      <button v-if="disableSave < 1" class="btn-primary pull-right" @click="saveMeal">{{$t('Save')}}</button>
+      <span v-else class="pull-right">Laddar upp bild</span>
     </div>
   </div>
 </template>
@@ -87,6 +98,8 @@
 import cloneDeep from 'lodash/cloneDeep'
 import map from 'lodash/map'
 import moment from 'moment'
+import Upload from './Upload'
+import SureButton from './SureButton'
 
 var emptyData = {
   title: '',
@@ -101,6 +114,7 @@ var emptyRecipeData = {
 
 export default {
   name: 'EditMeal',
+  components: { Upload, SureButton },
   props: {
     week: {
       type: Number
@@ -127,7 +141,8 @@ export default {
       textareaExpanded: false,
       commentHeight: 64,
       meal: {},
-      newRecipes: []
+      newRecipes: [],
+      disableSave: 0
     }
   },
   created () {
@@ -186,6 +201,16 @@ export default {
     }
   },
   methods: {
+    blockSave () {
+      this.disableSave += 1
+    },
+    fileAttached (e, index) {
+      this.disableSave -= 1
+      this.newRecipes[index].fileUrl = e.fileUrl
+    },
+    clearFileUrl (index) {
+      alert('Denna funktion finns inte än')
+    },
     addNewRecipe () {
       var recipeData = cloneDeep(emptyRecipeData)
       recipeData.title = this.meal.title
@@ -287,6 +312,10 @@ export default {
   h3 {
     margin-top: 0;
     line-height: @bu;
+  }
+  .recipe-thumbnail {
+    max-width: 120px;
+    height: auto;
   }
 }
 .textareameasure {
