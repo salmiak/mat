@@ -8,7 +8,7 @@
       <pre class="textareameasure">{{meal.comment}}</pre>
     </div>
     <div>
-      <input type="search" v-model="recipeSearchTerm" :placeholder="$t('Type to search current recipes')" />
+      <input type="search" v-model="recipeSearchTerm" :placeholder="$t('Type to search current recipes')" v-on:focus="recipeSearchTerm =  recipeSearchTerm || meal.title" />
       <ul v-if="recipeResultsNotSelected.length">
          <li v-for="recipe in recipeResultsNotSelected.slice(sliceStart,sliceEnd+1)" :key="recipe._id" @click="selectRecipe(recipe._id)">
            <div class="btn btn-sm pull-right">{{$t('Add')}}</div>
