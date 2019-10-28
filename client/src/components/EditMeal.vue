@@ -206,6 +206,7 @@ export default {
     },
     selectRecipe (id) {
       this.meal.recipes.push(id)
+      this.meal.title = this.meal.title || this.selectedRecipes[0].title
       this.recipeSearchTerm = ''
     },
     removeRecipe (id) {
