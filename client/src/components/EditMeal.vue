@@ -188,6 +188,7 @@ export default {
   methods: {
     addNewRecipe () {
       var recipeData = cloneDeep(emptyRecipeData)
+      recipeData.title = this.meal.title
       recipeData.tmpId = (new Date()).getTime()
       this.newRecipes.push(recipeData)
     },
