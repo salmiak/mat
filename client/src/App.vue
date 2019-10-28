@@ -7,7 +7,8 @@
     <router-view/>
     <footer>
       <span v-if="$root.locale!=='en'" v-on:click="$root.locale='en'">🇬🇧</span>
-      <span v-if="$root.locale!=='se'" v-on:click="$root.locale='se'">🇸🇪</span>
+      <span v-if="$root.locale!=='se'" v-on:click="$root.locale='se'">🇸🇪</span> |
+      <span v-on:click="reloadApp">{{ $t('Reload') }}</span>
     </footer>
   </div>
 </template>
@@ -16,11 +17,13 @@
   {
     "en": {
       "Recipes": "Recipes",
-      "Planning": "Planning"
+      "Planning": "Planning",
+      "Reload": "Reload"
     },
     "se": {
       "Recipes": "Recept",
-      "Planning": "Planering"
+      "Planning": "Planering",
+      "Reload": "Ladda om"
     }
   }
 </i18n>
@@ -31,6 +34,11 @@ export default {
   metaInfo: {
     title: 'Hem',
     titleTemplate: '%s | Beckmans matsajt'
+  },
+  methods: {
+    reloadApp () {
+      location.reload(true)
+    }
   }
 }
 </script>
