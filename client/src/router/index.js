@@ -13,6 +13,8 @@ import NewMeal from '@/components/NewMeal'
 import Recipes from '@/components/Recipes'
 import NewRecipe from '@/components/NewRecipe'
 
+import UploadTest from '@/components/UploadTest'
+
 Vue.use(Router)
 Vue.use(Meta)
 
@@ -23,6 +25,11 @@ let router = new Router({
       path: '/',
       name: 'Welcome',
       redirect: '/week'
+    },
+    {
+      path: '/uploadtest',
+      name: 'UploadTest',
+      component: UploadTest
     },
     {
       path: '/import/recipes',

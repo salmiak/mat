@@ -4,6 +4,15 @@
       <input type="text" name="title" :placeholder="$t('Title')" v-model="recipe.title">
     </div>
     <div>
+      <div v-if="recipe.fileUrl" style="position: relative; float:left; clear:both">
+        <img :src="recipe.fileUrl" class="recipe-thumbnail" />
+        <div class="toolbar">
+          <sure-button @clicked="recipe.fileUrl = ''" type="i" class="fal fa-trash-alt"></sure-button>
+        </div>
+      </div>
+      <upload v-else v-on:uploadStart="blockSave" v-on:uploadDone="fileAttached"></upload>
+    </div>
+    <div>
       <input type="url" name="url" :placeholder="$t('Url')" v-model="recipe.url">
     </div>
     <div>
@@ -12,7 +21,8 @@
     </div>
     <div class="cardfooter">
       <button @click="cancelEdit">{{$t('Cancel')}}</button>
-      <button class="btn-primary pull-right" @click="saveRecipe">{{$t('Save')}}</button>
+      <button v-if="!disableSave" class="btn-primary pull-right" @click="saveRecipe">{{$t('Save')}}</button>
+      <span v-else class="pull-right">Laddar upp bild</span>
     </div>
   </div>
 </template>
@@ -20,16 +30,19 @@
 <script>
 import cloneDeep from 'lodash/cloneDeep'
 import VueMarkdown from 'vue-markdown'
+import Upload from './Upload'
+import SureButton from './SureButton'
 
 var emptyData = {
   title: '',
   comment: '',
-  url: ''
+  url: '',
+  fileUrl: ''
 }
 
 export default {
   name: 'EditRecipe',
-  components: {VueMarkdown},
+  components: {VueMarkdown, Upload, SureButton},
   props: {
     recipeData: {
       default () {
@@ -41,7 +54,8 @@ export default {
     return {
       textareaExpanded: false,
       recipe: {},
-      commentHeight: 64
+      commentHeight: 64,
+      disableSave: false
     }
   },
   computed: {
@@ -59,6 +73,13 @@ export default {
     this.resetRecipe()
   },
   methods: {
+    blockSave () {
+      this.disableSave = true
+    },
+    fileAttached (e) {
+      this.disableSave = false
+      this.recipe.fileUrl = e.fileUrl
+    },
     expandTextarea (e) {
       this.growTextarea(e)
       this.textareaExpanded = true
@@ -95,6 +116,10 @@ export default {
   textarea{
     height: calc(2.5rem + 2px);
     transition: height .3s;
+  }
+  .recipe-thumbnail {
+    max-width: 120px;
+    height: auto;
   }
 }
 .textareameasure {

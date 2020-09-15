@@ -5,6 +5,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
+const AWS = require('aws-sdk')
+const path = require('path')
 
 let app = express()
 app.use(morgan('combined'))
@@ -14,8 +16,8 @@ app.use(cors())
 const Recipe = require("./models/recipe");
 const Meal = require("./models/meal");
 
-const host_prod = 'mongodb://mat-user:YD22aq2obhA5x1ETRZ2D@ds123258.mlab.com:23258/mat-prod'
-const host_dev = 'mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat'
+const host_prod = 'mongodb+srv://mat-user:YD22aq2obhA5x1ETRZ2D@mat-prod.dk9z7.mongodb.net/mat-prod?retryWrites=true&w=majority'
+const host_dev = 'mongodb+srv://mat-user:b68mclzReZqJnHksTq1D@mat.nfzpr.mongodb.net/mat?retryWrites=true&w=majority'
 
 let bd_host = host_prod
 if (process.env.NODE_ENV === 'dev') {
@@ -31,6 +33,40 @@ db.once("open", function(callback){
     console.log('listening on ' + (process.env.PORT || 8081))
   })
 });
+
+
+/**
+  * Upload
+  * - Source: https://www.netlify.com/blog/2016/11/17/serverless-file-uploads/
+  */
+
+// Test upload page directly from server
+app.get('/upload', (req, res) => {
+  res.sendFile(path.join(__dirname + '/upload.html'));
+})
+
+// Request and resturn AWS S3 upload url
+app.post('/requestUploadURL', (req, res) => {
+  var s3 = new AWS.S3();
+  var params = req.body;
+
+  var s3Params = {
+    Bucket: 'mat-cdn',
+    Key:  params.name,
+    ContentType: params.type,
+    ACL: 'public-read',
+  };
+
+  var uploadURL = s3.getSignedUrl('putObject', s3Params);
+
+  res.send({
+    statusCode: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
+    uploadURL: uploadURL
+  })
+})
 
 
 /**
@@ -139,6 +175,7 @@ app.post('/recipes', (req, res) => {
     title: req.body.title,
     comment: req.body.comment,
     url: req.body.url,
+    fileUrl: req.body.fileUrl,
     wpId: req.body.wpId
   }
 
@@ -158,7 +195,7 @@ app.post('/recipes', (req, res) => {
 
 // Read all recipes
 app.get('/recipes', (req, res) => {
-  Recipe.find({}, 'title comment url', function (error, recipes) {
+  Recipe.find({}, 'title comment url fileUrl', function (error, recipes) {
     if (error) { console.error(error); }
     res.send({
       recipes: recipes
@@ -169,12 +206,13 @@ app.get('/recipes', (req, res) => {
 // Update a recipe
 app.put('/recipes/:id', (req, res) => {
   var db = req.db;
-  Recipe.findById(req.params.id, 'title comment url', function (error, recipe) {
+  Recipe.findById(req.params.id, 'title comment url fileUrl', function (error, recipe) {
     if (error) { console.error(error); }
 
     recipe.title = req.body.title
     recipe.comment = req.body.comment
     recipe.url = req.body.url
+    recipe.fileUrl = req.body.fileUrl
 
     recipe.save(function (error) {
       if (error) {

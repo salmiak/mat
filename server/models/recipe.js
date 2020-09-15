@@ -5,6 +5,7 @@ var RecipeSchema = new Schema({
   title: String,
   comment: String,
   url: String,
+  fileUrl: String,
   wpId: Number
 }, {
   timestamps: true
