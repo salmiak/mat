@@ -16,8 +16,8 @@ app.use(cors())
 const Recipe = require("./models/recipe");
 const Meal = require("./models/meal");
 
-const host_prod = 'mongodb://mat-user:YD22aq2obhA5x1ETRZ2D@ds123258.mlab.com:23258/mat-prod'
-const host_dev = 'mongodb://mat-user:b68mclzReZqJnHksTq1D@ds161710.mlab.com:61710/mat'
+const host_prod = 'mongodb+srv://mat-user:YD22aq2obhA5x1ETRZ2D@mat-prod.dk9z7.mongodb.net/mat-prod?retryWrites=true&w=majority'
+const host_dev = 'mongodb+srv://mat-user:b68mclzReZqJnHksTq1D@mat.nfzpr.mongodb.net/mat?retryWrites=true&w=majority'
 
 let bd_host = host_prod
 if (process.env.NODE_ENV === 'dev') {
