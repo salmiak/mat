@@ -22,7 +22,7 @@
     "less": "^3.12.2",
     "less-loader": "^4.1.0",
     "lesshat": "^4.1.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "reset-css": "^4.0.1",
     "vue": "^2.5.17",
     "vue-cookie": "^1.1.4",
