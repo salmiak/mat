@@ -297,7 +297,8 @@ app.get('/cloneProd2Dev', (req, res) => {
           let payload = {
             title: recipe.title,
             comment: recipe.comment,
-            url: recipe.url
+            url: recipe.url,
+            fileUrl: recipe.fileUrl
           }
           let post = new Recipe(payload)
           post.save(function (error) {
@@ -326,7 +327,7 @@ app.get('/cloneProd2Dev', (req, res) => {
     console.log("Connection with prod-host Succeeded")
 
     console.log('Getting all recipes')
-    Recipe.find({}, 'title comment url', function (error, recipes) {
+    Recipe.find({}, 'title comment url fileUrl', function (error, recipes) {
       if (error) { console.error(error); }
       local_recipes = recipes
       setDevData()
@@ -340,28 +341,6 @@ app.get('/cloneProd2Dev', (req, res) => {
     }).sort({_id:-1})
   });
 
-})
-
-// Map over wpId and _id
-app.get('/recipes/wpidmap', (req, res) => {
-  var db = req.db;
-  Recipe.find({}, 'title wpId', function (error, recipes) {
-    if (error) { console.error(error); }
-    res.send({
-      map: _.keyBy(recipes, 'wpId')
-    })
-  }).sort({_id:-1})
-})
-
-// Map over wpId and _id
-app.get('/meals/wpidmap', (req, res) => {
-  var db = req.db;
-  Meal.find({}, 'title wpId', function (error, meals) {
-    if (error) { console.error(error); }
-    res.send({
-      map: _.keyBy(meals, 'wpId')
-    })
-  }).sort({_id:-1})
 })
 
 module.exports = app
