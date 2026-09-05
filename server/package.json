@@ -10,7 +10,8 @@
     "build": "tsc -p tsconfig.json && cp -r drizzle dist/drizzle",
     "test": "vitest run",
     "db:generate": "drizzle-kit generate",
-    "migrate:mongo": "tsx scripts/migrate-from-mongo.ts"
+    "migrate:mongo": "tsx scripts/migrate-from-mongo.ts",
+    "preview": "tsx scripts/preview.mts"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
