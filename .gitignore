@@ -1,2 +1,3 @@
-
-client/dist/index.html
+node_modules/
+.env
+server/dist/

@@ -1,57 +1,39 @@
 <template>
   <div class="recipeContent">
-    <div v-if="!recipe">
-      …
-    </div>
+    <div v-if="!recipe">…</div>
     <div v-else>
       <h2>
-        <a v-if="recipe.url" :href="recipe.url" target="_blank">{{recipe.title}}</a>
-        <a v-else-if="recipe.fileUrl" :href="recipe.fileUrl" target="_blank">{{recipe.title}}</a>
-        <span v-else>{{recipe.title}}</span>
+        <a v-if="recipe.url" :href="recipe.url" target="_blank">{{ recipe.title }}</a>
+        <a v-else-if="recipe.imageUrl" :href="recipe.imageUrl" target="_blank">{{ recipe.title }}</a>
+        <span v-else>{{ recipe.title }}</span>
       </h2>
 
-      <a v-if="recipe.fileUrl" :href="recipe.fileUrl" target="_blank">
-        <img :src="recipe.fileUrl" class="recipe-thumbnail" />
+      <a v-if="recipe.imageUrl" :href="recipe.imageUrl" target="_blank">
+        <img :src="recipe.imageUrl" class="recipe-thumbnail" />
       </a>
 
-      <expander class="comment" v-if="recipe.comment && recipe.comment.length > 70">
-        <vue-markdown>{{recipe.comment}}</vue-markdown>
-      </expander>
-      <vue-markdown v-else class="comment">{{recipe.comment}}</vue-markdown>
+      <expander-box v-if="recipe.comment && recipe.comment.length > 70" class="comment">
+        <markdown-text :source="recipe.comment" />
+      </expander-box>
+      <markdown-text v-else class="comment" :source="recipe.comment" />
     </div>
   </div>
 </template>
 
-<i18n>
-  {
-  }
-</i18n>
+<script setup lang="ts">
+import { computed } from 'vue'
+import { useRecipesStore } from '@/stores/recipes'
+import ExpanderBox from './ExpanderBox.vue'
+import MarkdownText from './MarkdownText.vue'
 
-<script>
-import VueMarkdown from 'vue-markdown'
-import Expander from './Expander'
+const props = defineProps<{ id: number }>()
 
-export default {
-  name: 'RecipeContent',
-  props: ['id', 'showDelete', 'showCreate'],
-  components: {VueMarkdown, Expander},
-  data () {
-    return {
-    }
-  },
-  mounted () {
-    // TODO: If a recipe that isn't loaded is requested, fetch from server.
-  },
-  computed: {
-    recipe () {
-      return this.$store.getters['recipes/recipeById'](this.id)
-    }
-  }
-}
+const recipesStore = useRecipesStore()
+const recipe = computed(() => recipesStore.recipeById(props.id))
 </script>
 
 <style lang="less" scoped>
-@import "../assets/global.less";
+@import "@/assets/global.less";
 .recipeContent {
   position: relative;
   background: @cRecipeBg;

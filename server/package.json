@@ -1,29 +1,37 @@
 {
-  "name": "server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "mat-server",
+  "version": "2.0.0",
+  "description": "Matplanering API server",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "start": "NODE_ENV=dev nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "deploy": "serverless deploy"
+    "dev": "tsx watch src/index.ts",
+    "start": "node dist/index.js",
+    "build": "tsc -p tsconfig.json && cp -r drizzle dist/drizzle",
+    "test": "vitest run",
+    "db:generate": "drizzle-kit generate",
+    "migrate:mongo": "tsx scripts/migrate-from-mongo.ts",
+    "preview": "tsx scripts/preview.mts"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.553.0",
-    "aws-serverless-express": "^3.3.5",
-    "body-parser": "^1.18.3",
-    "cors": "^2.8.4",
-    "express": "^4.16.3",
-    "lodash": "^4.17.21",
-    "moment": "^2.22.2",
-    "mongodb": "^3.3.3",
-    "mongoose": "^5.5.5",
-    "morgan": "^1.9.1"
+    "date-fns": "^4.1.0",
+    "drizzle-orm": "^0.44.2",
+    "express": "^5.1.0",
+    "morgan": "^1.10.0",
+    "pg": "^8.16.0"
   },
   "devDependencies": {
-    "nodemon": "^1.18.3"
+    "@types/express": "^5.0.1",
+    "@types/morgan": "^1.9.9",
+    "@types/node": "^22.15.0",
+    "@types/pg": "^8.15.0",
+    "@types/supertest": "^6.0.3",
+    "drizzle-kit": "^0.31.1",
+    "mongodb": "^7.6.0",
+    "pg-mem": "^3.0.5",
+    "supertest": "^7.1.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.8.0",
+    "vitest": "^3.2.0"
   }
 }

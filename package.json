@@ -1,0 +1,18 @@
+{
+  "name": "mat",
+  "version": "2.0.0",
+  "description": "Beckmans Matplanering – Express/Postgres API + Vue 3 client on Railway",
+  "private": true,
+  "scripts": {
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "cd client && npm ci && npm run build",
+    "build:server": "cd server && npm ci && npm run build",
+    "start": "cd server && node dist/index.js",
+    "test": "npm --prefix server test && npm --prefix client test",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

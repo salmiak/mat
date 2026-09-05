@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: ['**']
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install server deps
+        run: npm ci
+        working-directory: server
+
+      - name: Server tests
+        run: npm test
+        working-directory: server
+
+      - name: Server build
+        run: npm run build
+        working-directory: server
+
+      - name: Install client deps
+        run: npm ci
+        working-directory: client
+
+      - name: Client tests
+        run: npm test
+        working-directory: client
+
+      - name: Client build
+        run: npm run build
+        working-directory: client
