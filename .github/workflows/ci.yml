@@ -22,14 +22,18 @@ jobs:
         run: npm test
         working-directory: server
 
+      - name: Server build
+        run: npm run build
+        working-directory: server
+
       - name: Install client deps
-        run: npm ci --ignore-scripts
+        run: npm ci
         working-directory: client
 
-      - name: Client unit tests
-        run: npm run unit
+      - name: Client tests
+        run: npm test
         working-directory: client
 
-      - name: Client production build
-        run: NODE_OPTIONS=--openssl-legacy-provider node build/build.js
+      - name: Client build
+        run: npm run build
         working-directory: client

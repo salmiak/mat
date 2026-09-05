@@ -1,37 +1,37 @@
 <template>
-  <component @click="clicked" :is="type || 'span'" :class="{'clicked': clickedOnce}">
+  <component :is="type || 'span'" :class="{ clicked: clickedOnce }" @click="clicked">
     <slot></slot>
   </component>
 </template>
 
-<script>
-export default {
-  name: 'SureButton',
-  props: ['type'],
-  data () {
-    return {
-      clickedOnce: false,
-      to: undefined
-    }
-  },
-  methods: {
-    clicked () {
-      clearTimeout(this.to)
-      if (this.clickedOnce) {
-        this.$emit('clicked')
-      } else {
-        this.clickedOnce = true
-        this.to = setTimeout(() => {
-          this.clickedOnce = false
-        }, 3000)
-      }
-    }
+<script setup lang="ts">
+import { onBeforeUnmount, ref } from 'vue'
+
+const props = defineProps<{ type?: string }>()
+const emit = defineEmits<{ clicked: [] }>()
+
+// First click arms the button, second click within 3s confirms
+const clickedOnce = ref(false)
+let timeout: ReturnType<typeof setTimeout> | undefined
+
+function clicked () {
+  clearTimeout(timeout)
+  if (clickedOnce.value) {
+    clickedOnce.value = false
+    emit('clicked')
+  } else {
+    clickedOnce.value = true
+    timeout = setTimeout(() => {
+      clickedOnce.value = false
+    }, 3000)
   }
 }
+
+onBeforeUnmount(() => clearTimeout(timeout))
 </script>
 
 <style lang="less" scoped>
-@import "../assets/global.less";
+@import "@/assets/global.less";
 .clicked {
   color: darken(@cSecondary, 20%);
   background: @cSecondary;

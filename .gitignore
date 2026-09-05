@@ -1,4 +1,3 @@
-client/dist/index.html
 node_modules/
 .env
-server/uploads/
+server/dist/

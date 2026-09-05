@@ -1,73 +1,59 @@
 <template>
   <div id="app">
     <div class="top">
-      <router-link to="/week">{{ $t('Planning') }}</router-link>
-      <router-link to="/recipes">{{ $t('Recipes') }}</router-link>
+      <router-link to="/week">{{ t('Planning') }}</router-link>
+      <router-link to="/recipes">{{ t('Recipes') }}</router-link>
     </div>
     <router-view/>
     <footer>
-      <span v-if="$root.locale!=='en'" v-on:click="$root.locale='en'">🇬🇧</span>
-      <span v-if="$root.locale!=='se'" v-on:click="$root.locale='se'">🇸🇪</span> |
-      <span v-on:click="reloadApp">{{ $t('Reload') }}</span>
+      <span v-if="locale !== 'en'" @click="setLocale('en')">🇬🇧</span>
+      <span v-if="locale !== 'se'" @click="setLocale('se')">🇸🇪</span> |
+      <span @click="reloadApp">{{ t('Reload') }}</span>
     </footer>
   </div>
 </template>
 
-<i18n>
-  {
-    "en": {
-      "Recipes": "Recipes",
-      "Planning": "Planning",
-      "Reload": "Reload"
-    },
-    "se": {
-      "Recipes": "Recept",
-      "Planning": "Planering",
-      "Reload": "Ladda om"
-    }
-  }
-</i18n>
+<script setup lang="ts">
+import { useI18n } from 'vue-i18n'
+import { persistLocale, type Locale } from '@/i18n'
 
-<script>
-export default {
-  name: 'App',
-  metaInfo: {
-    title: 'Hem',
-    titleTemplate: '%s | Beckmans matsajt'
-  },
-  methods: {
-    reloadApp () {
-      location.reload(true)
-    }
-  }
+const { t, locale } = useI18n()
+
+function setLocale (value: Locale) {
+  locale.value = value
+  persistLocale(value)
+}
+
+function reloadApp () {
+  location.reload()
 }
 </script>
 
 <style lang="less">
-// @import (css) url('https://fonts.googleapis.com/css?family=IBM+Plex+Mono:400,700|IBM+Plex+Sans+Condensed:500,700|IBM+Plex+Sans:400,400i,500,700|IBM+Plex+Serif:400,400i,600,600i');
 @import (css) url('https://rsms.me/inter/inter-ui.css');
-@import '../node_modules/reset-css/less/reset';
-* { box-sizing: border-box; }
-@import "./assets/global.less";
+@import "@/assets/global.less";
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+img { max-width: 100%; }
 
 html {
   font-size: 16px;
-  letter-spacing: -0,004em;
+  letter-spacing: -0.004em;
   font-feature-settings: "calt", "ss01", "case";
   background: multiply(@cHeading, @cBackground);
-  @media only screen and (min-device-width : 300px) and (max-device-width : 370px) {
+  @media only screen and (min-device-width: 300px) and (max-device-width: 370px) {
     font-size: 14px;
-    letter-spacing: 0,001em;
+    letter-spacing: 0.001em;
   }
-  @media only screen and (max-device-width : 319px) {
+  @media only screen and (max-device-width: 319px) {
     font-size: 12px;
-    letter-spacing: 0,008em;
+    letter-spacing: 0.008em;
   }
 }
 
 body {
   background: @cBackground;
-  // font-family: 'IBM Plex Serif', serif;
   font-family: 'Inter UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -95,7 +81,6 @@ a, .a {
   align-content: stretch;
   background: @cBackground;
   font-family: 'Inter UI', sans-serif;
-  // font-family: 'IBM Plex Mono', sans-serif;
   font-weight: 700;
   font-size: 0.75rem;
   line-height: 2rem;
@@ -131,7 +116,9 @@ footer {
   font-weight: 700;
   margin-top: @bu;
   line-height: @bu*4;
+  span { cursor: pointer; }
 }
+
 #app {
   position: relative;
   padding: 5rem 0 5*@bu;
@@ -162,7 +149,6 @@ input, textarea {
   font-size: 1rem;
   border-radius: @radius;
   font-family: 'Inter UI', sans-serif;
-  // font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 500;
   line-height: 1.5em;
   color: @cText;
@@ -174,11 +160,9 @@ input, textarea {
 }
 textarea {
   font-family: 'Inter UI', sans-serif;
-  // font-family: 'IBM Plex Mono', monospace;
   font-size: 0.88rem;
   &::placeholder {
     font-family: 'Inter UI', sans-serif;
-    // font-family: 'IBM Plex Sans', sans-serif;
     font-weight: 500;
     line-height: 1.5em;
     font-size: 1rem;
@@ -232,7 +216,7 @@ textarea {
     margin-bottom: @bu/2;
     li {
       list-style: square;
-      padding: 0 0 0 0em;
+      padding: 0;
       margin: 0 0 0 1.2em;
     }
   }

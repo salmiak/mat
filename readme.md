@@ -1,41 +1,50 @@
 # Beckmans Matplanering
 
-## Setup
+Familjens app för veckovis matplanering: planera måltider per vecka och koppla recept (länkar eller uppladdade bilder) till varje måltid.
 
-You need to install [node.js](https://nodejs.org/en/)
+**Stack:** Vue 3 + Vite + Pinia + TypeScript (klient), Express 5 + Drizzle ORM + PostgreSQL (server). Bilder lagras som blobs i Postgres. Allt körs på Railway. Se `docs/architecture.md` för detaljer.
 
-Database connection strings are no longer hardcoded — copy `.env.example` and set `MONGODB_URI` (and optionally `MONGODB_URI_DEV` / `MONGODB_URI_PROD`) in your environment before starting the server.
+## Utveckling
 
-### Client
-**Run dev:** `npm run start`
+Kräver Node 22+ och en Postgres att peka på (`DATABASE_URL`).
 
-### Server
-**Run dev:** `MONGODB_URI_DEV=<your-dev-uri> npm run start`
+```bash
+# Servern (API på :8081, kör migreringar vid start)
+cd server && npm install
+DATABASE_URL=postgres://... npm run dev
 
-## Deploy on Railway
+# Klienten (Vite dev-server på :8080, proxar /api till :8081)
+cd client && npm install
+npm run dev
+```
 
-Everything runs on Railway — no AWS dependency. One service runs the Express server, which serves the API, the built Vue client (same origin, so the client is built with `API_HOST=/`), and uploaded files. The database is a MongoDB service in the same Railway project, and uploads are stored on a Railway volume.
+**Tester:** `npm test` i `server/` (vitest + supertest mot in-memory-Postgres via pg-mem) respektive `client/` (vitest, stores + komponenter). Eller `npm test` i repo-roten för båda.
 
-1. Create a new Railway project from this repo. `railway.json` makes Nixpacks run `npm run build` (installs client deps, builds the client into `client/dist`, installs server deps) and start with `npm start` (`node server/index.js`).
-2. Add a **MongoDB** database service to the project (Railway's MongoDB template).
-3. On the app service, set variables:
-   - `MONGODB_URI` = `${{ MongoDB.MONGO_URL }}` (reference to the MongoDB service), or your own MongoDB URI.
-   - `UPLOAD_DIR` = the volume mount path, e.g. `/data/uploads`.
-4. Attach a **volume** to the app service (right-click the service → Attach volume) mounted at e.g. `/data`. Uploaded recipe images are stored there and served by the server under `/uploads/`.
-5. Generate a public domain under the service's Settings → Networking. Railway injects `PORT` automatically; the server binds to it.
+## Deploy på Railway
 
-## Clone production db to dev db
+En Railway-tjänst kör Express-servern som serverar API, byggd klient och bilder. Databasen är en Postgres-tjänst i samma projekt.
 
-Start the server and visit http://localhost:8081/cloneProd2Dev
+1. Skapa ett Railway-projekt från repot. `railway.json` får Nixpacks att köra `npm run build` (bygger klient + server) och `npm start`.
+2. Lägg till en **PostgreSQL**-tjänst i projektet.
+3. Sätt `DATABASE_URL` = `${{ Postgres.DATABASE_URL }}` på apptjänsten.
+4. Generera en publik domän under tjänstens Settings → Networking. Servern kör sina databasmigreringar automatiskt vid varje deploy.
 
-This will drop the content in dev database and replace it with the content in the production database.
+Ingen volym och inga AWS-beroenden behövs.
 
+## Migrera data från gamla appen (Mongo)
+
+Engångsjobb när du vill flytta innehållet:
+
+```bash
+cd server
+MONGODB_URI=mongodb+srv://... DATABASE_URL=postgres://... npm run migrate:mongo -- --download-images
+```
+
+`--download-images` hämtar receptbilderna från de gamla S3-URL:erna och lagrar dem som blobs; utan flaggan behålls de gamla URL:erna (fungerar så länge S3-bucketen finns kvar).
 
 ## Todo
-- Refactor expanding-textarea to it's own component
-- Refactor New Recipes list to it's own component
 - Rate recipes
-- Upload image when adding recipe from new meal
 - Smarter meal creation
-  - When writing title for new meal, automaticaly search for matching recipes and have a "add new recipe"-button that opens new recipe-editor with title prefilled.
-- https://auth0.com/
+  - When writing title for new meal, automatically search for matching recipes and have an "add new recipe" button that opens the recipe editor with the title prefilled.
+- User management and authentication
+- Real-time updates (multiple users working at the same time)

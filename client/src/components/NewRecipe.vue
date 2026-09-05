@@ -4,37 +4,34 @@
       <div class="toolbar">
         <i class="fal fa-times" @click="expanded = false"></i>
       </div>
-      <h2>{{ $t('Add Recipe') }}</h2>
-      <edit-recipe @save-recipe="addRecipe" @cancel-edit="expanded = false"></edit-recipe>
+      <h2>{{ t('Add Recipe') }}</h2>
+      <edit-recipe @save-recipe="addRecipe" @cancel-edit="expanded = false" />
     </div>
     <div v-else>
-      <button @click="expanded = true">{{ $t('Add Recipe') }}</button>
+      <button @click="expanded = true">{{ t('Add Recipe') }}</button>
     </div>
   </div>
 </template>
 
-<script>
-import EditRecipe from './EditRecipe'
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRecipesStore } from '@/stores/recipes'
+import type { NewRecipe } from '@/types'
+import EditRecipe from './EditRecipe.vue'
 
-export default {
-  name: 'NewRecipe',
-  components: { EditRecipe },
-  data () {
-    return {
-      expanded: false
-    }
-  },
-  methods: {
-    addRecipe (recipeData) {
-      this.$store.dispatch('recipes/addRecipe', recipeData).then(() => {
-        this.expanded = false
-      })
-    }
-  }
+const { t } = useI18n()
+const recipesStore = useRecipesStore()
+const expanded = ref(false)
+
+async function addRecipe (recipeData: NewRecipe) {
+  await recipesStore.addRecipe(recipeData)
+  expanded.value = false
 }
 </script>
+
 <style lang="less" scoped>
-@import "../assets/global.less";
+@import "@/assets/global.less";
 .recipe {
   background: @cRecipeBg;
   padding: @bu;
