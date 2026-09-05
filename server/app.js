@@ -16,15 +16,20 @@ app.use(cors())
 const Recipe = require("./models/recipe");
 const Meal = require("./models/meal");
 
-const host_prod = 'mongodb+srv://mat-user:YD22aq2obhA5x1ETRZ2D@mat-prod.dk9z7.mongodb.net/mat-prod?retryWrites=true&w=majority'
-const host_dev = 'mongodb+srv://mat-user:b68mclzReZqJnHksTq1D@mat.nfzpr.mongodb.net/mat?retryWrites=true&w=majority'
+const host_prod = process.env.MONGODB_URI_PROD || process.env.MONGODB_URI
+const host_dev = process.env.MONGODB_URI_DEV || process.env.MONGODB_URI
 
 let bd_host = host_prod
 if (process.env.NODE_ENV === 'dev') {
-  bd_host =host_dev
+  bd_host = host_dev
 }
 
-mongoose.connect(bd_host);
+if (!bd_host) {
+  console.error('No MongoDB connection string configured. Set MONGODB_URI (or MONGODB_URI_PROD / MONGODB_URI_DEV).')
+  process.exit(1)
+}
+
+mongoose.connect(bd_host, { useNewUrlParser: true, useFindAndModify: false });
 const db = mongoose.connection;
 db.on("error", console.error.bind(console, "connection error"));
 db.once("open", function(callback){
@@ -51,7 +56,7 @@ app.post('/requestUploadURL', (req, res) => {
   var params = req.body;
 
   var s3Params = {
-    Bucket: 'mat-cdn',
+    Bucket: process.env.S3_UPLOAD_BUCKET || 'mat-cdn',
     Key:  params.name,
     ContentType: params.type,
     ACL: 'public-read',
@@ -342,5 +347,19 @@ app.get('/cloneProd2Dev', (req, res) => {
   });
 
 })
+
+/**
+  * Static client (used when the built client is served from this server, e.g. on Railway)
+  */
+
+const fs = require('fs')
+const clientDist = path.join(__dirname, '..', 'client', 'dist')
+if (fs.existsSync(path.join(clientDist, 'index.html'))) {
+  app.use(express.static(clientDist))
+  // SPA fallback for vue-router history mode (API routes are registered above and take precedence)
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(clientDist, 'index.html'))
+  })
+}
 
 module.exports = app

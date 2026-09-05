@@ -4,22 +4,30 @@
 
 You need to install [node.js](https://nodejs.org/en/)
 
-To deploy you need to have [AWS-cli](https://docs.aws.amazon.com/cli/latest/userguide/cli-install-macos.html) installed and configured. [Follow these instructions on setting up AWS credentials](https://serverless.com/framework/docs/providers/aws/guide/credentials)
+Database connection strings are no longer hardcoded — copy `.env.example` and set `MONGODB_URI` (and optionally `MONGODB_URI_DEV` / `MONGODB_URI_PROD`) in your environment before starting the server.
 
 ### Client
 **Run dev:** `npm run start`
 
-**Deploy:** `npm run deploy`
-
 ### Server
-**Run dev:** `npm run start`
+**Run dev:** `MONGODB_URI_DEV=<your-dev-uri> npm run start`
 
-**Deploy**
-Hosted on AWS serverless you need to install serverless (`npm install -g serverless`).
+## Deploy on Railway
 
-To deploy, in the Server directory, run
+The app runs as a single Railway service: the Express server serves both the API and the built Vue client (same origin, so the client is built with `API_HOST=/`).
 
-`npm run deploy`
+1. Create a new Railway project from this repo. `railway.json` makes Nixpacks run `npm run build` (installs client deps, builds the client into `client/dist`, installs server deps) and start with `npm start` (`node server/index.js`).
+2. Set variables on the service:
+   - `MONGODB_URI` — your MongoDB Atlas connection string (or `${{ MongoDB.MONGO_URL }}` if you add Railway's MongoDB service).
+   - Optional, for image uploads via S3: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_UPLOAD_BUCKET`.
+3. Generate a public domain under the service's Settings → Networking. Railway injects `PORT` automatically; the server binds to it.
+
+### Legacy AWS deploy
+
+The old AWS setup (client on S3, server on Lambda via Serverless) still works:
+
+- Client: `npm run deploy` in `client/` (builds with the AWS API Gateway `API_HOST` default and syncs to S3).
+- Server: `npm run deploy` in `server/` (requires `serverless` installed and AWS credentials configured).
 
 ## Clone production db to dev db
 
