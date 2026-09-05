@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=dev nodemon index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,8 @@
     "morgan": "^1.9.1"
   },
   "devDependencies": {
-    "nodemon": "^1.18.3"
+    "nodemon": "^1.18.3",
+    "supertest": "^7.2.2",
+    "vitest": "^3.2.7"
   }
 }

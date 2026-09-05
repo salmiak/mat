@@ -7,7 +7,8 @@
     "build": "npm run build:client && npm run install:server",
     "build:client": "cd client && npm ci --ignore-scripts && NODE_OPTIONS=--openssl-legacy-provider node build/build.js",
     "install:server": "cd server && npm ci --omit=dev",
-    "start": "node server/index.js"
+    "start": "node server/index.js",
+    "test": "npm --prefix server test && npm --prefix client run unit"
   },
   "engines": {
     "node": ">=18"
