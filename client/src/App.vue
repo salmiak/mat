@@ -1,16 +1,16 @@
 <template>
-  <div id="app">
-    <div class="top">
-      <router-link to="/week">{{ t('Planning') }}</router-link>
-      <router-link to="/recipes">{{ t('Recipes') }}</router-link>
-    </div>
-    <router-view/>
-    <footer>
-      <span v-if="locale !== 'en'" @click="setLocale('en')">🇬🇧</span>
-      <span v-if="locale !== 'se'" @click="setLocale('se')">🇸🇪</span> |
-      <span @click="reloadApp">{{ t('Reload') }}</span>
-    </footer>
+  <!-- No wrapper div: Vue 3 renders inside the #app container from index.html,
+       so a root div with id="app" would double every #app style. -->
+  <div class="top">
+    <router-link to="/week">{{ t('Planning') }}</router-link>
+    <router-link to="/recipes">{{ t('Recipes') }}</router-link>
   </div>
+  <router-view/>
+  <footer>
+    <span v-if="locale !== 'en'" @click="setLocale('en')">🇬🇧</span>
+    <span v-if="locale !== 'se'" @click="setLocale('se')">🇸🇪</span> |
+    <span @click="reloadApp">{{ t('Reload') }}</span>
+  </footer>
 </template>
 
 <script setup lang="ts">
