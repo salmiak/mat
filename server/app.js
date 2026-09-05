@@ -5,8 +5,8 @@ const bodyParser = require('body-parser')
 const cors = require('cors')
 const morgan = require('morgan')
 const mongoose = require('mongoose')
-const AWS = require('aws-sdk')
 const path = require('path')
+const fs = require('fs')
 
 let app = express()
 app.use(morgan('combined'))
@@ -42,36 +42,51 @@ db.once("open", function(callback){
 
 /**
   * Upload
-  * - Source: https://www.netlify.com/blog/2016/11/17/serverless-file-uploads/
+  * Files are stored on local disk (a Railway volume in production).
+  * Set UPLOAD_DIR to the volume mount path, e.g. /data/uploads.
   */
+
+const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, 'uploads')
+fs.mkdirSync(uploadDir, { recursive: true })
 
 // Test upload page directly from server
 app.get('/upload', (req, res) => {
   res.sendFile(path.join(__dirname + '/upload.html'));
 })
 
-// Request and resturn AWS S3 upload url
+// Return an upload URL for the given filename (kept for compatibility with
+// the old S3 signed-URL flow — the URL now points back to this server).
 app.post('/requestUploadURL', (req, res) => {
-  var s3 = new AWS.S3();
-  var params = req.body;
+  var name = path.basename(req.body.name || '')
+  if (!name) {
+    return res.status(400).send({ error: 'Missing file name' })
+  }
 
-  var s3Params = {
-    Bucket: process.env.S3_UPLOAD_BUCKET || 'mat-cdn',
-    Key:  params.name,
-    ContentType: params.type,
-    ACL: 'public-read',
-  };
-
-  var uploadURL = s3.getSignedUrl('putObject', s3Params);
-
+  var fileUrl = '/uploads/' + encodeURIComponent(name)
   res.send({
     statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*'
-    },
-    uploadURL: uploadURL
+    uploadURL: fileUrl,
+    fileUrl: fileUrl
   })
 })
+
+// Receive the file itself
+app.put('/uploads/:name', bodyParser.raw({ type: () => true, limit: '25mb' }), (req, res) => {
+  var name = path.basename(req.params.name)
+  fs.writeFile(path.join(uploadDir, name), req.body, (err) => {
+    if (err) {
+      console.error(err)
+      return res.status(500).send({ error: 'Failed to store file' })
+    }
+    res.send({
+      success: true,
+      fileUrl: '/uploads/' + encodeURIComponent(name)
+    })
+  })
+})
+
+// Serve uploaded files
+app.use('/uploads', express.static(uploadDir))
 
 
 /**
@@ -352,7 +367,6 @@ app.get('/cloneProd2Dev', (req, res) => {
   * Static client (used when the built client is served from this server, e.g. on Railway)
   */
 
-const fs = require('fs')
 const clientDist = path.join(__dirname, '..', 'client', 'dist')
 if (fs.existsSync(path.join(clientDist, 'index.html'))) {
   app.use(express.static(clientDist))

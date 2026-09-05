@@ -9,7 +9,6 @@
 <script>
 
 var apiBaseURL = process.env.API_HOST
-const cdnHost = '//mat-cdn.s3-eu-west-1.amazonaws.com/'
 
 export default {
   name: 'upload',
@@ -48,15 +47,18 @@ export default {
             return response.json()
           })
           .then(function (json) {
-            return fetch(json.uploadURL, {
+            // The server returns paths relative to the API host
+            var apiHost = apiBaseURL.replace(/\/$/, '')
+            _this.fileUrl = apiHost + json.fileUrl
+            return fetch(apiHost + json.uploadURL, {
               method: 'PUT',
               body: new Blob([reader.result], {type: _this.file.type})
             })
           })
           .then(function () {
             _this.status = 2
-            _this.$emit('uploadDone', {fileUrl: cdnHost + _this.fileName})
-            _this.uploadedFileUrl = cdnHost + _this.fileName
+            _this.$emit('uploadDone', {fileUrl: _this.fileUrl})
+            _this.uploadedFileUrl = _this.fileUrl
           })
       })
       reader.readAsArrayBuffer(_this.file)

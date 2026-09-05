@@ -14,20 +14,15 @@ Database connection strings are no longer hardcoded — copy `.env.example` and 
 
 ## Deploy on Railway
 
-The app runs as a single Railway service: the Express server serves both the API and the built Vue client (same origin, so the client is built with `API_HOST=/`).
+Everything runs on Railway — no AWS dependency. One service runs the Express server, which serves the API, the built Vue client (same origin, so the client is built with `API_HOST=/`), and uploaded files. The database is a MongoDB service in the same Railway project, and uploads are stored on a Railway volume.
 
 1. Create a new Railway project from this repo. `railway.json` makes Nixpacks run `npm run build` (installs client deps, builds the client into `client/dist`, installs server deps) and start with `npm start` (`node server/index.js`).
-2. Set variables on the service:
-   - `MONGODB_URI` — your MongoDB Atlas connection string (or `${{ MongoDB.MONGO_URL }}` if you add Railway's MongoDB service).
-   - Optional, for image uploads via S3: `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, `AWS_REGION`, `S3_UPLOAD_BUCKET`.
-3. Generate a public domain under the service's Settings → Networking. Railway injects `PORT` automatically; the server binds to it.
-
-### Legacy AWS deploy
-
-The old AWS setup (client on S3, server on Lambda via Serverless) still works:
-
-- Client: `npm run deploy` in `client/` (builds with the AWS API Gateway `API_HOST` default and syncs to S3).
-- Server: `npm run deploy` in `server/` (requires `serverless` installed and AWS credentials configured).
+2. Add a **MongoDB** database service to the project (Railway's MongoDB template).
+3. On the app service, set variables:
+   - `MONGODB_URI` = `${{ MongoDB.MONGO_URL }}` (reference to the MongoDB service), or your own MongoDB URI.
+   - `UPLOAD_DIR` = the volume mount path, e.g. `/data/uploads`.
+4. Attach a **volume** to the app service (right-click the service → Attach volume) mounted at e.g. `/data`. Uploaded recipe images are stored there and served by the server under `/uploads/`.
+5. Generate a public domain under the service's Settings → Networking. Railway injects `PORT` automatically; the server binds to it.
 
 ## Clone production db to dev db
 

@@ -43,11 +43,7 @@
   <script type="text/javascript">
     var drop = document.getElementById('drop');
     var list = document.getElementById('list');
-    var apiBaseURL = "/dev";
-
-    if (window.location.href.indexOf('localhost') !== -1 ) {
-      apiBaseURL = "";
-    }
+    var apiBaseURL = "";
 
     function cancel(e) {
       e.preventDefault();
@@ -76,14 +72,14 @@
             return response.json();
           })
           .then(function(json){
-            return fetch(json.uploadURL, {
+            return fetch(apiBaseURL + json.uploadURL, {
               method: "PUT",
               body: new Blob([reader.result], {type: file.type})
-            })
+            }).then(function(){ return json; })
           })
-          .then(function(){
+          .then(function(json){
             var uploadedFileNode = document.createElement('div');
-            uploadedFileNode.innerHTML = '<a href="//mat-cdn.s3-eu-west-1.amazonaws.com/'+ file.name +'">'+ file.name +'</a>';
+            uploadedFileNode.innerHTML = '<a href="'+ apiBaseURL + json.fileUrl +'">'+ file.name +'</a>';
             list.appendChild(uploadedFileNode);
           });
         });

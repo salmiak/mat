@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build": "npm run build:client && npm run install:server",
-    "build:client": "cd client && npm ci --ignore-scripts && NODE_OPTIONS=--openssl-legacy-provider API_HOST=/ node build/build.js",
+    "build:client": "cd client && npm ci --ignore-scripts && NODE_OPTIONS=--openssl-legacy-provider node build/build.js",
     "install:server": "cd server && npm ci --omit=dev",
     "start": "node server/index.js"
   },
