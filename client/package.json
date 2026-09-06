@@ -28,7 +28,7 @@
     "@vitejs/plugin-vue": "^5.2.3",
     "@vue/test-utils": "^2.4.6",
     "@vue/tsconfig": "^0.7.0",
-    "happy-dom": "^17.4.6",
+    "happy-dom": "^20.14.0",
     "less": "^4.3.0",
     "typescript": "^5.8.0",
     "vite": "^6.3.5",
