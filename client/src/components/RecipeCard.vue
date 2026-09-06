@@ -92,8 +92,13 @@ async function mealFromRecipe () {
     }
   }
 }
-.recipeContent {
+// Applies both to the edit container and to the displayed RecipeContent
+// root (child roots carry the parent scope). The descendant selector keeps
+// the specificity above RecipeContent's own white defaults, so the blue
+// background and matching fade color win regardless of CSS order.
+.recipe .recipeContent {
   background: @cMealBg;
+  --expander-bg: @cMealBg;
   padding: @bu;
   border-radius: @radius;
 }

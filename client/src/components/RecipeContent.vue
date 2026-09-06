@@ -13,7 +13,7 @@
             <span v-else>{{ recipe.title }}</span>
           </h2>
           <a v-if="sourceHost" class="source" :href="recipe.url" target="_blank">
-            {{ sourceHost }} <i class="fal fa-external-link"></i>
+            {{ sourceHost }} <i class="far fa-external-link"></i>
           </a>
         </div>
       </div>
@@ -89,11 +89,11 @@ const sourceHost = computed(() => {
     display: inline-block;
     margin-top: @bu/4;
     font-size: 0.7rem;
-    font-weight: 500;
+    font-weight: 700;
     .capitals;
-    color: fade(@cPrimary, 60%);
-    .fal {
-      font-size: 0.65em;
+    color: fade(@cPrimary, 80%);
+    .far {
+      font-size: 0.7em;
       vertical-align: 0.1em;
     }
     &:hover {
