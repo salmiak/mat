@@ -43,7 +43,9 @@ const collapsed = ref(true)
     font-size: .8rem;
     font-weight: 500;
     cursor: pointer;
-    background-image: linear-gradient(to bottom, fade(@cRecipeBg, 0%) 0%, @cRecipeBg 100%);
+    // Fades into the surrounding card's color: cards set --expander-bg to
+    // their background (defaults to the white recipe card).
+    background-image: linear-gradient(to bottom, transparent 0%, var(--expander-bg, @cRecipeBg) 100%);
   }
   .toggleExpanded {
     position: absolute;
