@@ -2,7 +2,9 @@
   <!-- No wrapper div: Vue 3 renders inside the #app container from index.html,
        so a root div with id="app" would double every #app style. -->
   <div class="top">
-    <router-link to="/week">{{ t('Planning') }}</router-link>
+    <!-- /week and /week/:year/:week are separate route records, so
+         router-link only marks the current week active on its own -->
+    <router-link to="/week" :class="{ 'router-link-active': route.path.startsWith('/week') }">{{ t('Planning') }}</router-link>
     <router-link to="/recipes">{{ t('Recipes') }}</router-link>
   </div>
   <router-view/>
@@ -15,9 +17,11 @@
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { persistLocale, type Locale } from '@/i18n'
 
 const { t, locale } = useI18n()
+const route = useRoute()
 
 function setLocale (value: Locale) {
   locale.value = value
