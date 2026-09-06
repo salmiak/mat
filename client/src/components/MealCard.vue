@@ -37,10 +37,9 @@
         </div>
 
         <div v-if="meal.made">
-          <h2>
-            <i class="fal fa-check-square"></i>
-            <span class="text-disabled">{{ meal.title }}</span>
-          </h2>
+          <!-- Icon and title on one line: Vue condenses away whitespace
+               that contains a newline between elements -->
+          <h2><i class="fal fa-check-square"></i> <span class="text-disabled">{{ meal.title }}</span></h2>
         </div>
       </div>
     </swipe-action-item>
