@@ -148,6 +148,7 @@ input, textarea {
   width: calc(100% + @bu);
   margin: 0 -@bu/2 @bu/2;
   padding: @bu/2 @bu/2;
+  background: @cRecipeBg;
   border: 1px solid fade(@cBackground, 40%);
   outline: none;
   font-size: 1rem;
@@ -162,6 +163,17 @@ input, textarea {
     color: fade(@cPrimary, 30%);
   }
 }
+// Search inputs get native (gray, rounded) styling in Safari/iOS —
+// strip it so they look like every other field
+input[type="search"] {
+  -webkit-appearance: none;
+  appearance: none;
+  &::-webkit-search-decoration,
+  &::-webkit-search-results-button {
+    -webkit-appearance: none;
+  }
+}
+
 textarea {
   font-family: 'Inter UI', sans-serif;
   font-size: 0.88rem;

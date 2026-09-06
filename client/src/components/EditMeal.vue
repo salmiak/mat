@@ -7,12 +7,15 @@
       <growing-textarea :placeholder="t('Comment')" v-model="meal.comment" />
     </div>
     <div>
-      <input
-        type="search"
-        v-model="recipeSearchTerm"
-        :placeholder="t('Type to search current recipes')"
-        @focus="recipeSearchTerm = recipeSearchTerm || meal.title"
-      />
+      <div class="searchField">
+        <i class="fal fa-search"></i>
+        <input
+          type="search"
+          v-model="recipeSearchTerm"
+          :placeholder="t('Type to search current recipes')"
+          @focus="recipeSearchTerm = recipeSearchTerm || meal.title"
+        />
+      </div>
       <ul v-if="recipeResultsNotSelected.length">
         <li v-for="recipe in recipeResultsNotSelected.slice(sliceStart, sliceEnd + 1)" :key="recipe.id" @click="selectRecipe(recipe.id)">
           <div class="btn btn-sm pull-right">{{ t('Add') }}</div>
@@ -217,6 +220,21 @@ async function saveMeal () {
 @import "@/assets/global.less";
 .editMeal {
   padding: @bu/2 0 0;
+  .searchField {
+    position: relative;
+    // The magnifying glass sits inside the field, left of the text
+    .fa-search {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      color: fade(@cPrimary, 40%);
+      pointer-events: none;
+    }
+    input {
+      padding-left: @bu*1.5;
+    }
+  }
   h3 {
     margin: @bu 0 @bu/2;
   }

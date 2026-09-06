@@ -40,8 +40,8 @@ const collapsed = ref(true)
     line-height: @bu*2;
     padding-top: @bu*3;
     .capitals;
-    font-size: .8rem;
-    font-weight: 500;
+    font-size: .7rem;
+    font-weight: 700;
     cursor: pointer;
     // Fades into the surrounding card's color: cards set --expander-bg to
     // their background (defaults to the white recipe card).
@@ -57,8 +57,8 @@ const collapsed = ref(true)
     line-height: @bu*2;
     padding-top: @bu;
     .capitals;
-    font-size: .8rem;
-    font-weight: 500;
+    font-size: .7rem;
+    font-weight: 700;
     cursor: pointer;
   }
 }
