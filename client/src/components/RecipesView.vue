@@ -103,6 +103,10 @@ input {
 // Room for the fixed header when a letter is scrolled to
 :deep(.recipe) {
   scroll-margin-top: 5.5rem;
+  // Skip layout/paint of offscreen cards — makes long lists cheap to
+  // render and scroll without changing what's in the DOM
+  content-visibility: auto;
+  contain-intrinsic-size: auto 9rem;
 }
 
 .letterIndex {

@@ -33,6 +33,10 @@ export function serializeRecipe (recipe: typeof recipes.$inferSelect) {
     url: recipe.url,
     imageUrl: recipe.imageId != null
       ? `/api/images/${recipe.imageId}`
+      : (recipe.legacyImageUrl || null),
+    // Downscaled version for lists; legacy external URLs have no thumb
+    thumbUrl: recipe.imageId != null
+      ? `/api/images/${recipe.imageId}?size=thumb`
       : (recipe.legacyImageUrl || null)
   }
 }

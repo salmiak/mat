@@ -32,6 +32,10 @@ export const images = pgTable('images', {
   data: bytea('data').notNull(),
   contentType: text('content_type').notNull(),
   filename: text('filename'),
+  // Downscaled version for list thumbnails; generated at upload, or lazily
+  // on first request for images that predate thumbnails
+  thumbData: bytea('thumb_data'),
+  thumbContentType: text('thumb_content_type'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
 })
 
