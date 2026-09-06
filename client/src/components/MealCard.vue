@@ -34,10 +34,6 @@
           <markdown-text v-if="meal.comment && meal.comment.length <= 70" class="comment" :source="meal.comment" />
 
           <recipe-content v-for="recipeId in meal.recipeIds" :key="recipeId" :id="recipeId" />
-
-          <div class="voteRow">
-            <vote-buttons :meal="meal" />
-          </div>
         </div>
 
         <div v-if="meal.made" class="madeRow">
@@ -140,10 +136,6 @@ function toggleMade () {
   --expander-bg: @cMealBg;
   padding: @bu;
   border-radius: @radius;
-}
-.voteRow {
-  margin-top: @bu/2;
-  text-align: right;
 }
 .madeRow {
   display: flex;
