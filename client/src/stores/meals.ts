@@ -1,7 +1,29 @@
 import { defineStore } from 'pinia'
 import { getISOWeek, getISOWeekYear, parseISO } from 'date-fns'
 import { api } from '@/services/api'
-import type { Meal, NewMeal, WeekRef } from '@/types'
+import type { Meal, NewMeal, VoteValue, WeekRef } from '@/types'
+
+// This browser's own votes, so a vote can be undone or switched.
+// Moves to the user account when auth lands.
+const VOTES_KEY = 'mat.votes'
+
+interface OwnVote { id: number, value: VoteValue }
+
+function readOwnVotes (): Record<number, OwnVote> {
+  try {
+    return JSON.parse(localStorage.getItem(VOTES_KEY) ?? '{}')
+  } catch {
+    return {}
+  }
+}
+
+function writeOwnVotes (votes: Record<number, OwnVote>) {
+  try {
+    localStorage.setItem(VOTES_KEY, JSON.stringify(votes))
+  } catch { /* private browsing etc. */ }
+}
+
+interface VoteResponse { vote?: { id: number }, upvotes: number, downvotes: number }
 
 function byWeek (meal: Meal, ref: WeekRef): boolean {
   const date = parseISO(meal.date)
@@ -10,7 +32,8 @@ function byWeek (meal: Meal, ref: WeekRef): boolean {
 
 export const useMealsStore = defineStore('meals', {
   state: () => ({
-    list: [] as Meal[]
+    list: [] as Meal[],
+    ownVotes: readOwnVotes()
   }),
 
   getters: {
@@ -64,6 +87,42 @@ export const useMealsStore = defineStore('meals', {
     async deleteMeal (id: number) {
       await api.delete(`/meals/${id}`)
       this.list = this.list.filter((meal) => meal.id !== id)
+    },
+
+    ownVote (mealId: number): VoteValue | undefined {
+      return this.ownVotes[mealId]?.value
+    },
+
+    // Tapping a thumb: sets the vote, tapping the same thumb again undoes
+    // it, tapping the other thumb switches it.
+    async voteMeal (mealId: number, value: VoteValue) {
+      const existing = this.ownVotes[mealId]
+      let response: VoteResponse
+      try {
+        if (existing && existing.value === value) {
+          response = await api.delete<VoteResponse>(`/votes/${existing.id}`)
+          delete this.ownVotes[mealId]
+        } else if (existing) {
+          response = await api.put<VoteResponse>(`/votes/${existing.id}`, { value })
+          this.ownVotes[mealId] = { id: existing.id, value }
+        } else {
+          response = await api.post<VoteResponse>(`/meals/${mealId}/votes`, { value })
+          this.ownVotes[mealId] = { id: response.vote!.id, value }
+        }
+      } catch (err) {
+        if (!existing) throw err
+        // The remembered vote no longer exists on the server — start over
+        delete this.ownVotes[mealId]
+        response = await api.post<VoteResponse>(`/meals/${mealId}/votes`, { value })
+        this.ownVotes[mealId] = { id: response.vote!.id, value }
+      }
+      writeOwnVotes(this.ownVotes)
+
+      const meal = this.list.find((m) => m.id === mealId)
+      if (meal) {
+        meal.upvotes = response.upvotes
+        meal.downvotes = response.downvotes
+      }
     }
   }
 })

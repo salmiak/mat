@@ -11,6 +11,10 @@
             <a v-if="recipe.url" :href="recipe.url" target="_blank">{{ recipe.title }}</a>
             <a v-else-if="recipe.imageUrl" :href="recipe.imageUrl" target="_blank">{{ recipe.title }}</a>
             <span v-else>{{ recipe.title }}</span>
+            <span v-if="recipe.score" class="score" :class="recipe.score > 0 ? 'positive' : 'negative'">
+              <i :class="recipe.score > 0 ? 'far fa-thumbs-up' : 'far fa-thumbs-down'"></i>
+              {{ Math.abs(recipe.score) }}
+            </span>
           </h2>
           <a v-if="sourceHost" class="source" :href="recipe.url" target="_blank">
             {{ sourceHost }} <i class="far fa-external-link"></i>
@@ -84,6 +88,28 @@ const sourceHost = computed(() => {
   h2 {
     padding-right: @bu*2 * 3;
     margin: 0;
+  }
+  .score {
+    display: inline-block;
+    margin-left: @bu/4;
+    padding: 0.05rem 0.45rem;
+    border-radius: @bu;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0;
+    vertical-align: 0.15em;
+    white-space: nowrap;
+    &.positive {
+      color: darken(@cSecondary, 25%);
+      background: fade(@cSecondary, 45%);
+    }
+    &.negative {
+      color: fade(@cText, 60%);
+      background: darken(@cRecipeBg, 7%);
+    }
+    .far {
+      font-size: 0.9em;
+    }
   }
   .source {
     display: inline-block;

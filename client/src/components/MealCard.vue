@@ -34,12 +34,17 @@
           <markdown-text v-if="meal.comment && meal.comment.length <= 70" class="comment" :source="meal.comment" />
 
           <recipe-content v-for="recipeId in meal.recipeIds" :key="recipeId" :id="recipeId" />
+
+          <div class="voteRow">
+            <vote-buttons :meal="meal" />
+          </div>
         </div>
 
-        <div v-if="meal.made">
+        <div v-if="meal.made" class="madeRow">
           <!-- Icon and title on one line: Vue condenses away whitespace
                that contains a newline between elements -->
           <h2><i class="fal fa-check-square"></i> <span class="text-disabled">{{ meal.title }}</span></h2>
+          <vote-buttons :meal="meal" />
         </div>
       </div>
     </swipe-action-item>
@@ -66,6 +71,7 @@ import SureButton from './SureButton.vue'
 import ExpanderBox from './ExpanderBox.vue'
 import MarkdownText from './MarkdownText.vue'
 import SwipeActionItem from './SwipeActionItem.vue'
+import VoteButtons from './VoteButtons.vue'
 
 const props = defineProps<{ meal: Meal }>()
 
@@ -134,5 +140,18 @@ function toggleMade () {
   --expander-bg: @cMealBg;
   padding: @bu;
   border-radius: @radius;
+}
+.voteRow {
+  margin-top: @bu/2;
+  text-align: right;
+}
+.madeRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: @bu/2;
+  h2 {
+    padding-right: 0;
+  }
 }
 </style>

@@ -1,7 +1,7 @@
 import { Router } from 'express'
-import { asc, eq } from 'drizzle-orm'
+import { asc, eq, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
-import { recipes } from '../db/schema.js'
+import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
 
 interface RecipePayload {
   title?: string
@@ -25,12 +25,24 @@ function recipeFields (body: RecipePayload) {
   }
 }
 
-export function serializeRecipe (recipe: typeof recipes.$inferSelect) {
+// A recipe's score is the sum of thumb votes on the meals it belongs to
+async function loadScores (db: Db): Promise<Map<number, number>> {
+  const rows = await db.select({
+    recipeId: mealRecipes.recipeId,
+    score: sql<number>`sum(${mealVotes.value})`
+  }).from(mealRecipes)
+    .innerJoin(mealVotes, eq(mealVotes.mealId, mealRecipes.mealId))
+    .groupBy(mealRecipes.recipeId)
+  return new Map(rows.map((row) => [row.recipeId, Number(row.score)]))
+}
+
+export function serializeRecipe (recipe: typeof recipes.$inferSelect, score = 0) {
   return {
     id: recipe.id,
     title: recipe.title,
     comment: recipe.comment,
     url: recipe.url,
+    score,
     imageUrl: recipe.imageId != null
       ? `/api/images/${recipe.imageId}`
       : (recipe.legacyImageUrl || null),
@@ -47,7 +59,8 @@ export function recipesRouter (db: Db): Router {
   // GET /api/recipes — all recipes, ordered by title
   router.get('/', async (_req, res) => {
     const rows = await db.select().from(recipes).orderBy(asc(recipes.title))
-    res.json({ recipes: rows.map(serializeRecipe) })
+    const scores = await loadScores(db)
+    res.json({ recipes: rows.map((row) => serializeRecipe(row, scores.get(row.id) ?? 0)) })
   })
 
   // POST /api/recipes

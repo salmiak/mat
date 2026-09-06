@@ -6,6 +6,7 @@ import type { Db } from './db/client.js'
 import { mealsRouter } from './routes/meals.js'
 import { recipesRouter } from './routes/recipes.js'
 import { imagesRouter } from './routes/images.js'
+import { votesRouter } from './routes/votes.js'
 
 export interface AppOptions {
   clientDist?: string
@@ -22,6 +23,7 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
   app.use('/api/meals', mealsRouter(db))
   app.use('/api/recipes', recipesRouter(db))
   app.use('/api/images', imagesRouter(db))
+  app.use('/api/votes', votesRouter(db))
 
   app.get('/api/health', (_req, res) => {
     res.json({ ok: true })

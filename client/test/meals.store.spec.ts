@@ -24,6 +24,8 @@ function meal (overrides: Partial<Meal>): Meal {
     index: 0,
     made: false,
     recipeIds: [],
+    upvotes: 0,
+    downvotes: 0,
     ...overrides
   }
 }
@@ -109,5 +111,62 @@ describe('actions', () => {
     await store.deleteMeal(1)
 
     expect(store.list.map((m) => m.id)).toEqual([2])
+  })
+})
+
+describe('voteMeal', () => {
+  beforeEach(() => {
+    localStorage.clear()
+  })
+
+  it('posts a new vote and updates the tallies', async () => {
+    const store = useMealsStore()
+    store.list = [meal({ id: 1 })]
+    vi.mocked(api.post).mockResolvedValue({ vote: { id: 7 }, upvotes: 1, downvotes: 0 })
+
+    await store.voteMeal(1, 1)
+
+    expect(api.post).toHaveBeenCalledWith('/meals/1/votes', { value: 1 })
+    expect(store.list[0]).toMatchObject({ upvotes: 1, downvotes: 0 })
+    expect(store.ownVote(1)).toBe(1)
+  })
+
+  it('tapping the same thumb again removes the vote', async () => {
+    const store = useMealsStore()
+    store.list = [meal({ id: 1, upvotes: 1 })]
+    store.ownVotes[1] = { id: 7, value: 1 }
+    vi.mocked(api.delete).mockResolvedValue({ upvotes: 0, downvotes: 0 })
+
+    await store.voteMeal(1, 1)
+
+    expect(api.delete).toHaveBeenCalledWith('/votes/7')
+    expect(store.ownVote(1)).toBeUndefined()
+    expect(store.list[0].upvotes).toBe(0)
+  })
+
+  it('tapping the other thumb switches the vote', async () => {
+    const store = useMealsStore()
+    store.list = [meal({ id: 1, upvotes: 1 })]
+    store.ownVotes[1] = { id: 7, value: 1 }
+    vi.mocked(api.put).mockResolvedValue({ vote: { id: 7 }, upvotes: 0, downvotes: 1 })
+
+    await store.voteMeal(1, -1)
+
+    expect(api.put).toHaveBeenCalledWith('/votes/7', { value: -1 })
+    expect(store.ownVote(1)).toBe(-1)
+    expect(store.list[0]).toMatchObject({ upvotes: 0, downvotes: 1 })
+  })
+
+  it('recovers by posting anew when the remembered vote is gone', async () => {
+    const store = useMealsStore()
+    store.list = [meal({ id: 1 })]
+    store.ownVotes[1] = { id: 99, value: 1 }
+    vi.mocked(api.put).mockRejectedValue(new Error('404'))
+    vi.mocked(api.post).mockResolvedValue({ vote: { id: 8 }, upvotes: 1, downvotes: 0 })
+
+    await store.voteMeal(1, -1)
+
+    expect(api.post).toHaveBeenCalledWith('/meals/1/votes', { value: -1 })
+    expect(store.ownVote(1)).toBe(-1)
   })
 })
