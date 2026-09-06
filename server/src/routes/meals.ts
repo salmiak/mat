@@ -2,7 +2,8 @@ import { Router } from 'express'
 import { and, asc, desc, eq, gte, inArray, lt } from 'drizzle-orm'
 import { addWeeks, formatISO, setISOWeek, setISOWeekYear, startOfISOWeek } from 'date-fns'
 import type { Db } from '../db/client.js'
-import { mealRecipes, meals } from '../db/schema.js'
+import { mealRecipes, meals, mealVotes } from '../db/schema.js'
+import { loadVoteTallies, type VoteTally } from './votes.js'
 
 interface MealPayload {
   title?: string
@@ -51,7 +52,7 @@ async function replaceRecipeLinks (db: Db, mealId: number, recipeIds: number[]) 
   }
 }
 
-function serialize (meal: typeof meals.$inferSelect, recipeIds: number[]) {
+export function serializeMeal (meal: typeof meals.$inferSelect, recipeIds: number[], tally: VoteTally = { upvotes: 0, downvotes: 0 }) {
   return {
     id: meal.id,
     title: meal.title,
@@ -62,7 +63,9 @@ function serialize (meal: typeof meals.$inferSelect, recipeIds: number[]) {
       : String(meal.date).slice(0, 10),
     index: meal.index,
     made: meal.made,
-    recipeIds
+    recipeIds,
+    upvotes: tally.upvotes,
+    downvotes: tally.downvotes
   }
 }
 
@@ -86,9 +89,11 @@ export function mealsRouter (db: Db): Router {
 
     const rows = await db.select().from(meals).where(where)
       .orderBy(desc(meals.date), asc(meals.index), desc(meals.id))
-    const recipeIdMap = await loadRecipeIds(db, rows.map((m) => m.id))
+    const mealIds = rows.map((m) => m.id)
+    const recipeIdMap = await loadRecipeIds(db, mealIds)
+    const tallies = await loadVoteTallies(db, mealIds)
 
-    res.json({ meals: rows.map((m) => serialize(m, recipeIdMap.get(m.id) ?? [])) })
+    res.json({ meals: rows.map((m) => serializeMeal(m, recipeIdMap.get(m.id) ?? [], tallies.get(m.id))) })
   })
 
   // POST /api/meals
@@ -96,7 +101,28 @@ export function mealsRouter (db: Db): Router {
     const recipeIds = recipeIdsFromBody(req.body)
     const [meal] = await db.insert(meals).values(mealFields(req.body)).returning()
     await replaceRecipeLinks(db, meal.id, recipeIds)
-    res.status(201).json({ meal: serialize(meal, recipeIds) })
+    res.status(201).json({ meal: serializeMeal(meal, recipeIds) })
+  })
+
+  // POST /api/meals/:id/votes — thumbs up (+1) or down (-1)
+  router.post('/:id/votes', async (req, res) => {
+    const mealId = Number(req.params.id)
+    const value = req.body.value === 1 ? 1 : req.body.value === -1 ? -1 : null
+    if (value === null) {
+      res.status(400).json({ error: 'value must be 1 or -1' })
+      return
+    }
+    const [meal] = await db.select().from(meals).where(eq(meals.id, mealId))
+    if (!meal) {
+      res.status(404).json({ error: 'Meal not found' })
+      return
+    }
+    const [vote] = await db.insert(mealVotes).values({ mealId, value }).returning()
+    const tallies = await loadVoteTallies(db, [mealId])
+    res.status(201).json({
+      vote: { id: vote.id, mealId, value },
+      ...tallies.get(mealId) ?? { upvotes: 0, downvotes: 0 }
+    })
   })
 
   // PUT /api/meals/:id
@@ -112,7 +138,7 @@ export function mealsRouter (db: Db): Router {
       return
     }
     await replaceRecipeLinks(db, id, recipeIds)
-    res.json({ meal: serialize(meal, recipeIds) })
+    res.json({ meal: serializeMeal(meal, recipeIds, (await loadVoteTallies(db, [id])).get(id)) })
   })
 
   // DELETE /api/meals/:id

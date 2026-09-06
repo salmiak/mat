@@ -63,6 +63,15 @@ export const meals = pgTable('meals', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow().notNull()
 })
 
+// Thumbs up/down on a meal. Anonymous for now — user_id comes with auth.
+// A recipe's score is the sum of votes on the meals it belongs to.
+export const mealVotes = pgTable('meal_votes', {
+  id: serial('id').primaryKey(),
+  mealId: integer('meal_id').notNull().references(() => meals.id, { onDelete: 'cascade' }),
+  value: integer('value').notNull(), // +1 or -1
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull()
+})
+
 export const mealRecipes = pgTable('meal_recipes', {
   mealId: integer('meal_id').notNull().references(() => meals.id, { onDelete: 'cascade' }),
   recipeId: integer('recipe_id').notNull().references(() => recipes.id, { onDelete: 'cascade' }),
