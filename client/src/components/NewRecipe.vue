@@ -2,7 +2,7 @@
   <div class="recipe">
     <div v-if="expanded">
       <div class="toolbar">
-        <i class="fal fa-times" @click="expanded = false"></i>
+        <X class="iconBtn" :size="16" @click="expanded = false" />
       </div>
       <h2>{{ t('Add Recipe') }}</h2>
       <edit-recipe @save-recipe="addRecipe" @cancel-edit="expanded = false" />
@@ -19,6 +19,7 @@ import { useI18n } from 'vue-i18n'
 import { useRecipesStore } from '@/stores/recipes'
 import type { NewRecipe } from '@/types'
 import EditRecipe from './EditRecipe.vue'
+import { X } from 'lucide-vue-next'
 
 const { t } = useI18n()
 const recipesStore = useRecipesStore()

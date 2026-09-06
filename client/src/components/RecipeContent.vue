@@ -12,12 +12,12 @@
             <a v-else-if="recipe.imageUrl" :href="recipe.imageUrl" target="_blank">{{ recipe.title }}</a>
             <span v-else>{{ recipe.title }}</span>
             <span v-if="recipe.score" class="score" :class="recipe.score > 0 ? 'positive' : 'negative'">
-              <i :class="recipe.score > 0 ? 'far fa-thumbs-up' : 'far fa-thumbs-down'"></i>
+              <ThumbsUp v-if="recipe.score > 0" :size="12" /><ThumbsDown v-else :size="12" />
               {{ Math.abs(recipe.score) }}
             </span>
           </h2>
           <a v-if="sourceHost" class="source" :href="recipe.url" target="_blank">
-            {{ sourceHost }} <i class="far fa-external-link"></i>
+            {{ sourceHost }} <ExternalLink :size="11" />
           </a>
         </div>
       </div>
@@ -35,6 +35,7 @@ import { computed } from 'vue'
 import { useRecipesStore } from '@/stores/recipes'
 import ExpanderBox from './ExpanderBox.vue'
 import MarkdownText from './MarkdownText.vue'
+import { ExternalLink, ThumbsDown, ThumbsUp } from 'lucide-vue-next'
 
 const props = defineProps<{ id: number }>()
 
@@ -107,9 +108,7 @@ const sourceHost = computed(() => {
       color: fade(@cText, 60%);
       background: darken(@cRecipeBg, 7%);
     }
-    .far {
-      font-size: 0.9em;
-    }
+
   }
   .source {
     display: inline-block;
@@ -118,10 +117,7 @@ const sourceHost = computed(() => {
     font-weight: 700;
     .capitals;
     color: fade(@cPrimary, 80%);
-    .far {
-      font-size: 0.7em;
-      vertical-align: 0.1em;
-    }
+
     &:hover {
       color: @cPrimary;
     }

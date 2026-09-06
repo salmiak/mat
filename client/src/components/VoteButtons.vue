@@ -1,11 +1,11 @@
 <template>
   <div class="voteButtons">
     <span class="vote" :class="{ active: own === 1 }" @click.stop="vote(1)">
-      <i :class="own === 1 ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
+      <ThumbsUp :size="16" :fill="own === 1 ? 'currentColor' : 'none'" />
       <span v-if="meal.upvotes" class="count">{{ meal.upvotes }}</span>
     </span>
     <span class="vote" :class="{ active: own === -1 }" @click.stop="vote(-1)">
-      <i :class="own === -1 ? 'fas fa-thumbs-down' : 'far fa-thumbs-down'"></i>
+      <ThumbsDown :size="16" :fill="own === -1 ? 'currentColor' : 'none'" />
       <span v-if="meal.downvotes" class="count">{{ meal.downvotes }}</span>
     </span>
   </div>
@@ -15,6 +15,7 @@
 import { computed } from 'vue'
 import { useMealsStore } from '@/stores/meals'
 import type { Meal, VoteValue } from '@/types'
+import { ThumbsDown, ThumbsUp } from 'lucide-vue-next'
 
 const props = defineProps<{ meal: Meal }>()
 

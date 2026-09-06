@@ -2,14 +2,14 @@
   <div class="week">
     <header>
       <router-link class="weekNav" :to="{ name: 'Week', params: { week: prevWeek.week, year: prevWeek.year } }">
-        <i class="fa fa-arrow-left"></i>
+        <ArrowLeft :size="18" />
       </router-link>
       <h1>
         <router-link v-if="!isCurrentWeek" to="/week">{{ t('Week') }} {{ week }}</router-link>
         <router-link v-else :to="{ name: 'Week', params: { week: nextWeek.week, year: nextWeek.year } }">{{ t('This week') }}</router-link>
       </h1>
       <router-link class="weekNav" :to="{ name: 'Week', params: { week: nextWeek.week, year: nextWeek.year } }">
-        <i class="fa fa-arrow-right"></i>
+        <ArrowRight :size="18" />
       </router-link>
     </header>
 
@@ -29,6 +29,7 @@ import { useRecipesStore } from '@/stores/recipes'
 import type { WeekRef } from '@/types'
 import MealCard from './MealCard.vue'
 import NewMeal from './NewMeal.vue'
+import { ArrowLeft, ArrowRight } from 'lucide-vue-next'
 
 const route = useRoute()
 const { t } = useI18n()

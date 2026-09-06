@@ -7,7 +7,7 @@
       <div v-if="recipe.imageUrl" style="position: relative; float: left; clear: both">
         <img :src="recipe.imageUrl" class="recipe-thumbnail" />
         <div class="toolbar">
-          <sure-button type="i" class="fal fa-trash-alt" @clicked="recipe.imageUrl = null"></sure-button>
+          <sure-button class="iconBtn" @clicked="recipe.imageUrl = null"><Trash2 :size="16" /></sure-button>
         </div>
       </div>
       <image-upload v-else @upload-start="uploading = true" @upload-done="imageAttached" />
@@ -33,6 +33,7 @@ import type { NewRecipe } from '@/types'
 import ImageUpload from './ImageUpload.vue'
 import SureButton from './SureButton.vue'
 import GrowingTextarea from './GrowingTextarea.vue'
+import { Trash2 } from 'lucide-vue-next'
 
 const props = defineProps<{ recipeData?: Partial<NewRecipe> }>()
 
