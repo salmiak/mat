@@ -21,7 +21,7 @@ En familjeapp för veckovis matplanering: man planerar måltider per vecka och k
 - **meals** — `id`, `title`, `comment`, `date` (DATE), `index` (sorteringsordning inom dagen), `made`, timestamps.
 - **recipes** — `id`, `title`, `comment` (markdown), `url` (extern receptlänk), `image_id` (FK → images), `legacy_image_url` (gamla S3-URL:er tills datamigreringen körts), timestamps.
 - **meal_recipes** — junction-tabell (meal_id, recipe_id, position) med cascade-delete åt båda håll.
-- **images** — `id`, `data` (bytea), `content_type`, `filename`. Bilder är immutabla (ny uppladdning = nytt id) och serveras med `Cache-Control: immutable`.
+- **images** — `id`, `data` (bytea), `content_type`, `filename`, samt `thumb_data`/`thumb_content_type` (480px webp-miniatyr, genererad med sharp vid uppladdning eller lazily vid första `?size=thumb`-anropet). Bilder är immutabla (ny uppladdning = nytt id) och serveras med `Cache-Control: immutable`.
 
 Schemat versioneras med Drizzle-migreringar i `server/drizzle/` (genereras med `npm run db:generate`) och appliceras automatiskt när servern startar.
 

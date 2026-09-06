@@ -18,7 +18,8 @@
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
     "morgan": "^1.10.0",
-    "pg": "^8.16.0"
+    "pg": "^8.16.0",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",

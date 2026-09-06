@@ -17,6 +17,8 @@ export interface Recipe {
   comment: string
   url: string
   imageUrl: string | null
+  /** Downscaled version of imageUrl for lists (falls back to imageUrl) */
+  thumbUrl?: string | null
 }
 
 export type NewRecipe = Omit<Recipe, 'id'> & { id?: number }

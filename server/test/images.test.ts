@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest'
 import request from 'supertest'
+import sharp from 'sharp'
 import type { Express } from 'express'
 import { createTestApp } from './helpers.js'
 
@@ -7,6 +8,44 @@ let app: Express
 
 beforeEach(() => {
   app = createTestApp().app
+})
+
+describe('GET /api/images/:id?size=thumb', () => {
+  it('serves a downscaled webp thumbnail', async () => {
+    const original = await sharp({
+      create: { width: 1200, height: 900, channels: 3, background: { r: 200, g: 40, b: 40 } }
+    }).png().toBuffer()
+
+    const post = await request(app)
+      .post('/api/images')
+      .set('Content-Type', 'image/png')
+      .send(original)
+    expect(post.status).toBe(201)
+
+    const thumb = await request(app).get(post.body.url + '?size=thumb')
+    expect(thumb.status).toBe(200)
+    expect(thumb.headers['content-type']).toBe('image/webp')
+
+    const meta = await sharp(thumb.body).metadata()
+    expect(meta.width).toBe(480)
+
+    // The original stays untouched
+    const full = await request(app).get(post.body.url)
+    expect(full.headers['content-type']).toBe('image/png')
+    expect((await sharp(full.body).metadata()).width).toBe(1200)
+  })
+
+  it('falls back to the original for non-image data', async () => {
+    // Bytes that claim to be an image but aren't — thumbnailing fails gracefully
+    const post = await request(app)
+      .post('/api/images')
+      .set('Content-Type', 'image/png')
+      .send(Buffer.from('not really a png'))
+
+    const res = await request(app).get(post.body.url + '?size=thumb')
+    expect(res.status).toBe(200)
+    expect(res.headers['content-type']).toBe('image/png')
+  })
 })
 
 describe('POST + GET /api/images', () => {
