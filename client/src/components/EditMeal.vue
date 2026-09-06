@@ -8,7 +8,7 @@
     </div>
     <div>
       <div class="searchField">
-        <i class="fal fa-search"></i>
+        <Search class="searchIcon" :size="16" />
         <input
           type="search"
           v-model="recipeSearchTerm"
@@ -44,7 +44,7 @@
     <div v-if="!recipeSearchTerm">
       <div v-for="(recipe, index) in newRecipes" :key="recipe.tmpId" class="recipe">
         <div class="toolbar">
-          <i class="fal fa-times pull-right" @click="removeNewRecipe(index)"></i>
+          <X class="iconBtn pull-right" :size="16" @click="removeNewRecipe(index)" />
         </div>
         <h3>{{ t('Create new recipe') }}</h3>
         <div>
@@ -54,7 +54,7 @@
           <div v-if="recipe.imageUrl" style="position: relative; float: left; clear: both">
             <img :src="recipe.imageUrl" class="recipe-thumbnail" />
             <div class="toolbar">
-              <sure-button type="i" class="fal fa-trash-alt" @clicked="recipe.imageUrl = null"></sure-button>
+              <sure-button class="iconBtn" @clicked="recipe.imageUrl = null"><Trash2 :size="16" /></sure-button>
             </div>
           </div>
           <image-upload v-else @upload-start="uploadsInProgress++" @upload-done="imageAttached($event, index)" />
@@ -66,7 +66,7 @@
           <growing-textarea :placeholder="t('Comment')" v-model="recipe.comment" />
         </div>
       </div>
-      <button @click="addNewRecipe"><i class="fal fa-plus"></i> {{ t('Create new recipe') }}</button>
+      <button @click="addNewRecipe"><Plus :size="14" /> {{ t('Create new recipe') }}</button>
     </div>
 
     <div class="cardfooter">
@@ -87,6 +87,7 @@ import type { NewMeal, NewRecipe } from '@/types'
 import ImageUpload from './ImageUpload.vue'
 import SureButton from './SureButton.vue'
 import GrowingTextarea from './GrowingTextarea.vue'
+import { Plus, Search, Trash2, X } from 'lucide-vue-next'
 
 type DraftRecipe = NewRecipe & { tmpId: number }
 
@@ -223,7 +224,7 @@ async function saveMeal () {
   .searchField {
     position: relative;
     // The magnifying glass sits inside the field, left of the text
-    .fa-search {
+    .searchIcon {
       position: absolute;
       top: 50%;
       left: 0;

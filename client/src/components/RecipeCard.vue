@@ -12,10 +12,10 @@
         @leftprimary="editMode = true"
       >
         <template #rightprimary>
-          <span><i class="fal fa-plus-square"></i> {{ t('Add meal') }}</span>
+          <span><SquarePlus :size="18" /> {{ t('Add meal') }}</span>
         </template>
         <template #leftprimary>
-          <span><i class="fal fa-edit"></i> {{ t('Edit') }}</span>
+          <span><Pencil :size="18" /> {{ t('Edit') }}</span>
         </template>
 
         <recipe-content :id="id" />
@@ -23,7 +23,7 @@
 
       <div v-if="editMode" class="recipeContent">
         <div class="toolbar">
-          <sure-button v-if="showDelete" type="i" class="fal fa-trash-alt" @clicked="recipesStore.deleteRecipe(recipe.id)"></sure-button>
+          <sure-button v-if="showDelete" class="iconBtn" @clicked="recipesStore.deleteRecipe(recipe.id)"><Trash2 :size="16" /></sure-button>
         </div>
 
         <h2>{{ t('Edit recipe') }}</h2>
@@ -44,6 +44,7 @@ import EditRecipe from './EditRecipe.vue'
 import RecipeContent from './RecipeContent.vue'
 import SureButton from './SureButton.vue'
 import SwipeActionItem from './SwipeActionItem.vue'
+import { Pencil, SquarePlus, Trash2 } from 'lucide-vue-next'
 
 const props = defineProps<{
   id: number

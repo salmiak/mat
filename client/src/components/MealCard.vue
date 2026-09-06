@@ -10,23 +10,23 @@
       @leftsecondary="moveToPrevWeek"
     >
       <template #rightprimary>
-        <span v-if="meal.made"><i class="fal fa-square"></i> {{ t('Not made') }}</span>
-        <span v-else><i class="fal fa-check-square"></i> {{ t('Made') }}</span>
+        <span v-if="meal.made"><Square :size="18" /> {{ t('Not made') }}</span>
+        <span v-else><SquareCheck :size="18" /> {{ t('Made') }}</span>
       </template>
       <template #rightsecondary>
-        <span v-if="meal.made"><i class="fal fa-copy"></i> {{ t('Copy') }}</span>
-        <span v-else><i class="fal fa-arrow-right"></i> {{ t('Move') }}</span>
+        <span v-if="meal.made"><Copy :size="18" /> {{ t('Copy') }}</span>
+        <span v-else><ArrowRight :size="18" /> {{ t('Move') }}</span>
       </template>
       <template #leftprimary>
-        <span><i class="fal fa-edit"></i> {{ t('Edit') }}</span>
+        <span><Pencil :size="18" /> {{ t('Edit') }}</span>
       </template>
       <template #leftsecondary>
-        <span><i class="fal fa-arrow-left"></i> {{ t('Move') }}</span>
+        <span><ArrowLeft :size="18" /> {{ t('Move') }}</span>
       </template>
 
       <div class="mealContent">
         <div v-if="!meal.made">
-          <h2><i class="fal fa-square"></i> {{ meal.title }}</h2>
+          <h2><Square :size="18" /> {{ meal.title }}</h2>
 
           <expander-box v-if="meal.comment && meal.comment.length > 70" class="comment">
             <markdown-text :source="meal.comment" />
@@ -39,7 +39,7 @@
         <div v-if="meal.made" class="madeRow">
           <!-- Icon and title on one line: Vue condenses away whitespace
                that contains a newline between elements -->
-          <h2><i class="fal fa-check-square"></i> <span class="text-disabled">{{ meal.title }}</span></h2>
+          <h2><SquareCheck :size="18" /> <span class="text-disabled">{{ meal.title }}</span></h2>
           <vote-buttons :meal="meal" />
         </div>
       </div>
@@ -47,7 +47,7 @@
 
     <div v-if="editMode" class="mealContent">
       <div class="toolbar">
-        <sure-button type="i" class="fal fa-trash-alt" @clicked="mealsStore.deleteMeal(meal.id)"></sure-button>
+        <sure-button class="iconBtn" @clicked="mealsStore.deleteMeal(meal.id)"><Trash2 :size="16" /></sure-button>
       </div>
       <h2>{{ t('Edit meal') }}</h2>
       <edit-meal :meal-data="meal" @save-meal="updateMeal" @cancel-edit="editMode = false" />
@@ -68,6 +68,7 @@ import ExpanderBox from './ExpanderBox.vue'
 import MarkdownText from './MarkdownText.vue'
 import SwipeActionItem from './SwipeActionItem.vue'
 import VoteButtons from './VoteButtons.vue'
+import { ArrowLeft, ArrowRight, Copy, Pencil, Square, SquareCheck, Trash2 } from 'lucide-vue-next'
 
 const props = defineProps<{ meal: Meal }>()
 
@@ -123,7 +124,7 @@ function toggleMade () {
     padding-right: calc(5rem);
     margin: 0 0 @bu/2;
     .noselect;
-    .fal {
+    svg {
       color: @cText;
     }
   }

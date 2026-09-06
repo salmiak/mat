@@ -2,7 +2,7 @@
   <div class="meal">
     <div v-if="expanded">
       <div class="toolbar">
-        <i class="fal fa-times" @click="expanded = false"></i>
+        <X class="iconBtn" :size="16" @click="expanded = false" />
       </div>
       <h2>{{ t('Add Meal') }}</h2>
       <edit-meal :week="week" :year="year" :reset-on-save="true" @save-meal="addMeal" @cancel-edit="expanded = false" />
@@ -19,6 +19,7 @@ import { useI18n } from 'vue-i18n'
 import { useMealsStore } from '@/stores/meals'
 import type { NewMeal } from '@/types'
 import EditMeal from './EditMeal.vue'
+import { X } from 'lucide-vue-next'
 
 defineProps<{
   week?: number

@@ -200,23 +200,37 @@ textarea {
   }
 }
 
+// Lucide icons sit next to text; nudge them onto the baseline
+svg.lucide {
+  display: inline-block;
+  vertical-align: -0.18em;
+}
+
+// Round, clickable icon buttons (toolbars, close buttons)
+.iconBtn {
+  .noselect;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: @bu*2;
+  height: @bu*2;
+  border-radius: 100%;
+  cursor: pointer;
+  transition: all 0.3s;
+  vertical-align: middle;
+  &:hover {
+    background-color: darken(@cMealBg, 5%);
+  }
+  svg {
+    vertical-align: 0;
+  }
+}
+
 .toolbar {
   .noselect;
   position: absolute;
   top: @bu/2;
   right: @bu/2;
-  .fal {
-    border-radius: 100%;
-    font-size: @bu;
-    padding: @bu/2;
-    cursor: pointer;
-    width: @bu*2;
-    text-align: center;
-    transition: all 0.3s;
-    &:hover {
-      background-color: darken(@cMealBg, 5%);
-    }
-  }
 }
 
 .cardfooter {
