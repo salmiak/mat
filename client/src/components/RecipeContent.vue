@@ -37,6 +37,8 @@ const recipe = computed(() => recipesStore.recipeById(props.id))
 .recipeContent {
   position: relative;
   background: @cRecipeBg;
+  // Recipe cards stay white even inside a meal card, so reset the fade color
+  --expander-bg: @cRecipeBg;
   padding: @bu @bu @bu/2;
   border-radius: @radius;
   margin: 0;

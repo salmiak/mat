@@ -132,6 +132,7 @@ function toggleMade () {
 }
 .mealContent {
   background: @cMealBg;
+  --expander-bg: @cMealBg;
   padding: @bu;
   border-radius: @radius;
 }
