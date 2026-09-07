@@ -31,7 +31,13 @@ const messages = {
     'Type to search current recipes': 'Type to search current recipes',
     'Show more': 'Show more',
     'Show less': 'Show less',
-    'Uploading image': 'Uploading image…'
+    'Uploading image': 'Uploading image…',
+    'Log in': 'Log in',
+    'Log out': 'Log out',
+    'Login intro': 'Sign in to see the meal planning.',
+    'Account not allowed': 'This account does not have access.',
+    'Login failed': 'Login failed. Try again.',
+    'No login providers': 'No login method is configured.'
   },
   se: {
     Planning: 'Planering',
@@ -63,7 +69,13 @@ const messages = {
     'Type to search current recipes': 'Sök för att lägga till befintligt recept',
     'Show more': 'Visa mer',
     'Show less': 'Visa mindre',
-    'Uploading image': 'Laddar upp bild…'
+    'Uploading image': 'Laddar upp bild…',
+    'Log in': 'Logga in',
+    'Log out': 'Logga ut',
+    'Login intro': 'Logga in för att se matplaneringen.',
+    'Account not allowed': 'Det här kontot har inte åtkomst.',
+    'Login failed': 'Inloggningen misslyckades. Försök igen.',
+    'No login providers': 'Ingen inloggningsmetod är konfigurerad.'
   }
 }
 

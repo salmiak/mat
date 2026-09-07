@@ -25,3 +25,21 @@ export interface WeekRef {
   week: number
   year: number
 }
+
+export interface AuthUser {
+  id: number
+  email: string
+  name: string
+  picture: string
+}
+
+export interface AuthProvider {
+  name: string
+  clientId: string
+}
+
+export interface MeResponse {
+  user: AuthUser | null
+  providers: AuthProvider[]
+  authRequired: boolean
+}

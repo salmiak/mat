@@ -10,14 +10,26 @@
     <span v-if="locale !== 'en'" @click="setLocale('en')">🇬🇧</span>
     <span v-if="locale !== 'se'" @click="setLocale('se')">🇸🇪</span> |
     <span @click="reloadApp">{{ t('Reload') }}</span>
+    <template v-if="auth.loggedIn">
+      | <span @click="logout">{{ t('Log out') }} ({{ auth.user!.name || auth.user!.email }})</span>
+    </template>
   </footer>
 </template>
 
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { persistLocale, type Locale } from '@/i18n'
+import { useAuthStore } from '@/stores/auth'
 
 const { t, locale } = useI18n()
+const router = useRouter()
+const auth = useAuthStore()
+
+async function logout () {
+  await auth.logout()
+  router.push({ name: 'Login' })
+}
 
 function setLocale (value: Locale) {
   locale.value = value
