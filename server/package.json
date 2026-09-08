@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.44.2",
+    "drizzle-orm": "^0.45.2",
     "express": "^5.1.0",
     "jose": "^6.2.12",
     "morgan": "^1.10.0",
