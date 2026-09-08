@@ -31,6 +31,14 @@ En Railway-tjänst kör Express-servern som serverar API, byggd klient och bilde
 
 Ingen volym och inga AWS-beroenden behövs.
 
+## Inloggning
+
+Inloggning sker med Google (Apple ID förberett men kräver Apple Developer-konto) och en allowlist av e-postadresser. Servern verifierar Googles ID-token mot deras JWKS och sätter en HMAC-signerad sessionscookie (30 dagar, HttpOnly). Utan `SESSION_SECRET` körs API:t helt öppet — bara för lokal utveckling.
+
+1. Skapa ett OAuth 2.0 Web Client ID i [Google Cloud Console](https://console.cloud.google.com/apis/credentials) och lägg sajtens origin under *Authorized JavaScript origins* (för lokal utveckling: `http://localhost:8080`).
+2. Sätt env-vars på apptjänsten (se `.env.example`): `SESSION_SECRET`, `ALLOWED_EMAILS` (kommaseparerad) och `GOOGLE_CLIENT_ID`.
+3. För Apple-inloggning senare: sätt `APPLE_CLIENT_ID` (Services ID) — serversidan är redan på plats.
+
 ## Migrera data från gamla appen (Mongo)
 
 Engångsjobb när du vill flytta innehållet:
@@ -47,4 +55,5 @@ MONGODB_URI=mongodb+srv://... DATABASE_URL=postgres://... npm run migrate:mongo 
 - Smarter meal creation
   - When writing title for new meal, automatically search for matching recipes and have an "add new recipe" button that opens the recipe editor with the title prefilled.
 - User management and authentication
+  - Done: Google sign-in with email allowlist; Apple prepared (needs Apple Developer account + `APPLE_CLIENT_ID` + a login button)
 - Real-time updates (multiple users working at the same time)

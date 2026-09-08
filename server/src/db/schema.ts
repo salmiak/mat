@@ -27,6 +27,20 @@ const bytea = customType<{ data: Buffer, driverData: unknown }>({
   }
 })
 
+export const users = pgTable('users', {
+  id: serial('id').primaryKey(),
+  email: text('email').notNull().unique(),
+  name: text('name').notNull().default(''),
+  picture: text('picture').notNull().default(''),
+  // OIDC provider ('google' | 'apple') and its stable subject claim. The
+  // account key is the verified email, so one row can serve both providers;
+  // these record how the user last signed in.
+  provider: text('provider').notNull(),
+  providerSub: text('provider_sub').notNull(),
+  createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  lastLoginAt: timestamp('last_login_at', { withTimezone: true }).defaultNow().notNull()
+})
+
 export const images = pgTable('images', {
   id: serial('id').primaryKey(),
   data: bytea('data').notNull(),

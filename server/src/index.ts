@@ -21,7 +21,17 @@ const migrationsFolder = fs.existsSync(localMigrations)
 await migrate(db, { migrationsFolder })
 console.log('Database migrations applied')
 
-const app = createApp(db)
+const sessionSecret = process.env.SESSION_SECRET
+const allowedEmails = (process.env.ALLOWED_EMAILS ?? '')
+  .split(',')
+  .map((e) => e.trim().toLowerCase())
+  .filter(Boolean)
+
+if (!sessionSecret) {
+  console.warn('WARNING: SESSION_SECRET is not set — the API is running WITHOUT authentication.')
+}
+
+const app = createApp(db, sessionSecret ? { auth: { sessionSecret, allowedEmails } } : {})
 const port = Number(process.env.PORT) || 8081
 app.listen(port, () => {
   console.log(`Listening on ${port}`)

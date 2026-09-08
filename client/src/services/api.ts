@@ -1,5 +1,18 @@
 const BASE = '/api'
 
+export class ApiError extends Error {
+  constructor (message: string, public status: number) {
+    super(message)
+  }
+}
+
+// The auth store registers itself here so an expired session on any API
+// call sends the user to the login page (avoids a circular import).
+let onUnauthorized: (() => void) | null = null
+export function setUnauthorizedHandler (handler: () => void) {
+  onUnauthorized = handler
+}
+
 async function requestJson<T> (method: string, path: string, body?: unknown): Promise<T> {
   const res = await fetch(BASE + path, {
     method,
@@ -7,7 +20,10 @@ async function requestJson<T> (method: string, path: string, body?: unknown): Pr
     body: body !== undefined ? JSON.stringify(body) : undefined
   })
   if (!res.ok) {
-    throw new Error(`API ${method} ${path} failed: ${res.status}`)
+    if (res.status === 401 && !path.startsWith('/auth')) {
+      onUnauthorized?.()
+    }
+    throw new ApiError(`API ${method} ${path} failed: ${res.status}`, res.status)
   }
   return res.json() as Promise<T>
 }

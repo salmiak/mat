@@ -7,10 +7,14 @@ import { mealsRouter } from './routes/meals.js'
 import { recipesRouter } from './routes/recipes.js'
 import { imagesRouter } from './routes/images.js'
 import { votesRouter } from './routes/votes.js'
+import { authRouter, type AuthConfig } from './routes/auth.js'
+import { sessionUserIdFromRequest } from './auth/session.js'
 
 export interface AppOptions {
   clientDist?: string
   logging?: boolean
+  /** Omit to run without authentication (local preview/tests only). */
+  auth?: AuthConfig
 }
 
 export function createApp (db: Db, options: AppOptions = {}): Express {
@@ -19,6 +23,28 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
     app.use(morgan('combined'))
   }
   app.use(express.json())
+
+  const auth = options.auth
+  if (auth) {
+    app.use('/api/auth', authRouter(db, auth))
+    app.use('/api', (req, res, next) => {
+      if (req.path.startsWith('/auth') || req.path === '/health') {
+        next()
+        return
+      }
+      if (sessionUserIdFromRequest(req, auth.sessionSecret) === null) {
+        res.status(401).json({ error: 'Not authenticated' })
+        return
+      }
+      next()
+    })
+  } else {
+    // Still mounted so the client can ask /api/auth/me and learn that no
+    // login is required.
+    app.get('/api/auth/me', (_req, res) => {
+      res.json({ user: null, providers: [], authRequired: false })
+    })
+  }
 
   app.use('/api/meals', mealsRouter(db))
   app.use('/api/recipes', recipesRouter(db))
@@ -40,7 +66,7 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((err: Error & { status?: number }, _req: Request, res: Response, _next: NextFunction) => {
-    console.error(err)
+    if (!(err as { status?: number }).status) console.error(err)
     res.status(err.status ?? 500).json({ error: err.status ? err.message : 'Internal server error' })
   })
 
