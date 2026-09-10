@@ -9,6 +9,7 @@ import { imagesRouter } from './routes/images.js'
 import { votesRouter } from './routes/votes.js'
 import { authRouter, type AuthConfig } from './routes/auth.js'
 import { eventsRouter } from './routes/events.js'
+import { mcpRouter } from './routes/mcp.js'
 import { sessionUserIdFromRequest } from './auth/session.js'
 import { ChangeBus } from './events.js'
 
@@ -19,6 +20,8 @@ export interface AppOptions {
   auth?: AuthConfig
   /** Injectable for tests; createApp makes one when omitted. */
   bus?: ChangeBus
+  /** Base URL the MCP tools use to reach this server's own API. */
+  selfBaseUrl?: string
 }
 
 export function createApp (db: Db, options: AppOptions = {}): Express {
@@ -65,6 +68,12 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
   app.get('/api/health', (_req, res) => {
     res.json({ ok: true })
   })
+
+  // Remote MCP for Claude on mobile/claude.ai; the path token is the secret
+  app.use('/mcp/:token', mcpRouter({
+    apiTokens: auth ? (auth.apiTokens ?? []) : null,
+    selfBaseUrl: options.selfBaseUrl ?? `http://127.0.0.1:${Number(process.env.PORT) || 8081}`
+  }))
 
   // Built Vue client with SPA fallback (vue-router history mode)
   const clientDist = options.clientDist ?? path.join(import.meta.dirname, '..', '..', 'client', 'dist')
