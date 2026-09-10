@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { eq, inArray, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
 import { mealVotes } from '../db/schema.js'
+import type { ChangeBus } from '../events.js'
 
 export interface VoteTally {
   upvotes: number
@@ -28,7 +29,7 @@ async function tallyFor (db: Db, mealId: number): Promise<VoteTally> {
   return (await loadVoteTallies(db, [mealId])).get(mealId) ?? { upvotes: 0, downvotes: 0 }
 }
 
-export function votesRouter (db: Db): Router {
+export function votesRouter (db: Db, bus?: ChangeBus): Router {
   const router = Router()
 
   // PUT /api/votes/:id — switch an existing vote between up and down
@@ -46,7 +47,9 @@ export function votesRouter (db: Db): Router {
       res.status(404).json({ error: 'Vote not found' })
       return
     }
-    res.json({ vote: { id: vote.id, mealId: vote.mealId, value: vote.value }, ...await tallyFor(db, vote.mealId) })
+    const tally = await tallyFor(db, vote.mealId)
+    bus?.publish({ resource: 'meals', action: 'voted', id: vote.mealId, ...tally })
+    res.json({ vote: { id: vote.id, mealId: vote.mealId, value: vote.value }, ...tally })
   })
 
   // DELETE /api/votes/:id — undo a vote
@@ -58,7 +61,9 @@ export function votesRouter (db: Db): Router {
       res.status(404).json({ error: 'Vote not found' })
       return
     }
-    res.json({ success: true, ...await tallyFor(db, vote.mealId) })
+    const tally = await tallyFor(db, vote.mealId)
+    bus?.publish({ resource: 'meals', action: 'voted', id: vote.mealId, ...tally })
+    res.json({ success: true, ...tally })
   })
 
   return router

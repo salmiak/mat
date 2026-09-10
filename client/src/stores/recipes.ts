@@ -57,9 +57,13 @@ export const useRecipesStore = defineStore('recipes', {
       return recipe
     },
 
+    removeRecipe (id: number) {
+      this.list = this.list.filter((recipe) => recipe.id !== id)
+    },
+
     async deleteRecipe (id: number) {
       await api.delete(`/recipes/${id}`)
-      this.list = this.list.filter((recipe) => recipe.id !== id)
+      this.removeRecipe(id)
     }
   }
 })

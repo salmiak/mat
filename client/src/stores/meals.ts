@@ -33,7 +33,9 @@ function byWeek (meal: Meal, ref: WeekRef): boolean {
 export const useMealsStore = defineStore('meals', {
   state: () => ({
     list: [] as Meal[],
-    ownVotes: readOwnVotes()
+    ownVotes: readOwnVotes(),
+    // Weeks fetched so far, so a live-update reconnect can resync them
+    loadedWeeks: [] as WeekRef[]
   }),
 
   getters: {
@@ -53,9 +55,30 @@ export const useMealsStore = defineStore('meals', {
       this.list.unshift(meal)
     },
 
+    removeMeal (id: number) {
+      this.list = this.list.filter((meal) => meal.id !== id)
+    },
+
+    applyVoteTally (id: number, upvotes: number, downvotes: number) {
+      const meal = this.list.find((m) => m.id === id)
+      if (meal) {
+        meal.upvotes = upvotes
+        meal.downvotes = downvotes
+      }
+    },
+
     async loadMealsInWeek (ref: WeekRef) {
       const { meals } = await api.get<{ meals: Meal[] }>(`/meals?week=${ref.week}&year=${ref.year}`)
+      // A meal moved out of this week elsewhere should disappear here too
+      this.list = this.list.filter((meal) => !byWeek(meal, ref) || meals.some((m) => m.id === meal.id))
       meals.forEach((meal) => this.setMeal(meal))
+      if (!this.loadedWeeks.some((w) => w.week === ref.week && w.year === ref.year)) {
+        this.loadedWeeks.push(ref)
+      }
+    },
+
+    async reloadLoadedWeeks () {
+      await Promise.all(this.loadedWeeks.map((ref) => this.loadMealsInWeek(ref)))
     },
 
     async addMeal (data: NewMeal): Promise<Meal> {
@@ -86,7 +109,7 @@ export const useMealsStore = defineStore('meals', {
 
     async deleteMeal (id: number) {
       await api.delete(`/meals/${id}`)
-      this.list = this.list.filter((meal) => meal.id !== id)
+      this.removeMeal(id)
     },
 
     ownVote (mealId: number): VoteValue | undefined {

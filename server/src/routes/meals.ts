@@ -4,6 +4,7 @@ import { addWeeks, formatISO, setISOWeek, setISOWeekYear, startOfISOWeek } from 
 import type { Db } from '../db/client.js'
 import { mealRecipes, meals, mealVotes } from '../db/schema.js'
 import { loadVoteTallies, type VoteTally } from './votes.js'
+import type { ChangeBus } from '../events.js'
 
 interface MealPayload {
   title?: string
@@ -69,7 +70,7 @@ export function serializeMeal (meal: typeof meals.$inferSelect, recipeIds: numbe
   }
 }
 
-export function mealsRouter (db: Db): Router {
+export function mealsRouter (db: Db, bus?: ChangeBus): Router {
   const router = Router()
 
   // GET /api/meals?week=&year= — all meals, or the ones in an ISO week
@@ -101,7 +102,9 @@ export function mealsRouter (db: Db): Router {
     const recipeIds = recipeIdsFromBody(req.body)
     const [meal] = await db.insert(meals).values(mealFields(req.body)).returning()
     await replaceRecipeLinks(db, meal.id, recipeIds)
-    res.status(201).json({ meal: serializeMeal(meal, recipeIds) })
+    const serialized = serializeMeal(meal, recipeIds)
+    bus?.publish({ resource: 'meals', action: 'saved', meal: serialized })
+    res.status(201).json({ meal: serialized })
   })
 
   // POST /api/meals/:id/votes — thumbs up (+1) or down (-1)
@@ -119,9 +122,11 @@ export function mealsRouter (db: Db): Router {
     }
     const [vote] = await db.insert(mealVotes).values({ mealId, value }).returning()
     const tallies = await loadVoteTallies(db, [mealId])
+    const tally = tallies.get(mealId) ?? { upvotes: 0, downvotes: 0 }
+    bus?.publish({ resource: 'meals', action: 'voted', id: mealId, ...tally })
     res.status(201).json({
       vote: { id: vote.id, mealId, value },
-      ...tallies.get(mealId) ?? { upvotes: 0, downvotes: 0 }
+      ...tally
     })
   })
 
@@ -138,12 +143,16 @@ export function mealsRouter (db: Db): Router {
       return
     }
     await replaceRecipeLinks(db, id, recipeIds)
-    res.json({ meal: serializeMeal(meal, recipeIds, (await loadVoteTallies(db, [id])).get(id)) })
+    const serialized = serializeMeal(meal, recipeIds, (await loadVoteTallies(db, [id])).get(id))
+    bus?.publish({ resource: 'meals', action: 'saved', meal: serialized })
+    res.json({ meal: serialized })
   })
 
   // DELETE /api/meals/:id
   router.delete('/:id', async (req, res) => {
-    await db.delete(meals).where(eq(meals.id, Number(req.params.id)))
+    const id = Number(req.params.id)
+    await db.delete(meals).where(eq(meals.id, id))
+    bus?.publish({ resource: 'meals', action: 'deleted', id })
     res.json({ success: true })
   })
 
