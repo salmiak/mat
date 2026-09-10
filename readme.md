@@ -39,6 +39,23 @@ Inloggning sker med Google (Apple ID förberett men kräver Apple Developer-kont
 2. Sätt env-vars på apptjänsten (se `.env.example`): `SESSION_SECRET`, `ALLOWED_EMAILS` (kommaseparerad) och `GOOGLE_CLIENT_ID`.
 3. För Apple-inloggning senare: sätt `APPLE_CLIENT_ID` (Services ID) — serversidan är redan på plats.
 
+## MCP-server: planera måltider med Claude
+
+`mcp/` innehåller en MCP-server som låter Claude läsa recepten och skapa/redigera måltider via sajtens API — spåna fram en veckoplan i chatten och få den inmatad automatiskt. Verktyg: `list_recipes`, `get_week`, `create_meal`, `update_meal`, `delete_meal`.
+
+1. Generera en token (`openssl rand -hex 32`) och lägg den i `API_TOKENS` på Railway-tjänsten.
+2. `cd mcp && npm install`
+3. Registrera i Claude Code:
+
+```bash
+claude mcp add --scope user mat \
+  --env MAT_API_URL=https://<din-domän> \
+  --env MAT_API_TOKEN=<token> \
+  -- node /absolut/sökväg/till/mat/mcp/index.mjs
+```
+
+I Claude Desktop: motsvarande post under Settings → Developer → MCP servers.
+
 ## Migrera data från gamla appen (Mongo)
 
 Engångsjobb när du vill flytta innehållet:

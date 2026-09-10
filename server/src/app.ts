@@ -37,6 +37,11 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
         next()
         return
       }
+      const bearer = /^Bearer (.+)$/.exec(req.headers.authorization ?? '')?.[1]
+      if (bearer && (auth.apiTokens ?? []).includes(bearer)) {
+        next()
+        return
+      }
       if (sessionUserIdFromRequest(req, auth.sessionSecret) === null) {
         res.status(401).json({ error: 'Not authenticated' })
         return
