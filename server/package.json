@@ -14,13 +14,15 @@
     "preview": "tsx scripts/preview.mts"
   },
   "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.45.2",
     "express": "^5.1.0",
     "jose": "^6.2.12",
     "morgan": "^1.10.0",
     "pg": "^8.16.0",
-    "sharp": "^0.35.4"
+    "sharp": "^0.35.4",
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "@types/express": "^5.0.1",

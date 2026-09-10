@@ -56,6 +56,10 @@ claude mcp add --scope user mat \
 
 I Claude Desktop: motsvarande post under Settings → Developer → MCP servers.
 
+### På mobilen (remote MCP)
+
+Servern exponerar också samma verktyg som remote MCP på `https://<din-domän>/mcp/<token>` (streamable HTTP, token från `API_TOKENS` i sökvägen eftersom claude.ai:s custom connectors inte kan skicka auth-headers — rotera tokenen vid behov). Lägg till URL:en som **custom connector** på claude.ai (Settings → Connectors → Add custom connector) så funkar den i mobilappen, på webben och i desktop. Bilduppladdning (`imagePath`) finns bara i den lokala MCP:n, men Claude kan läsa ett recept från ett foto i chatten och spara texten.
+
 ## Migrera data från gamla appen (Mongo)
 
 Engångsjobb när du vill flytta innehållet:
