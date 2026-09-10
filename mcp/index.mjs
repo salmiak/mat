@@ -142,7 +142,7 @@ server.registerTool('create_recipe', {
   title: 'Create a recipe',
   description: 'Save a recipe. Either link an external recipe (url + a short comment), or write a full recipe in the comment field. imagePath uploads a local image file and attaches it.',
   inputSchema: {
-    title: z.string().describe('Recipe title, e.g. "Pasta carbonara"'),
+    title: z.string().describe('Recipe title, e.g. "Pasta carbonara". When the recipe text is authored by Claude (a full recipe written in the comment field, not a link to someone else\'s recipe), end the title with " 🤖" so the family can see it is Claude\'s own recipe.'),
     url: z.string().url().optional().describe('Link to an external recipe page'),
     comment: z.string().optional().describe(recipeCommentDescription),
     imagePath: z.string().optional().describe('Absolute path to a local image file to upload and attach')
@@ -163,7 +163,7 @@ server.registerTool('update_recipe', {
   description: 'Change a recipe\'s title, url or comment, or attach an image via imagePath. Omitted fields keep their current value.',
   inputSchema: {
     id: z.number().int(),
-    title: z.string().optional(),
+    title: z.string().optional().describe('End with " 🤖" when the recipe text is authored by Claude (see create_recipe)'),
     url: z.string().optional(),
     comment: z.string().optional().describe(recipeCommentDescription),
     imagePath: z.string().optional().describe('Absolute path to a local image file to upload and attach (replaces any current image)')
