@@ -41,7 +41,7 @@ Inloggning sker med Google (Apple ID förberett men kräver Apple Developer-kont
 
 ## MCP-server: planera måltider med Claude
 
-`mcp/` innehåller en MCP-server som låter Claude läsa recepten och skapa/redigera måltider via sajtens API — spåna fram en veckoplan i chatten och få den inmatad automatiskt. Verktyg: `list_recipes`, `get_week`, `create_meal`, `update_meal`, `delete_meal`.
+`mcp/` innehåller en MCP-server som låter Claude läsa recepten och skapa/redigera måltider via sajtens API — spåna fram en veckoplan i chatten och få den inmatad automatiskt. Verktyg: `list_recipes`, `create_recipe`, `update_recipe` (kan ladda upp en lokal bildfil), `get_week`, `create_meal`, `update_meal`, `delete_meal`.
 
 1. Generera en token (`openssl rand -hex 32`) och lägg den i `API_TOKENS` på Railway-tjänsten.
 2. `cd mcp && npm install`

@@ -5,6 +5,8 @@
 // Env:
 //   MAT_API_URL   e.g. https://mat.example.com (no trailing slash)
 //   MAT_API_TOKEN one of the server's API_TOKENS
+import { readFile } from 'node:fs/promises'
+import { extname } from 'node:path'
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js'
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { z } from 'zod'
@@ -34,6 +36,34 @@ async function api (method, path, body) {
 
 function json (data) {
   return { content: [{ type: 'text', text: JSON.stringify(data, null, 2) }] }
+}
+
+const IMAGE_TYPES = {
+  '.jpg': 'image/jpeg',
+  '.jpeg': 'image/jpeg',
+  '.png': 'image/png',
+  '.webp': 'image/webp',
+  '.gif': 'image/gif',
+  '.heic': 'image/heic'
+}
+
+// Uploads a local image file and returns its /api/images/<id> URL
+async function uploadImage (imagePath) {
+  const contentType = IMAGE_TYPES[extname(imagePath).toLowerCase()]
+  if (!contentType) {
+    throw new Error(`Unsupported image type: ${imagePath} (use ${Object.keys(IMAGE_TYPES).join(', ')})`)
+  }
+  const data = await readFile(imagePath)
+  const filename = encodeURIComponent(imagePath.split('/').pop())
+  const res = await fetch(`${BASE}/api/images?filename=${filename}`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${TOKEN}`, 'Content-Type': contentType },
+    body: data
+  })
+  if (!res.ok) {
+    throw new Error(`Image upload failed: ${res.status} ${await res.text()}`)
+  }
+  return (await res.json()).url
 }
 
 const server = new McpServer({ name: 'mat', version: '1.0.0' })
@@ -104,6 +134,52 @@ server.registerTool('update_meal', {
     recipeIds: changes.recipeIds ?? current.recipeIds
   })
   return json(meal)
+})
+
+const recipeCommentDescription = 'The recipe itself as markdown: a short intro if useful, then "### Ingredienser" as a bulleted list and "### Gör så här" as a numbered list. Write in Swedish. For link-only recipes this can be a one-line description instead.'
+
+server.registerTool('create_recipe', {
+  title: 'Create a recipe',
+  description: 'Save a recipe. Either link an external recipe (url + a short comment), or write a full recipe in the comment field. imagePath uploads a local image file and attaches it.',
+  inputSchema: {
+    title: z.string().describe('Recipe title, e.g. "Pasta carbonara". When the recipe text is authored by Claude (a full recipe written in the comment field, not a link to someone else\'s recipe), end the title with " 🤖" so the family can see it is Claude\'s own recipe.'),
+    url: z.string().url().optional().describe('Link to an external recipe page'),
+    comment: z.string().optional().describe(recipeCommentDescription),
+    imagePath: z.string().optional().describe('Absolute path to a local image file to upload and attach')
+  }
+}, async ({ title, url, comment, imagePath }) => {
+  const imageUrl = imagePath ? await uploadImage(imagePath) : null
+  const { recipe } = await api('POST', '/recipes', {
+    title,
+    url: url ?? '',
+    comment: comment ?? '',
+    imageUrl
+  })
+  return json(recipe)
+})
+
+server.registerTool('update_recipe', {
+  title: 'Update a recipe',
+  description: 'Change a recipe\'s title, url or comment, or attach an image via imagePath. Omitted fields keep their current value.',
+  inputSchema: {
+    id: z.number().int(),
+    title: z.string().optional().describe('End with " 🤖" when the recipe text is authored by Claude (see create_recipe)'),
+    url: z.string().optional(),
+    comment: z.string().optional().describe(recipeCommentDescription),
+    imagePath: z.string().optional().describe('Absolute path to a local image file to upload and attach (replaces any current image)')
+  }
+}, async ({ id, imagePath, ...changes }) => {
+  const { recipes } = await api('GET', '/recipes')
+  const current = recipes.find((r) => r.id === id)
+  if (!current) throw new Error(`Recipe ${id} not found`)
+  const imageUrl = imagePath ? await uploadImage(imagePath) : current.imageUrl
+  const { recipe } = await api('PUT', `/recipes/${id}`, {
+    title: changes.title ?? current.title,
+    url: changes.url ?? current.url,
+    comment: changes.comment ?? current.comment,
+    imageUrl
+  })
+  return json(recipe)
 })
 
 server.registerTool('delete_meal', {
