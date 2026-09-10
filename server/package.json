@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "date-fns": "^4.1.0",
-    "drizzle-orm": "^0.44.2",
+    "drizzle-orm": "^0.45.2",
     "express": "^5.1.0",
     "jose": "^6.2.12",
     "morgan": "^1.10.0",
@@ -28,12 +28,12 @@
     "@types/node": "^22.15.0",
     "@types/pg": "^8.15.0",
     "@types/supertest": "^6.0.3",
-    "drizzle-kit": "^0.31.1",
+    "drizzle-kit": "^0.31.10",
     "mongodb": "^7.6.0",
     "pg-mem": "^3.0.5",
     "supertest": "^7.1.0",
     "tsx": "^4.19.0",
     "typescript": "^5.8.0",
-    "vitest": "^3.2.0"
+    "vitest": "^5.0.0"
   }
 }
