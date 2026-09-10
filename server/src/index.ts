@@ -31,7 +31,12 @@ if (!sessionSecret) {
   console.warn('WARNING: SESSION_SECRET is not set — the API is running WITHOUT authentication.')
 }
 
-const app = createApp(db, sessionSecret ? { auth: { sessionSecret, allowedEmails } } : {})
+const apiTokens = (process.env.API_TOKENS ?? '')
+  .split(',')
+  .map((t) => t.trim())
+  .filter(Boolean)
+
+const app = createApp(db, sessionSecret ? { auth: { sessionSecret, allowedEmails, apiTokens } } : {})
 const port = Number(process.env.PORT) || 8081
 app.listen(port, () => {
   console.log(`Listening on ${port}`)

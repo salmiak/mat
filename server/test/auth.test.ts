@@ -26,6 +26,7 @@ function createAuthedApp (result: VerifiedIdentity | Error = identity()) {
     auth: {
       sessionSecret: SECRET,
       allowedEmails: ['anna@example.com'],
+      apiTokens: ['valid-api-token'],
       providers: [{ name: 'google', clientId: 'test-client' }],
       verifyIdToken: async () => {
         if (result instanceof Error) throw result
@@ -98,6 +99,16 @@ describe('auth', () => {
     const { app } = createAuthedApp(Object.assign(new Error('Invalid id token'), { status: 401 }))
     const res = await request(app).post('/api/auth/google').send({ credential: 'bad' })
     expect(res.status).toBe(401)
+  })
+
+  it('accepts a valid bearer token and rejects wrong ones', async () => {
+    const { app } = createAuthedApp()
+    const ok = await request(app).get('/api/meals?week=1&year=2026')
+      .set('Authorization', 'Bearer valid-api-token')
+    expect(ok.status).toBe(200)
+    const bad = await request(app).get('/api/meals?week=1&year=2026')
+      .set('Authorization', 'Bearer wrong-token')
+    expect(bad.status).toBe(401)
   })
 
   it('rejects tampered session cookies', async () => {

@@ -9,6 +9,8 @@ export interface AuthConfig {
   sessionSecret: string
   /** Lower-cased emails that are allowed to sign in. Empty = nobody. */
   allowedEmails: string[]
+  /** Long-lived bearer tokens for API clients (the MCP server). */
+  apiTokens?: string[]
   /** Injectable for tests; defaults to real JWKS verification. */
   verifyIdToken?: IdTokenVerifier
   providers?: EnabledProvider[]
