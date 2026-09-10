@@ -2,6 +2,7 @@ import { Router } from 'express'
 import { asc, eq, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
 import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
+import type { ChangeBus } from '../events.js'
 
 interface RecipePayload {
   title?: string
@@ -53,7 +54,7 @@ export function serializeRecipe (recipe: typeof recipes.$inferSelect, score = 0)
   }
 }
 
-export function recipesRouter (db: Db): Router {
+export function recipesRouter (db: Db, bus?: ChangeBus): Router {
   const router = Router()
 
   // GET /api/recipes — all recipes, ordered by title
@@ -66,7 +67,9 @@ export function recipesRouter (db: Db): Router {
   // POST /api/recipes
   router.post('/', async (req, res) => {
     const [recipe] = await db.insert(recipes).values(recipeFields(req.body)).returning()
-    res.status(201).json({ recipe: serializeRecipe(recipe) })
+    const serialized = serializeRecipe(recipe)
+    bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
+    res.status(201).json({ recipe: serialized })
   })
 
   // PUT /api/recipes/:id
@@ -79,12 +82,16 @@ export function recipesRouter (db: Db): Router {
       res.status(404).json({ error: 'Recipe not found' })
       return
     }
-    res.json({ recipe: serializeRecipe(recipe) })
+    const serialized = serializeRecipe(recipe, (await loadScores(db)).get(recipe.id) ?? 0)
+    bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
+    res.json({ recipe: serialized })
   })
 
   // DELETE /api/recipes/:id
   router.delete('/:id', async (req, res) => {
-    await db.delete(recipes).where(eq(recipes.id, Number(req.params.id)))
+    const id = Number(req.params.id)
+    await db.delete(recipes).where(eq(recipes.id, id))
+    bus?.publish({ resource: 'recipes', action: 'deleted', id })
     res.json({ success: true })
   })
 

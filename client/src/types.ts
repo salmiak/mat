@@ -50,6 +50,14 @@ export interface AuthProvider {
   clientId: string
 }
 
+// Mirror of the server's ChangeEvent (server/src/events.ts), broadcast on /api/events
+export type ChangeEvent =
+  | { resource: 'meals', action: 'saved', meal: Meal }
+  | { resource: 'meals', action: 'deleted', id: number }
+  | { resource: 'meals', action: 'voted', id: number, upvotes: number, downvotes: number }
+  | { resource: 'recipes', action: 'saved', recipe: Recipe }
+  | { resource: 'recipes', action: 'deleted', id: number }
+
 export interface MeResponse {
   user: AuthUser | null
   providers: AuthProvider[]

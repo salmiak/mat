@@ -8,13 +8,17 @@ import { recipesRouter } from './routes/recipes.js'
 import { imagesRouter } from './routes/images.js'
 import { votesRouter } from './routes/votes.js'
 import { authRouter, type AuthConfig } from './routes/auth.js'
+import { eventsRouter } from './routes/events.js'
 import { sessionUserIdFromRequest } from './auth/session.js'
+import { ChangeBus } from './events.js'
 
 export interface AppOptions {
   clientDist?: string
   logging?: boolean
   /** Omit to run without authentication (local preview/tests only). */
   auth?: AuthConfig
+  /** Injectable for tests; createApp makes one when omitted. */
+  bus?: ChangeBus
 }
 
 export function createApp (db: Db, options: AppOptions = {}): Express {
@@ -24,6 +28,7 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
   }
   app.use(express.json())
 
+  const bus = options.bus ?? new ChangeBus()
   const auth = options.auth
   if (auth) {
     app.use('/api/auth', authRouter(db, auth))
@@ -46,10 +51,11 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
     })
   }
 
-  app.use('/api/meals', mealsRouter(db))
-  app.use('/api/recipes', recipesRouter(db))
+  app.use('/api/meals', mealsRouter(db, bus))
+  app.use('/api/recipes', recipesRouter(db, bus))
   app.use('/api/images', imagesRouter(db))
-  app.use('/api/votes', votesRouter(db))
+  app.use('/api/votes', votesRouter(db, bus))
+  app.use('/api/events', eventsRouter(bus))
 
   app.get('/api/health', (_req, res) => {
     res.json({ ok: true })
