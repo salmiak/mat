@@ -42,7 +42,8 @@ const messages = {
     'Recipe with this link exists': 'A recipe with this link already exists: {title}. Saving will use it instead of creating a duplicate.',
     'Create recipe from link': 'Create a new recipe from the link',
     'Generate AI image': 'Generate AI image',
-    'Fetch image from link': 'Fetch image from the link',
+    'Fetch image from link': 'Fetch from link',
+    'Upload image': 'Upload image',
     'Generating image': 'Updating the image…',
     'Image update failed': 'Could not update the image.'
   },
@@ -87,7 +88,8 @@ const messages = {
     'Recipe with this link exists': 'Det finns redan ett recept med den här länken: {title}. Sparar du används det istället för att skapa en dublett.',
     'Create recipe from link': 'Skapa nytt recept från länken',
     'Generate AI image': 'Generera AI-bild',
-    'Fetch image from link': 'Hämta bild från länken',
+    'Fetch image from link': 'Hämta från länken',
+    'Upload image': 'Ladda upp bild',
     'Generating image': 'Uppdaterar bilden…',
     'Image update failed': 'Kunde inte uppdatera bilden.'
   }

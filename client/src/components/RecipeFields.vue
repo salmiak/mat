@@ -1,26 +1,28 @@
 <template>
+  <div v-if="recipe.imageUrl" class="imagePreview">
+    <img :src="recipe.imageUrl" :alt="recipe.title" />
+    <div class="toolbar">
+      <sure-button class="iconBtn" @clicked="recipe.imageUrl = null"><Trash2 :size="16" /></sure-button>
+    </div>
+  </div>
   <div>
     <input type="text" name="title" :placeholder="t('Title')" v-model="recipe.title">
   </div>
   <div>
-    <div v-if="recipe.imageUrl" style="position: relative; float: left; clear: both">
-      <img :src="recipe.imageUrl" class="recipe-thumbnail" />
-      <div class="toolbar">
-        <sure-button class="iconBtn" @clicked="recipe.imageUrl = null"><Trash2 :size="16" /></sure-button>
-      </div>
-    </div>
-    <image-upload v-else @upload-start="emit('upload-start')" @upload-done="imageAttached" />
-    <!-- Replacing the image on demand only works on a saved recipe -->
-    <div v-if="recipe.id" class="imageActions">
-      <button :disabled="imageBusy" @click="replaceImage('generate-ai-image', { title: recipe.title, comment: recipe.comment })">
-        <Sparkles :size="14" /> {{ t('Generate AI image') }}
+    <div class="imageActions">
+      <image-upload @upload-start="emit('upload-start')" @upload-done="imageAttached" />
+      <!-- Regenerating on demand only works on a saved recipe -->
+      <button v-if="recipe.id" :disabled="imageBusy" @click="replaceImage('generate-ai-image', { title: recipe.title, comment: recipe.comment })">
+        <Sparkles :size="16" />
+        <span>{{ t('Generate AI image') }}</span>
       </button>
-      <button v-if="hasUrl" :disabled="imageBusy" @click="replaceImage('fetch-og-image', { url: recipe.url })">
-        <ImageDown :size="14" /> {{ t('Fetch image from link') }}
+      <button v-if="recipe.id && hasUrl" :disabled="imageBusy" @click="replaceImage('fetch-og-image', { url: recipe.url })">
+        <ImageDown :size="16" />
+        <span>{{ t('Fetch image from link') }}</span>
       </button>
-      <span v-if="imageBusy" class="hint">{{ t('Generating image') }}</span>
-      <span v-else-if="imageError" class="hint error">{{ t('Image update failed') }}</span>
     </div>
+    <p v-if="imageBusy" class="hint">{{ t('Generating image') }}</p>
+    <p v-else-if="imageError" class="hint error">{{ t('Image update failed') }}</p>
   </div>
   <div>
     <input type="url" name="url" :placeholder="t('Url')" v-model="recipe.url" @blur="fetchPreview">
@@ -144,20 +146,47 @@ onMounted(() => {
   max-width: 120px;
   height: auto;
 }
+.imagePreview {
+  position: relative;
+  margin-bottom: @bu/2;
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 7;
+    object-fit: cover;
+    border-radius: @radius;
+  }
+}
+// Square-ish action buttons: icon on top, centered label on up to two lines
 .imageActions {
-  clear: both;
   display: flex;
-  align-items: center;
-  flex-wrap: wrap;
   gap: @bu/2;
-  margin: @bu/2 0;
-  .hint {
-    font-size: 0.8rem;
-    opacity: 0.8;
+  margin: 0 0 @bu/2;
+  :deep(> button), > button {
+    flex: 1 1 0;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: @bu/2 @bu/4;
+    min-height: @bu*4;
+    line-height: 1.25;
+    font-size: 0.65rem;
+    text-align: center;
+    svg {
+      vertical-align: 0;
+    }
   }
-  .error {
-    color: darken(@cSecondary, 30%);
-  }
+}
+.hint {
+  font-size: 0.8rem;
+  opacity: 0.8;
+  margin: 0 0 @bu/2;
+}
+.error {
+  color: darken(@cSecondary, 30%);
 }
 .preview-hint {
   display: flex;
