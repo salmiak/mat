@@ -1,7 +1,11 @@
 <template>
-  <div v-if="recipe.imageUrl" class="imagePreview">
-    <img :src="recipe.imageUrl" :alt="recipe.title" />
-    <div class="toolbar">
+  <!-- While a new image is generated the status shows over the current
+       image, or as a placeholder where the image will appear -->
+  <div v-if="recipe.imageUrl || imageBusy" class="imagePreview">
+    <img v-if="recipe.imageUrl" :src="recipe.imageUrl" :alt="recipe.title" />
+    <div v-else class="placeholder"></div>
+    <div v-if="imageBusy" class="busyOverlay">{{ t('Generating image') }}</div>
+    <div v-else-if="recipe.imageUrl" class="toolbar">
       <sure-button class="iconBtn" @clicked="recipe.imageUrl = null"><Trash2 :size="16" /></sure-button>
     </div>
   </div>
@@ -21,8 +25,7 @@
         <span>{{ t('Fetch image from link') }}</span>
       </button>
     </div>
-    <p v-if="imageBusy" class="hint">{{ t('Generating image') }}</p>
-    <p v-else-if="imageError" class="hint error">{{ t('Image update failed') }}</p>
+    <p v-if="imageError && !imageBusy" class="hint error">{{ t('Image update failed') }}</p>
   </div>
   <div>
     <input type="url" name="url" :placeholder="t('Url')" v-model="recipe.url" @blur="fetchPreview">
@@ -149,12 +152,26 @@ onMounted(() => {
 .imagePreview {
   position: relative;
   margin-bottom: @bu/2;
-  img {
+  img, .placeholder {
     display: block;
     width: 100%;
     aspect-ratio: 16 / 9;
     object-fit: cover;
     border-radius: @radius;
+    background: darken(@cRecipeBg, 4%);
+  }
+  .busyOverlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: fade(@cRecipeBg, 70%);
+    border-radius: @radius;
+    font-size: 0.8rem;
+    font-weight: 700;
+    .capitals;
+    color: @cPrimary;
   }
 }
 // Square-ish action buttons: icon on top, centered label on up to two lines
