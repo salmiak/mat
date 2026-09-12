@@ -89,7 +89,7 @@ const sourceHost = computed(() => {
     img {
       display: block;
       width: 100%;
-      aspect-ratio: 16 / 7;
+      aspect-ratio: 16 / 9;
       object-fit: cover;
     }
   }
