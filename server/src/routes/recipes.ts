@@ -50,6 +50,9 @@ export function serializeRecipe (recipe: typeof recipes.$inferSelect, score = 0)
     comment: recipe.comment,
     url: recipe.url,
     score,
+    // 'upload' | 'og' | 'ai' | null — lets the client treat AI/og images
+    // as decoration rather than linking to the full-size file
+    imageSource: recipe.imageSource,
     imageUrl: recipe.imageId != null
       ? `/api/images/${recipe.imageId}`
       : (recipe.legacyImageUrl || null),
