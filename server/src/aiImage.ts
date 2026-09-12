@@ -22,12 +22,11 @@ export const generateAiImage: AiImageGenerator = async (title, comment) => {
   // glance next to real photos of the family's cooking.
   const context = comment.replace(/\s+/g, ' ').slice(0, 300)
   const prompt =
-    `Flat gouache illustration of the dish "${title}".` +
+    `Risograph print illustration of the home-cooked dish "${title}".` +
     (context ? ` The recipe: ${context}.` : '') +
-    ' Retro cookbook illustration style: simplified flat shapes, matte gouache texture,' +
-    ' a limited palette of soft aqua (#99e1e5), blush pink (#fbafaf), cream white and warm food colors.' +
-    ' The dish centered on a simple plate against a plain single-color background.' +
-    ' Clearly stylized and illustrated, absolutely not photorealistic. No text, no people, no hands.'
+    ' Visible halftone dot texture, slight color misregistration between layers,' +
+    ' 2 spot colors only (e.g. teal and coral) plus paper white, grainy print texture,' +
+    ' flat shapes with minimal shading. No text, no logos, no people, no hands, no photorealism.'
 
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
