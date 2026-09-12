@@ -15,7 +15,9 @@
 
     <new-meal :week="week" :year="year" />
 
-    <meal-card v-for="meal in mealsInCurrentWeek" :key="meal.id" :meal="meal" />
+    <div class="meals">
+      <meal-card v-for="meal in mealsInCurrentWeek" :key="meal.id" :meal="meal" />
+    </div>
   </div>
 </template>
 
@@ -83,6 +85,24 @@ header {
     width: 3rem;
     line-height: 3rem;
     text-align: center;
+  }
+}
+
+// Wide screens: the meal cards sit side by side in a grid
+@media @wide {
+  .meals {
+    max-width: @wideMax;
+    margin: 0 auto;
+    padding: 0 @bu;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(@bu * 19, 1fr));
+    column-gap: @bu;
+    align-items: start;
+    :deep(.meal) {
+      width: 100%;
+      max-width: none;
+      margin: @bu/2 0;
+    }
   }
 }
 </style>
