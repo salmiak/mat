@@ -101,6 +101,37 @@ describe('AI image fallback', () => {
     expect((await request(app).get(aiBefore)).status).toBe(404)
   })
 
+  it('generate-missing-images backfills image-less recipes, og before ai', async () => {
+    // Both sources fail during creation, so the recipes end up image-less
+    let sourcesWork = false
+    const ai = vi.fn(async () => sourcesWork ? { data: await tinyPng(), contentType: 'image/png' } : null)
+    const og: OgImageFetcher = async () =>
+      sourcesWork ? { data: await tinyPng(), contentType: 'image/png' } : null
+    const app = createAiApp(ai, og)
+
+    await request(app).post('/api/recipes').send({ title: 'Utan bild' })
+    await request(app).post('/api/recipes').send({ title: 'Med länk', url: 'https://x.se/1' })
+    const upload = await request(app).post('/api/images')
+      .set('Content-Type', 'image/png').send(await tinyPng())
+    await request(app).post('/api/recipes').send({ title: 'Uppladdad', imageUrl: upload.body.url })
+    await vi.waitFor(() => expect(ai).toHaveBeenCalledTimes(2))
+
+    sourcesWork = true
+    const res = await request(app).post('/api/recipes/generate-missing-images')
+    expect(res.status).toBe(202)
+    expect(res.body.queued).toBe(2)
+
+    await vi.waitFor(async () => {
+      const { body } = await request(app).get('/api/recipes')
+      const byTitle = (title: string) => body.recipes.find((r: { title: string }) => r.title === title)
+      // No link -> AI image; link -> og image; the upload stays untouched
+      expect(byTitle('Utan bild').imageSource).toBe('ai')
+      expect(byTitle('Med länk').imageSource).toBe('og')
+      expect(byTitle('Uppladdad').imageUrl).toBe(upload.body.url)
+    })
+    expect(ai).toHaveBeenCalledTimes(3)
+  })
+
   it('generate-ai-image replaces the image on request, with draft overrides', async () => {
     const ai = vi.fn(async () => ({ data: await tinyPng(), contentType: 'image/png' }))
     const app = createAiApp(ai)

@@ -99,18 +99,19 @@ export async function regenerateAiImages (
 
 // Fire-and-forget AI-image fallback for a recipe with no image at all.
 // Never touches uploads or og images, and a concurrent upload wins.
+// Resolves to whether an image was attached.
 export async function attachAiImage (
   db: Db,
   bus: ChangeBus | undefined,
   recipeId: number,
   generator: AiImageGenerator = generateAiImage
-): Promise<void> {
+): Promise<boolean> {
   try {
     const [recipe] = await db.select().from(recipes).where(eq(recipes.id, recipeId))
-    if (!recipe || recipe.imageId !== null || recipe.legacyImageUrl) return
+    if (!recipe || recipe.imageId !== null || recipe.legacyImageUrl) return false
 
     const generated = await generator(recipe.title, recipe.comment)
-    if (!generated) return
+    if (!generated) return false
     const imageId = await storeImage(db, generated.data, generated.contentType, 'ai-image.webp')
 
     const [updated] = await db.update(recipes)
@@ -119,11 +120,13 @@ export async function attachAiImage (
       .returning()
     if (!updated) {
       await db.delete(images).where(eq(images.id, imageId))
-      return
+      return false
     }
 
     bus?.publish({ resource: 'recipes', action: 'saved', recipe: serializeRecipe(updated) })
+    return true
   } catch (err) {
     console.warn(`AI image generation failed for recipe ${recipeId}:`, (err as Error).message)
+    return false
   }
 }
