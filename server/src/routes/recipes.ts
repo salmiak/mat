@@ -1,5 +1,5 @@
 import { Router, type Response } from 'express'
-import { asc, eq, ne, sql } from 'drizzle-orm'
+import { and, asc, eq, isNull, ne, or, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
 import { images, mealRecipes, mealVotes, recipes } from '../db/schema.js'
 import { storeImage } from './images.js'
@@ -95,6 +95,30 @@ export function recipesRouter (
     res.status(202).json({ queued: targets.length })
     void regenerateAiImages(db, bus, aiGenerator)
       .then(({ total, regenerated }) => console.log(`AI image regeneration done: ${regenerated}/${total}`))
+  })
+
+  // POST /api/recipes/generate-missing-images — give every recipe without
+  // an image one: the linked page's og:image first, an AI image as
+  // fallback (same order as at creation). Responds immediately; the work
+  // runs sequentially in the background (Gemini rate limits) and
+  // publishes bus events per updated recipe.
+  router.post('/generate-missing-images', async (_req, res) => {
+    if (aiGenerator == null && ogFetcher === null) {
+      res.status(503).json({ error: 'Image generation is not configured' })
+      return
+    }
+    const targets = await db.select({ id: recipes.id }).from(recipes)
+      .where(and(isNull(recipes.imageId), or(isNull(recipes.legacyImageUrl), eq(recipes.legacyImageUrl, ''))))
+    res.status(202).json({ queued: targets.length })
+    void (async () => {
+      let attached = 0
+      for (const { id } of targets) {
+        const gotOg = ogFetcher === null ? false : await attachOgImage(db, bus, id, ogFetcher)
+        if (gotOg) attached++
+        else if (aiGenerator !== null && await attachAiImage(db, bus, id, aiGenerator)) attached++
+      }
+      console.log(`Missing-image backfill done: ${attached}/${targets.length}`)
+    })()
   })
 
   // Replace a recipe's image with a freshly generated/fetched one, on the
