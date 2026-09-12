@@ -92,6 +92,41 @@ async function safeFetch (url: string, accept: string, maxHops = 3): Promise<Res
   return null
 }
 
+// og:title, falling back to the <title> tag
+export function extractOgTitle (html: string): string | null {
+  const decode = (s: string) => s
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#x27;|&apos;/g, "'")
+    .replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ')
+    .trim()
+  for (const tag of html.match(/<meta\s[^>]*>/gi) ?? []) {
+    const key = /(?:property|name)\s*=\s*["']([^"']+)["']/i.exec(tag)?.[1]?.toLowerCase()
+    const content = /content\s*=\s*["']([^"']+)["']/i.exec(tag)?.[1]
+    if (key === 'og:title' && content) return decode(content)
+  }
+  const title = /<title[^>]*>([^<]*)<\/title>/i.exec(html)?.[1]
+  return title ? decode(title) : null
+}
+
+export interface LinkPreview {
+  title: string | null
+  imageUrl: string | null
+}
+
+export type LinkPreviewFetcher = (pageUrl: string) => Promise<LinkPreview>
+
+// Page title + og:image URL for prefilling the recipe form — nothing is
+// downloaded or stored; the image is fetched properly on save.
+export const fetchLinkPreview: LinkPreviewFetcher = async (pageUrl) => {
+  const res = await safeFetch(pageUrl, 'text/html')
+  if (!res) return { title: null, imageUrl: null }
+  const html = (await res.text()).slice(0, MAX_HTML_BYTES)
+  return {
+    title: extractOgTitle(html),
+    imageUrl: extractOgImageUrl(html, res.url || pageUrl)
+  }
+}
+
 export type OgImageFetcher = (pageUrl: string) => Promise<{ data: Buffer, contentType: string } | null>
 
 // Downloads the linked page, finds its og:image, and recompresses it to a
