@@ -26,14 +26,20 @@ export const generateAiImage: AiImageGenerator = async (title, comment) => {
     (context ? ` The recipe: ${context}.` : '') +
     ' Visible halftone dot texture, slight color misregistration between layers,' +
     ' 2 spot colors only (e.g. teal and coral) plus paper white, grainy print texture,' +
-    ' flat shapes with minimal shading. No text, no logos, no people, no hands, no photorealism.'
+    ' flat shapes with minimal shading. Wide landscape composition, 16:7 aspect ratio.' +
+    ' No text, no logos, no people, no hands, no photorealism.'
 
   const res = await fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
     {
       method: 'POST',
       headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: prompt }] }],
+        // 16:7 is not an accepted value — 16:9 is the closest; the cards
+        // crop to 16:7 with object-fit: cover anyway
+        generationConfig: { imageConfig: { aspectRatio: '16:9' } }
+      }),
       signal: AbortSignal.timeout(60_000)
     }
   )
