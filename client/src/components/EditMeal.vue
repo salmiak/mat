@@ -47,24 +47,7 @@
           <X class="iconBtn pull-right" :size="16" @click="removeNewRecipe(index)" />
         </div>
         <h3>{{ t('Create new recipe') }}</h3>
-        <div>
-          <input type="text" name="title" :placeholder="t('Title')" v-model="recipe.title">
-        </div>
-        <div>
-          <div v-if="recipe.imageUrl" style="position: relative; float: left; clear: both">
-            <img :src="recipe.imageUrl" class="recipe-thumbnail" />
-            <div class="toolbar">
-              <sure-button class="iconBtn" @clicked="recipe.imageUrl = null"><Trash2 :size="16" /></sure-button>
-            </div>
-          </div>
-          <image-upload v-else @upload-start="uploadsInProgress++" @upload-done="imageAttached($event, index)" />
-        </div>
-        <div>
-          <input type="url" name="url" :placeholder="t('Url')" v-model="recipe.url">
-        </div>
-        <div>
-          <growing-textarea :placeholder="t('Comment')" v-model="recipe.comment" />
-        </div>
+        <recipe-fields :recipe="recipe" @upload-start="uploadsInProgress++" @upload-done="uploadsInProgress--" />
       </div>
       <button @click="addNewRecipe"><Plus :size="14" /> {{ t('Create new recipe') }}</button>
     </div>
@@ -84,10 +67,9 @@ import Fuse from 'fuse.js'
 import { formatISO, setISOWeek, setISOWeekYear, startOfISOWeek } from 'date-fns'
 import { useRecipesStore } from '@/stores/recipes'
 import type { NewMeal, NewRecipe } from '@/types'
-import ImageUpload from './ImageUpload.vue'
-import SureButton from './SureButton.vue'
 import GrowingTextarea from './GrowingTextarea.vue'
-import { Plus, Search, Trash2, X } from 'lucide-vue-next'
+import RecipeFields from './RecipeFields.vue'
+import { Plus, Search, X } from 'lucide-vue-next'
 
 type DraftRecipe = NewRecipe & { tmpId: number }
 
@@ -161,11 +143,6 @@ const date = computed(() => {
   }
   return formatISO(startOfISOWeek(base), { representation: 'date' })
 })
-
-function imageAttached (e: { imageUrl: string }, index: number) {
-  uploadsInProgress.value -= 1
-  newRecipes.value[index].imageUrl = e.imageUrl || null
-}
 
 function addNewRecipe () {
   newRecipes.value.push({
@@ -268,10 +245,6 @@ async function saveMeal () {
   h3 {
     margin-top: 0;
     line-height: @bu;
-  }
-  .recipe-thumbnail {
-    max-width: 120px;
-    height: auto;
   }
 }
 </style>
