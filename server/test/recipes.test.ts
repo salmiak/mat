@@ -28,6 +28,21 @@ describe('POST /api/recipes', () => {
     expect(res.body.recipe.junk).toBeUndefined()
   })
 
+  it('reuses an existing recipe when the url matches (trailing slash ignored)', async () => {
+    const first = await request(app).post('/api/recipes')
+      .send({ title: 'Pannkakor', url: 'https://example.com/pannkakor/' })
+    expect(first.status).toBe(201)
+
+    const dup = await request(app).post('/api/recipes')
+      .send({ title: 'Pannkakor igen', url: 'https://example.com/pannkakor' })
+    expect(dup.status).toBe(200)
+    expect(dup.body.recipe.id).toBe(first.body.recipe.id)
+    expect(dup.body.recipe.title).toBe('Pannkakor')
+
+    const list = await request(app).get('/api/recipes')
+    expect(list.body.recipes).toHaveLength(1)
+  })
+
   it('accepts an uploaded image url and a legacy external url', async () => {
     const upload = await request(app).post('/api/images')
       .set('Content-Type', 'image/png').send(Buffer.from([1, 2, 3]))

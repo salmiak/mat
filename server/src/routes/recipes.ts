@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { asc, eq, sql } from 'drizzle-orm'
+import { asc, eq, ne, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
 import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
 import type { ChangeBus } from '../events.js'
@@ -25,6 +25,10 @@ function recipeFields (body: RecipePayload) {
     imageId: match ? Number(match[1]) : null,
     legacyImageUrl: match ? null : imageUrl
   }
+}
+
+function normalizeUrl (url: string): string {
+  return url.trim().replace(/\/+$/, '')
 }
 
 // A recipe's score is the sum of thumb votes on the meals it belongs to
@@ -71,9 +75,19 @@ export function recipesRouter (db: Db, bus?: ChangeBus, ogFetcher?: OgImageFetch
     res.json({ recipes: rows.map((row) => serializeRecipe(row, scores.get(row.id) ?? 0)) })
   })
 
-  // POST /api/recipes
+  // POST /api/recipes — reuses an existing recipe when the url matches,
+  // so no client can create link duplicates
   router.post('/', async (req, res) => {
     const fields = recipeFields(req.body)
+    if (fields.url) {
+      const wanted = normalizeUrl(fields.url)
+      const rows = await db.select().from(recipes).where(ne(recipes.url, ''))
+      const existing = rows.find((r) => normalizeUrl(r.url) === wanted)
+      if (existing) {
+        res.json({ recipe: serializeRecipe(existing, (await loadScores(db)).get(existing.id) ?? 0) })
+        return
+      }
+    }
     const [recipe] = await db.insert(recipes).values({
       ...fields,
       imageSource: fields.imageId !== null || fields.legacyImageUrl ? 'upload' : null
