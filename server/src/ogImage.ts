@@ -156,45 +156,48 @@ export const fetchOgImage: OgImageFetcher = async (pageUrl) => {
 
 // Fire-and-forget: fetch the og:image for a link recipe and attach it,
 // unless a person has attached an image in the meantime. Broadcasts the
-// updated recipe so open clients see the thumbnail appear.
+// updated recipe so open clients see the thumbnail appear. Returns true
+// when an image was attached (the AI fallback runs otherwise).
 export async function attachOgImage (
   db: Db,
   bus: ChangeBus | undefined,
   recipeId: number,
   fetcher: OgImageFetcher = fetchOgImage
-): Promise<void> {
+): Promise<boolean> {
   try {
     const [recipe] = await db.select().from(recipes).where(eq(recipes.id, recipeId))
-    if (!recipe || !recipe.url) return
-    if (recipe.imageSource === 'upload' || recipe.legacyImageUrl) return
-    if (recipe.imageId !== null && recipe.imageSource !== 'og') return
+    if (!recipe || !recipe.url) return false
+    if (recipe.imageSource === 'upload' || recipe.legacyImageUrl) return true
 
     const fetched = await fetcher(recipe.url)
-    if (!fetched) return
+    if (!fetched) return false
     const imageId = await storeImage(db, fetched.data, fetched.contentType, 'og-image.webp')
 
     const previousImageId = recipe.imageId
     // Guard against a concurrent manual upload: attach only while the
-    // recipe still has no person-chosen image.
+    // recipe has no person-chosen image (an AI image may be replaced —
+    // the real photo from the linked page wins).
     const [updated] = await db.update(recipes)
       .set({ imageId, imageSource: 'og', updatedAt: new Date() })
       .where(and(
         eq(recipes.id, recipeId),
-        or(isNull(recipes.imageSource), eq(recipes.imageSource, 'og'))
+        or(isNull(recipes.imageSource), eq(recipes.imageSource, 'og'), eq(recipes.imageSource, 'ai'))
       ))
       .returning()
     if (!updated) {
       await db.delete(images).where(eq(images.id, imageId))
-      return
+      return true
     }
 
-    // The replaced og image is machine-fetched — drop the orphaned blob
+    // The replaced og/ai image is machine-made — drop the orphaned blob
     if (previousImageId !== null) {
       await db.delete(images).where(eq(images.id, previousImageId))
     }
 
     bus?.publish({ resource: 'recipes', action: 'saved', recipe: serializeRecipe(updated) })
+    return true
   } catch (err) {
     console.warn(`og-image fetch failed for recipe ${recipeId}:`, (err as Error).message)
+    return false
   }
 }

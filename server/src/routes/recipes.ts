@@ -4,6 +4,7 @@ import type { Db } from '../db/client.js'
 import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
 import type { ChangeBus } from '../events.js'
 import { attachOgImage, type OgImageFetcher } from '../ogImage.js'
+import { attachAiImage, type AiImageGenerator } from '../aiImage.js'
 
 interface RecipePayload {
   title?: string
@@ -59,13 +60,23 @@ export function serializeRecipe (recipe: typeof recipes.$inferSelect, score = 0)
   }
 }
 
-export function recipesRouter (db: Db, bus?: ChangeBus, ogFetcher?: OgImageFetcher | null): Router {
+export function recipesRouter (
+  db: Db,
+  bus?: ChangeBus,
+  ogFetcher?: OgImageFetcher | null,
+  aiGenerator?: AiImageGenerator | null
+): Router {
   const router = Router()
 
-  // Fire-and-forget og:image fetch for link recipes without a chosen image
-  function scheduleOgImage (recipeId: number) {
-    if (ogFetcher === null) return
-    void attachOgImage(db, bus, recipeId, ogFetcher)
+  // Fire-and-forget image pipeline for recipes without a chosen image:
+  // the linked page's og:image first, an AI-generated photo as fallback
+  function scheduleImage (recipeId: number) {
+    void (async () => {
+      const attached = ogFetcher === null ? false : await attachOgImage(db, bus, recipeId, ogFetcher)
+      if (!attached && aiGenerator !== null) {
+        await attachAiImage(db, bus, recipeId, aiGenerator)
+      }
+    })()
   }
 
   // GET /api/recipes — all recipes, ordered by title
@@ -95,8 +106,8 @@ export function recipesRouter (db: Db, bus?: ChangeBus, ogFetcher?: OgImageFetch
     const serialized = serializeRecipe(recipe)
     bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
     res.status(201).json({ recipe: serialized })
-    if (recipe.url && recipe.imageId === null && !recipe.legacyImageUrl) {
-      scheduleOgImage(recipe.id)
+    if (recipe.imageId === null && !recipe.legacyImageUrl) {
+      scheduleImage(recipe.id)
     }
   })
 
@@ -123,9 +134,9 @@ export function recipesRouter (db: Db, bus?: ChangeBus, ogFetcher?: OgImageFetch
     bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
     res.json({ recipe: serialized })
     const urlChanged = recipe.url !== current.url
-    if (recipe.url && recipe.imageSource !== 'upload' && !recipe.legacyImageUrl &&
-        (recipe.imageId === null || urlChanged)) {
-      scheduleOgImage(recipe.id)
+    if (recipe.imageSource !== 'upload' && !recipe.legacyImageUrl &&
+        (recipe.imageId === null || (recipe.url !== '' && urlChanged))) {
+      scheduleImage(recipe.id)
     }
   })
 

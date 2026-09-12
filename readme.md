@@ -69,6 +69,15 @@ cd server
 DATABASE_URL=postgres://... npx tsx scripts/fetch-og-images.mts
 ```
 
+## AI-genererade receptbilder
+
+Med `GEMINI_API_KEY` satt (API-nyckel från [Google AI Studio](https://aistudio.google.com/apikey)) får recept som helt saknar bild en AI-genererad matbild (Geminis bildmodell, ~0,4 kr/bild). Prioritet: uppladdad bild > og-bild från länken > AI. En AI-bild ersätts automatiskt om en riktig og-bild dyker upp när länken byts, och aldrig tvärtom. Utan nyckeln är funktionen av. För befintliga bildlösa recept:
+
+```bash
+cd server
+DATABASE_URL=postgres://... GEMINI_API_KEY=... npx tsx scripts/generate-ai-images.mts --limit 3
+```
+
 ## Migrera data från gamla appen (Mongo)
 
 Engångsjobb när du vill flytta innehållet:
