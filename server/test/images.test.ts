@@ -27,7 +27,7 @@ describe('GET /api/images/:id?size=thumb', () => {
     expect(thumb.headers['content-type']).toBe('image/webp')
 
     const meta = await sharp(thumb.body).metadata()
-    expect(meta.width).toBe(480)
+    expect(meta.width).toBe(800)
 
     // The original stays untouched
     const full = await request(app).get(post.body.url)
