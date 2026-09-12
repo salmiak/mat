@@ -10,6 +10,17 @@
       </div>
     </div>
     <image-upload v-else @upload-start="emit('upload-start')" @upload-done="imageAttached" />
+    <!-- Replacing the image on demand only works on a saved recipe -->
+    <div v-if="recipe.id" class="imageActions">
+      <button :disabled="imageBusy" @click="replaceImage('generate-ai-image', { title: recipe.title, comment: recipe.comment })">
+        <Sparkles :size="14" /> {{ t('Generate AI image') }}
+      </button>
+      <button v-if="hasUrl" :disabled="imageBusy" @click="replaceImage('fetch-og-image', { url: recipe.url })">
+        <ImageDown :size="14" /> {{ t('Fetch image from link') }}
+      </button>
+      <span v-if="imageBusy" class="hint">{{ t('Generating image') }}</span>
+      <span v-else-if="imageError" class="hint error">{{ t('Image update failed') }}</span>
+    </div>
   </div>
   <div>
     <input type="url" name="url" :placeholder="t('Url')" v-model="recipe.url" @blur="fetchPreview">
@@ -24,7 +35,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { api } from '@/services/api'
 import { useRecipesStore } from '@/stores/recipes'
@@ -32,7 +43,7 @@ import type { NewRecipe, Recipe } from '@/types'
 import ImageUpload from './ImageUpload.vue'
 import SureButton from './SureButton.vue'
 import GrowingTextarea from './GrowingTextarea.vue'
-import { Trash2 } from 'lucide-vue-next'
+import { ImageDown, Sparkles, Trash2 } from 'lucide-vue-next'
 
 // The shared title/image/url/comment fields for a recipe being edited —
 // used by EditRecipe and by the recipe drafts inside EditMeal. Mutates the
@@ -54,6 +65,31 @@ const recipesStore = useRecipesStore()
 function imageAttached (e: { imageUrl: string }) {
   emit('upload-done')
   props.recipe.imageUrl = e.imageUrl || null
+}
+
+const hasUrl = computed(() => /^https?:\/\//.test(props.recipe.url.trim()))
+
+// Force a new AI image or re-fetch the link's og image, replacing the
+// current one. Draft values are sent along so the buttons act on what's
+// on screen; the save button is blocked meanwhile via upload-start/done.
+const imageBusy = ref(false)
+const imageError = ref(false)
+
+async function replaceImage (action: 'generate-ai-image' | 'fetch-og-image', body: object) {
+  imageBusy.value = true
+  imageError.value = false
+  emit('upload-start')
+  try {
+    const { recipe } = await api.post<{ recipe: Recipe }>(`/recipes/${props.recipe.id}/${action}`, body)
+    props.recipe.imageUrl = recipe.imageUrl
+    props.recipe.imageSource = recipe.imageSource
+    recipesStore.setRecipe(recipe)
+  } catch {
+    imageError.value = true
+  } finally {
+    imageBusy.value = false
+    emit('upload-done')
+  }
 }
 
 // Paste a URL and the page's title fills in by itself (never over a title
@@ -107,6 +143,21 @@ onMounted(() => {
 .recipe-thumbnail {
   max-width: 120px;
   height: auto;
+}
+.imageActions {
+  clear: both;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: @bu/2;
+  margin: @bu/2 0;
+  .hint {
+    font-size: 0.8rem;
+    opacity: 0.8;
+  }
+  .error {
+    color: darken(@cSecondary, 30%);
+  }
 }
 .preview-hint {
   display: flex;

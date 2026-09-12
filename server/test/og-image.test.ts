@@ -137,3 +137,49 @@ describe('og image attachment', () => {
     expect(body.recipes[0].imageUrl).toBeNull()
   })
 })
+
+describe('POST /api/recipes/:id/fetch-og-image', () => {
+  async function png (): Promise<Buffer> {
+    return sharp({ create: { width: 8, height: 8, channels: 3, background: { r: 1, g: 2, b: 3 } } })
+      .png().toBuffer()
+  }
+
+  it('re-fetches and replaces the image, using a draft url override', async () => {
+    const fetched: string[] = []
+    const fetcher: OgImageFetcher = async (url) => {
+      fetched.push(url)
+      return { data: await png(), contentType: 'image/png' }
+    }
+    const app = createOgApp(fetcher)
+
+    const recipe = (await request(app).post('/api/recipes')
+      .send({ title: 'Länkrätt', url: 'https://x.se/gammal' })).body.recipe
+    await vi.waitFor(async () => {
+      const { body } = await request(app).get('/api/recipes')
+      expect(body.recipes[0].imageSource).toBe('og')
+    })
+    const before = (await request(app).get('/api/recipes')).body.recipes[0].imageUrl
+
+    const res = await request(app)
+      .post(`/api/recipes/${recipe.id}/fetch-og-image`)
+      .send({ url: 'https://x.se/ny' })
+
+    expect(res.status).toBe(200)
+    expect(fetched).toContain('https://x.se/ny')
+    expect(res.body.recipe.imageSource).toBe('og')
+    expect(res.body.recipe.imageUrl).not.toBe(before)
+    expect((await request(app).get(before)).status).toBe(404)
+  })
+
+  it('400s without a url and 422s when the page has no og image', async () => {
+    const fetcher: OgImageFetcher = async () => null
+    const app = createOgApp(fetcher)
+
+    const noUrl = (await request(app).post('/api/recipes').send({ title: 'Utan länk' })).body.recipe
+    expect((await request(app).post(`/api/recipes/${noUrl.id}/fetch-og-image`).send({})).status).toBe(400)
+
+    const withUrl = (await request(app).post('/api/recipes')
+      .send({ title: 'Med länk', url: 'https://x.se/tom' })).body.recipe
+    expect((await request(app).post(`/api/recipes/${withUrl.id}/fetch-og-image`).send({})).status).toBe(422)
+  })
+})

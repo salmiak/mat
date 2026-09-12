@@ -40,7 +40,11 @@ const messages = {
     'No login providers': 'No login method is configured.',
     'Image from link': 'This image is attached automatically when you save.',
     'Recipe with this link exists': 'A recipe with this link already exists: {title}. Saving will use it instead of creating a duplicate.',
-    'Create recipe from link': 'Create a new recipe from the link'
+    'Create recipe from link': 'Create a new recipe from the link',
+    'Generate AI image': 'Generate AI image',
+    'Fetch image from link': 'Fetch image from the link',
+    'Generating image': 'Updating the image…',
+    'Image update failed': 'Could not update the image.'
   },
   se: {
     Planning: 'Planering',
@@ -81,7 +85,11 @@ const messages = {
     'No login providers': 'Ingen inloggningsmetod är konfigurerad.',
     'Image from link': 'Bilden läggs till automatiskt när du sparar.',
     'Recipe with this link exists': 'Det finns redan ett recept med den här länken: {title}. Sparar du används det istället för att skapa en dublett.',
-    'Create recipe from link': 'Skapa nytt recept från länken'
+    'Create recipe from link': 'Skapa nytt recept från länken',
+    'Generate AI image': 'Generera AI-bild',
+    'Fetch image from link': 'Hämta bild från länken',
+    'Generating image': 'Uppdaterar bilden…',
+    'Image update failed': 'Kunde inte uppdatera bilden.'
   }
 }
 
