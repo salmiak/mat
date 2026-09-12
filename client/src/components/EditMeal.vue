@@ -25,7 +25,10 @@
           <span class="btn btn-sm" @click.stop="resultPage++">{{ t('Show more results') }}</span>
         </li>
       </ul>
-      <p v-if="recipeSearchTerm && recipeResultsNotSelected.length === 0">
+      <p v-if="searchTermIsUrl && recipeResultsNotSelected.length === 0">
+        <button @click="addNewRecipeFromUrl"><Plus :size="14" /> {{ t('Create recipe from link') }}</button>
+      </p>
+      <p v-else-if="recipeSearchTerm && recipeResultsNotSelected.length === 0">
         {{ t('No results') }}
       </p>
     </div>
@@ -121,9 +124,17 @@ watch(recipeSearchTerm, () => { resultPage.value = 0 })
 
 const fuse = computed(() => new Fuse(recipesStore.list, { keys: ['title', 'comment'] }))
 
+const searchTermIsUrl = computed(() => /^https?:\/\//.test(recipeSearchTerm.value.trim()))
+
 const recipeResults = computed(() => {
-  if (!recipeSearchTerm.value) return []
-  return fuse.value.search(recipeSearchTerm.value).map((result) => result.item)
+  const term = recipeSearchTerm.value.trim()
+  if (!term) return []
+  // A pasted link finds the recipe that already has it
+  if (searchTermIsUrl.value) {
+    const match = recipesStore.recipeByUrl(term)
+    return match ? [match] : []
+  }
+  return fuse.value.search(term).map((result) => result.item)
 })
 
 const recipeResultsNotSelected = computed(() =>
@@ -158,6 +169,19 @@ function addNewRecipe () {
     imageUrl: null,
     tmpId: Date.now()
   })
+}
+
+// No recipe has the pasted link: draft one from it. RecipeFields fetches
+// the page title and image preview as soon as the draft mounts.
+function addNewRecipeFromUrl () {
+  newRecipes.value.push({
+    title: '',
+    comment: '',
+    url: recipeSearchTerm.value.trim(),
+    imageUrl: null,
+    tmpId: Date.now()
+  })
+  recipeSearchTerm.value = ''
 }
 
 function removeNewRecipe (index: number) {

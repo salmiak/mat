@@ -39,7 +39,8 @@ const messages = {
     'Login failed': 'Login failed. Try again.',
     'No login providers': 'No login method is configured.',
     'Image from link': 'This image is attached automatically when you save.',
-    'Recipe with this link exists': 'A recipe with this link already exists: {title}. Saving will use it instead of creating a duplicate.'
+    'Recipe with this link exists': 'A recipe with this link already exists: {title}. Saving will use it instead of creating a duplicate.',
+    'Create recipe from link': 'Create a new recipe from the link'
   },
   se: {
     Planning: 'Planering',
@@ -79,7 +80,8 @@ const messages = {
     'Login failed': 'Inloggningen misslyckades. Försök igen.',
     'No login providers': 'Ingen inloggningsmetod är konfigurerad.',
     'Image from link': 'Bilden läggs till automatiskt när du sparar.',
-    'Recipe with this link exists': 'Det finns redan ett recept med den här länken: {title}. Sparar du används det istället för att skapa en dublett.'
+    'Recipe with this link exists': 'Det finns redan ett recept med den här länken: {title}. Sparar du används det istället för att skapa en dublett.',
+    'Create recipe from link': 'Skapa nytt recept från länken'
   }
 }
 

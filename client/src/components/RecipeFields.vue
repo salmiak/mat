@@ -24,7 +24,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, ref, watch } from 'vue'
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { api } from '@/services/api'
 import { useRecipesStore } from '@/stores/recipes'
@@ -93,6 +93,13 @@ watch(() => props.recipe.url, () => {
   debounceTimer = setTimeout(fetchPreview, 700)
 })
 onBeforeUnmount(() => clearTimeout(debounceTimer))
+
+// A draft created from a pasted link arrives with the url already set:
+// fetch right away. Only when the title is empty, so editing an existing
+// recipe doesn't flag itself as a duplicate.
+onMounted(() => {
+  if (props.recipe.url && !props.recipe.title.trim()) fetchPreview()
+})
 </script>
 
 <style lang="less" scoped>

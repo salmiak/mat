@@ -67,6 +67,39 @@ describe('EditMeal inline recipe draft', () => {
     expect((wrapper.find('input[name="title"]').element as HTMLInputElement).value).toBe('Fredagsmys')
   })
 
+  it('finds the recipe when its url is pasted into the search field', async () => {
+    const recipes = useRecipesStore()
+    recipes.setRecipe({ id: 7, title: 'Pannkakor', comment: '', url: 'https://x.se/pannkakor/', imageUrl: null })
+
+    const wrapper = mount(EditMeal, { global: { plugins: [i18n] } })
+    await wrapper.find('input[type="search"]').setValue('https://x.se/pannkakor')
+
+    const hit = wrapper.findAll('li').find((li) => li.text().includes('Pannkakor'))
+    expect(hit).toBeDefined()
+
+    await hit!.trigger('click')
+    expect((wrapper.find('input[name="title"]').element as HTMLInputElement).value).toBe('Pannkakor')
+    expect(wrapper.text()).toContain('Pannkakor')
+  })
+
+  it('offers to draft a recipe when the pasted url is unknown, and prefetches its preview', async () => {
+    mockedApi.get.mockResolvedValue({ title: 'Ny rätt – recept', imageUrl: null })
+    const wrapper = mount(EditMeal, { global: { plugins: [i18n] } })
+    await wrapper.find('input[type="search"]').setValue('https://x.se/ny-ratt')
+
+    const createFromLink = wrapper.findAll('button').find((b) => b.text().includes('Create recipe from link'))
+    expect(createFromLink).toBeDefined()
+    await createFromLink!.trigger('click')
+
+    const draft = wrapper.find('.recipe')
+    expect((draft.find('input[name="url"]').element as HTMLInputElement).value).toBe('https://x.se/ny-ratt')
+    // The preview runs on mount: recipe and meal titles fill in
+    await vi.waitFor(() => {
+      expect((draft.find('input[name="title"]').element as HTMLInputElement).value).toBe('Ny rätt – recept')
+      expect((wrapper.find('input[name="title"]').element as HTMLInputElement).value).toBe('Ny rätt – recept')
+    })
+  })
+
   it('attaches the existing recipe instead of drafting a duplicate url', async () => {
     const recipes = useRecipesStore()
     recipes.setRecipe({ id: 7, title: 'Pannkakor', comment: '', url: 'https://x.se/pannkakor/', imageUrl: null })
