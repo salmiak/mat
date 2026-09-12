@@ -4,7 +4,7 @@ import type { Db } from '../db/client.js'
 import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
 import type { ChangeBus } from '../events.js'
 import { attachOgImage, type OgImageFetcher } from '../ogImage.js'
-import { attachAiImage, type AiImageGenerator } from '../aiImage.js'
+import { attachAiImage, regenerateAiImages, type AiImageGenerator } from '../aiImage.js'
 
 interface RecipePayload {
   title?: string
@@ -78,6 +78,20 @@ export function recipesRouter (
       }
     })()
   }
+
+  // POST /api/recipes/regenerate-ai-images — re-render every AI-generated
+  // image with the current prompt/style. Responds immediately; the work
+  // runs in the background and publishes bus events per updated recipe.
+  router.post('/regenerate-ai-images', async (_req, res) => {
+    if (aiGenerator === null || aiGenerator === undefined) {
+      res.status(503).json({ error: 'AI image generation is not configured' })
+      return
+    }
+    const targets = await db.select({ id: recipes.id }).from(recipes).where(eq(recipes.imageSource, 'ai'))
+    res.status(202).json({ queued: targets.length })
+    void regenerateAiImages(db, bus, aiGenerator)
+      .then(({ total, regenerated }) => console.log(`AI image regeneration done: ${regenerated}/${total}`))
+  })
 
   // GET /api/recipes — all recipes, ordered by title
   router.get('/', async (_req, res) => {

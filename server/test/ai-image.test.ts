@@ -70,6 +70,37 @@ describe('AI image fallback', () => {
     expect(ai).not.toHaveBeenCalled()
   })
 
+  it('regenerate-ai-images re-renders AI images but never uploads', async () => {
+    const ai = vi.fn(async () => ({ data: await tinyPng(), contentType: 'image/png' }))
+    const app = createAiApp(ai)
+
+    // One AI-imaged recipe, one with an uploaded image
+    await request(app).post('/api/recipes').send({ title: 'AI-rätt' })
+    await vi.waitFor(() => expect(ai).toHaveBeenCalledTimes(1))
+    const upload = await request(app).post('/api/images')
+      .set('Content-Type', 'image/png').send(await tinyPng())
+    await request(app).post('/api/recipes').send({ title: 'Uppladdad', imageUrl: upload.body.url })
+
+    const before = (await request(app).get('/api/recipes')).body.recipes
+    const aiBefore = before.find((r: { title: string }) => r.title === 'AI-rätt').imageUrl
+
+    const res = await request(app).post('/api/recipes/regenerate-ai-images')
+    expect(res.status).toBe(202)
+    expect(res.body.queued).toBe(1)
+
+    await vi.waitFor(async () => {
+      const { body } = await request(app).get('/api/recipes')
+      const aiAfter = body.recipes.find((r: { title: string }) => r.title === 'AI-rätt').imageUrl
+      expect(aiAfter).not.toBe(aiBefore)
+    })
+    expect(ai).toHaveBeenCalledTimes(2)
+
+    // The uploaded recipe is untouched and the old AI image row is gone
+    const { body } = await request(app).get('/api/recipes')
+    expect(body.recipes.find((r: { title: string }) => r.title === 'Uppladdad').imageUrl).toBe(upload.body.url)
+    expect((await request(app).get(aiBefore)).status).toBe(404)
+  })
+
   it('a failed generation leaves the recipe without an image', async () => {
     const ai = vi.fn(async () => null)
     const app = createAiApp(ai)
