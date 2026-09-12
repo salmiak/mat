@@ -1,9 +1,10 @@
-import { Router } from 'express'
+import { Router, type Response } from 'express'
 import { asc, eq, ne, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
-import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
+import { images, mealRecipes, mealVotes, recipes } from '../db/schema.js'
+import { storeImage } from './images.js'
 import type { ChangeBus } from '../events.js'
-import { attachOgImage, type OgImageFetcher } from '../ogImage.js'
+import { attachOgImage, fetchOgImage, type OgImageFetcher } from '../ogImage.js'
 import { attachAiImage, regenerateAiImages, type AiImageGenerator } from '../aiImage.js'
 
 interface RecipePayload {
@@ -94,6 +95,85 @@ export function recipesRouter (
     res.status(202).json({ queued: targets.length })
     void regenerateAiImages(db, bus, aiGenerator)
       .then(({ total, regenerated }) => console.log(`AI image regeneration done: ${regenerated}/${total}`))
+  })
+
+  // Replace a recipe's image with a freshly generated/fetched one, on the
+  // user's explicit request from the editor. Deletes the replaced image row.
+  async function replaceImage (
+    recipeId: number,
+    generated: { data: Buffer, contentType: string },
+    source: 'ai' | 'og',
+    res: Response
+  ) {
+    const imageId = await storeImage(db, generated.data, generated.contentType, `${source}-image`)
+    const [current] = await db.select({ imageId: recipes.imageId }).from(recipes).where(eq(recipes.id, recipeId))
+    const [updated] = await db.update(recipes)
+      .set({ imageId, imageSource: source, legacyImageUrl: null, updatedAt: new Date() })
+      .where(eq(recipes.id, recipeId))
+      .returning()
+    if (!updated) {
+      await db.delete(images).where(eq(images.id, imageId))
+      res.status(404).json({ error: 'Recipe not found' })
+      return
+    }
+    if (current?.imageId != null) {
+      await db.delete(images).where(eq(images.id, current.imageId))
+    }
+    const serialized = serializeRecipe(updated, (await loadScores(db)).get(recipeId) ?? 0)
+    bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
+    res.json({ recipe: serialized })
+  }
+
+  // POST /api/recipes/:id/generate-ai-image — force a new AI image,
+  // replacing whatever image the recipe has. Optional {title, comment}
+  // overrides let the editor use its unsaved draft values.
+  router.post('/:id/generate-ai-image', async (req, res) => {
+    if (aiGenerator == null) {
+      res.status(503).json({ error: 'AI image generation is not configured' })
+      return
+    }
+    const id = Number(req.params.id)
+    const [recipe] = await db.select().from(recipes).where(eq(recipes.id, id))
+    if (!recipe) {
+      res.status(404).json({ error: 'Recipe not found' })
+      return
+    }
+    const title = typeof req.body?.title === 'string' && req.body.title.trim() ? req.body.title : recipe.title
+    const comment = typeof req.body?.comment === 'string' ? req.body.comment : recipe.comment
+    const generated = await aiGenerator(title, comment)
+    if (!generated) {
+      res.status(422).json({ error: 'Image generation failed' })
+      return
+    }
+    await replaceImage(id, generated, 'ai', res)
+  })
+
+  // POST /api/recipes/:id/fetch-og-image — re-fetch the linked page's
+  // og:image and replace the current image. Optional {url} override lets
+  // the editor use its unsaved draft url.
+  router.post('/:id/fetch-og-image', async (req, res) => {
+    const fetcher = ogFetcher === null ? null : (ogFetcher ?? fetchOgImage)
+    if (fetcher === null) {
+      res.status(503).json({ error: 'og image fetching is not configured' })
+      return
+    }
+    const id = Number(req.params.id)
+    const [recipe] = await db.select().from(recipes).where(eq(recipes.id, id))
+    if (!recipe) {
+      res.status(404).json({ error: 'Recipe not found' })
+      return
+    }
+    const url = typeof req.body?.url === 'string' && req.body.url.trim() ? req.body.url.trim() : recipe.url
+    if (!url) {
+      res.status(400).json({ error: 'The recipe has no url' })
+      return
+    }
+    const fetched = await fetcher(url)
+    if (!fetched) {
+      res.status(422).json({ error: 'No og image found on the page' })
+      return
+    }
+    await replaceImage(id, fetched, 'og', res)
   })
 
   // GET /api/recipes — all recipes, ordered by title

@@ -101,6 +101,37 @@ describe('AI image fallback', () => {
     expect((await request(app).get(aiBefore)).status).toBe(404)
   })
 
+  it('generate-ai-image replaces the image on request, with draft overrides', async () => {
+    const ai = vi.fn(async () => ({ data: await tinyPng(), contentType: 'image/png' }))
+    const app = createAiApp(ai)
+
+    // Recipe with an uploaded image — the explicit request replaces even that
+    const upload = await request(app).post('/api/images')
+      .set('Content-Type', 'image/png').send(await tinyPng())
+    const recipe = (await request(app).post('/api/recipes')
+      .send({ title: 'Sparad titel', imageUrl: upload.body.url })).body.recipe
+
+    const res = await request(app)
+      .post(`/api/recipes/${recipe.id}/generate-ai-image`)
+      .send({ title: 'Utkast-titel', comment: 'utkast' })
+
+    expect(res.status).toBe(200)
+    expect(ai).toHaveBeenCalledWith('Utkast-titel', 'utkast')
+    expect(res.body.recipe.imageSource).toBe('ai')
+    expect(res.body.recipe.imageUrl).not.toBe(upload.body.url)
+    // The replaced image row is deleted
+    expect((await request(app).get(upload.body.url)).status).toBe(404)
+  })
+
+  it('generate-ai-image 404s on a missing recipe and 422s when generation fails', async () => {
+    const failing = vi.fn(async () => null)
+    const app = createAiApp(failing)
+    expect((await request(app).post('/api/recipes/999/generate-ai-image').send({})).status).toBe(404)
+
+    const recipe = (await request(app).post('/api/recipes').send({ title: 'X' })).body.recipe
+    expect((await request(app).post(`/api/recipes/${recipe.id}/generate-ai-image`).send({})).status).toBe(422)
+  })
+
   it('a failed generation leaves the recipe without an image', async () => {
     const ai = vi.fn(async () => null)
     const app = createAiApp(ai)
