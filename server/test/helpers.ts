@@ -49,6 +49,6 @@ export function createTestDb (): Db {
 
 export function createTestApp () {
   const db = createTestDb()
-  const app = createApp(db, { logging: false, clientDist: '/nonexistent', ogImages: false })
+  const app = createApp(db, { logging: false, clientDist: '/nonexistent', ogImages: false, aiImages: false })
   return { app, db }
 }

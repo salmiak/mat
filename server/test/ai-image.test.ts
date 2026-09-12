@@ -1,0 +1,81 @@
+import { describe, expect, it, vi } from 'vitest'
+import request from 'supertest'
+import sharp from 'sharp'
+import { createApp } from '../src/app.js'
+import type { AiImageGenerator } from '../src/aiImage.js'
+import type { OgImageFetcher } from '../src/ogImage.js'
+import { createTestDb } from './helpers.js'
+
+async function tinyPng (): Promise<Buffer> {
+  return sharp({ create: { width: 8, height: 8, channels: 3, background: { r: 9, g: 8, b: 7 } } })
+    .png().toBuffer()
+}
+
+function createAiApp (ai: AiImageGenerator, og: OgImageFetcher | false = false) {
+  const db = createTestDb()
+  return createApp(db, {
+    logging: false,
+    clientDist: '/nonexistent',
+    ogImages: og,
+    aiImages: ai
+  })
+}
+
+describe('AI image fallback', () => {
+  it('generates an image for a recipe without link or image', async () => {
+    const ai = vi.fn(async () => ({ data: await tinyPng(), contentType: 'image/png' }))
+    const app = createAiApp(ai)
+
+    await request(app).post('/api/recipes').send({ title: 'Pannkakor 🤖', comment: 'Vispa och stek' })
+    await vi.waitFor(async () => {
+      const { body } = await request(app).get('/api/recipes')
+      expect(body.recipes[0].imageUrl).toMatch(/^\/api\/images\/\d+$/)
+    })
+    expect(ai).toHaveBeenCalledWith('Pannkakor 🤖', 'Vispa och stek')
+  })
+
+  it('runs only when the og image fails, and og replaces ai later', async () => {
+    const ai = vi.fn(async () => ({ data: await tinyPng(), contentType: 'image/png' }))
+    let ogWorks = false
+    const og: OgImageFetcher = async () =>
+      ogWorks ? { data: await tinyPng(), contentType: 'image/png' } : null
+    const app = createAiApp(ai, og)
+
+    // og fails -> AI image
+    const created = await request(app).post('/api/recipes')
+      .send({ title: 'Länkrätt', url: 'https://x.se/1' })
+    const id = created.body.recipe.id
+    await vi.waitFor(() => expect(ai).toHaveBeenCalledTimes(1))
+
+    // link changes and og now works -> the real photo replaces the AI one
+    ogWorks = true
+    const before = (await request(app).get('/api/recipes')).body.recipes[0].imageUrl
+    await request(app).put(`/api/recipes/${id}`)
+      .send({ title: 'Länkrätt', url: 'https://x.se/2', imageUrl: before })
+    await vi.waitFor(async () => {
+      const { body } = await request(app).get('/api/recipes')
+      expect(body.recipes[0].imageUrl).not.toBe(before)
+    })
+    expect(ai).toHaveBeenCalledTimes(1)
+  })
+
+  it('never runs for a recipe with an uploaded image', async () => {
+    const ai = vi.fn(async () => ({ data: await tinyPng(), contentType: 'image/png' }))
+    const app = createAiApp(ai)
+
+    const upload = await request(app).post('/api/images')
+      .set('Content-Type', 'image/png').send(await tinyPng())
+    await request(app).post('/api/recipes').send({ title: 'Med bild', imageUrl: upload.body.url })
+    await new Promise((r) => setTimeout(r, 50))
+    expect(ai).not.toHaveBeenCalled()
+  })
+
+  it('a failed generation leaves the recipe without an image', async () => {
+    const ai = vi.fn(async () => null)
+    const app = createAiApp(ai)
+    await request(app).post('/api/recipes').send({ title: 'Utan bild' })
+    await vi.waitFor(() => expect(ai).toHaveBeenCalled())
+    const { body } = await request(app).get('/api/recipes')
+    expect(body.recipes[0].imageUrl).toBeNull()
+  })
+})

@@ -1,0 +1,84 @@
+import sharp from 'sharp'
+import { and, eq, isNull } from 'drizzle-orm'
+import type { Db } from './db/client.js'
+import type { ChangeBus } from './events.js'
+import { images, recipes } from './db/schema.js'
+import { storeImage } from './routes/images.js'
+import { serializeRecipe } from './routes/recipes.js'
+
+const MAX_WIDTH = 1200
+
+export type AiImageGenerator = (title: string, comment: string) => Promise<{ data: Buffer, contentType: string } | null>
+
+// Generates a food photo with Gemini's image model (Google AI Studio API
+// key). Returns null quietly on any failure — a recipe without an image
+// is fine.
+export const generateAiImage: AiImageGenerator = async (title, comment) => {
+  const apiKey = process.env.GEMINI_API_KEY
+  if (!apiKey) return null
+  const model = process.env.GEMINI_IMAGE_MODEL ?? 'gemini-2.5-flash-image'
+
+  const context = comment.replace(/\s+/g, ' ').slice(0, 300)
+  const prompt =
+    `Appetizing photograph of the home-cooked dish "${title}".` +
+    (context ? ` The recipe: ${context}.` : '') +
+    ' Natural daylight, served on a plate on a wooden table, shallow depth of field,' +
+    ' realistic home cooking (not restaurant plating). No text, no people, no hands.'
+
+  const res = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+    {
+      method: 'POST',
+      headers: { 'x-goog-api-key': apiKey, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
+      signal: AbortSignal.timeout(60_000)
+    }
+  )
+  if (!res.ok) {
+    console.warn(`Gemini image generation failed: ${res.status} ${(await res.text()).slice(0, 300)}`)
+    return null
+  }
+
+  interface Part { inlineData?: { mimeType?: string, data?: string }, inline_data?: { mime_type?: string, data?: string } }
+  const body = await res.json() as { candidates?: Array<{ content?: { parts?: Part[] } }> }
+  const part = body.candidates?.[0]?.content?.parts?.find((p) => p.inlineData?.data || p.inline_data?.data)
+  const base64 = part?.inlineData?.data ?? part?.inline_data?.data
+  if (!base64) return null
+
+  const data = await sharp(Buffer.from(base64, 'base64'))
+    .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+    .webp({ quality: 80 })
+    .toBuffer()
+  return { data, contentType: 'image/webp' }
+}
+
+// Fire-and-forget AI-image fallback for a recipe with no image at all.
+// Never touches uploads or og images, and a concurrent upload wins.
+export async function attachAiImage (
+  db: Db,
+  bus: ChangeBus | undefined,
+  recipeId: number,
+  generator: AiImageGenerator = generateAiImage
+): Promise<void> {
+  try {
+    const [recipe] = await db.select().from(recipes).where(eq(recipes.id, recipeId))
+    if (!recipe || recipe.imageId !== null || recipe.legacyImageUrl) return
+
+    const generated = await generator(recipe.title, recipe.comment)
+    if (!generated) return
+    const imageId = await storeImage(db, generated.data, generated.contentType, 'ai-image.webp')
+
+    const [updated] = await db.update(recipes)
+      .set({ imageId, imageSource: 'ai', updatedAt: new Date() })
+      .where(and(eq(recipes.id, recipeId), isNull(recipes.imageId)))
+      .returning()
+    if (!updated) {
+      await db.delete(images).where(eq(images.id, imageId))
+      return
+    }
+
+    bus?.publish({ resource: 'recipes', action: 'saved', recipe: serializeRecipe(updated) })
+  } catch (err) {
+    console.warn(`AI image generation failed for recipe ${recipeId}:`, (err as Error).message)
+  }
+}

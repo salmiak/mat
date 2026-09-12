@@ -55,7 +55,7 @@ async function tinyPng (): Promise<Buffer> {
 
 function createOgApp (fetcher: OgImageFetcher) {
   const db = createTestDb()
-  const app = createApp(db, { logging: false, clientDist: '/nonexistent', ogImages: fetcher })
+  const app = createApp(db, { logging: false, clientDist: '/nonexistent', ogImages: fetcher, aiImages: false })
   return app
 }
 

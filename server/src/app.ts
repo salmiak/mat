@@ -13,6 +13,7 @@ import { mcpRouter } from './routes/mcp.js'
 import { sessionUserIdFromRequest } from './auth/session.js'
 import { ChangeBus } from './events.js'
 import { fetchLinkPreview, type LinkPreviewFetcher, type OgImageFetcher } from './ogImage.js'
+import { generateAiImage, type AiImageGenerator } from './aiImage.js'
 
 export interface AppOptions {
   clientDist?: string
@@ -25,6 +26,8 @@ export interface AppOptions {
   selfBaseUrl?: string
   /** og:image fetching for link recipes: a fake for tests, or false to disable. */
   ogImages?: OgImageFetcher | false
+  /** AI image fallback: a fake for tests, or false to disable. Off unless GEMINI_API_KEY is set. */
+  aiImages?: AiImageGenerator | false
   /** Link-preview fetching (title/image for the recipe form): a fake for tests. */
   linkPreview?: LinkPreviewFetcher
 }
@@ -65,7 +68,10 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
   }
 
   app.use('/api/meals', mealsRouter(db, bus))
-  app.use('/api/recipes', recipesRouter(db, bus, options.ogImages === false ? null : options.ogImages))
+  const aiImages = options.aiImages === false
+    ? null
+    : options.aiImages ?? (process.env.GEMINI_API_KEY ? generateAiImage : null)
+  app.use('/api/recipes', recipesRouter(db, bus, options.ogImages === false ? null : options.ogImages, aiImages))
   app.use('/api/images', imagesRouter(db))
   app.use('/api/votes', votesRouter(db, bus))
   app.use('/api/events', eventsRouter(bus))
