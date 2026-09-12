@@ -8,13 +8,17 @@
 
     <input type="search" v-model="searchTerm" :placeholder="t('Type to search')" />
 
-    <recipe-card
-      v-for="recipe in list"
-      :key="recipe.id"
-      :id="recipe.id"
-      :data-letter="searchTerm ? undefined : letterOf(recipe.title)"
-      :show-delete="true"
-    />
+    <!-- Search results are a flat list; the browsable list is grouped
+         under sticky letter dividers -->
+    <div v-if="searchTerm" class="cards">
+      <recipe-card v-for="recipe in list" :key="recipe.id" :id="recipe.id" :show-delete="true" />
+    </div>
+    <section v-else v-for="group in groups" :key="group.letter" class="letterSection" :data-letter="group.letter">
+      <h3 class="letterHeading"><span>{{ group.letter }}</span></h3>
+      <div class="cards">
+        <recipe-card v-for="recipe in group.recipes" :key="recipe.id" :id="recipe.id" :show-delete="true" />
+      </div>
+    </section>
 
     <nav v-if="!searchTerm && letters.length > 1" class="letterIndex" :class="{ visible: indexVisible }">
       <span v-for="letter in letters" :key="letter" @click="scrollToLetter(letter)">{{ letter }}</span>
@@ -48,14 +52,18 @@ function letterOf (title: string): string {
   return /\p{Letter}/u.test(first) ? first : '#'
 }
 
-const letters = computed(() => {
-  const seen: string[] = []
+// The list is already sorted, so consecutive titles share their letter
+const groups = computed(() => {
+  const out: Array<{ letter: string, recipes: typeof list.value }> = []
   for (const recipe of list.value) {
     const letter = letterOf(recipe.title)
-    if (!seen.includes(letter)) seen.push(letter)
+    if (out[out.length - 1]?.letter !== letter) out.push({ letter, recipes: [] })
+    out[out.length - 1].recipes.push(recipe)
   }
-  return seen
+  return out
 })
+
+const letters = computed(() => groups.value.map((group) => group.letter))
 
 // The index shows while the page scrolls and fades away shortly after
 const indexVisible = ref(false)
@@ -100,13 +108,72 @@ input {
   }
 }
 
-// Room for the fixed header when a letter is scrolled to
 :deep(.recipe) {
-  scroll-margin-top: 5.5rem;
   // Skip layout/paint of offscreen cards — makes long lists cheap to
   // render and scroll without changing what's in the DOM
   content-visibility: auto;
   contain-intrinsic-size: auto 9rem;
+}
+
+// Room for the fixed header when a letter is scrolled to
+.letterSection {
+  scroll-margin-top: 5rem;
+}
+
+// Divider per first letter, sticky just below the fixed header so the
+// current letter stays visible while scrolling through the list
+.letterHeading {
+  .noselect;
+  position: sticky;
+  top: 5rem;
+  z-index: 700;
+  width: 95%;
+  max-width: @bu * 25;
+  margin: @bu auto 0;
+  display: flex;
+  align-items: center;
+  gap: @bu/2;
+  span {
+    .capitals;
+    color: @cPrimary;
+    font-size: 0.75rem;
+    font-weight: 700;
+    line-height: 1.4rem;
+    min-width: 1.4rem;
+    text-align: center;
+    background: fade(@cRecipeBg, 85%);
+    border-radius: @radius;
+    box-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+  }
+  &::after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid fade(@cPrimary, 25%);
+  }
+}
+
+// Wide screens: the cards sit side by side in a grid
+@media @wide {
+  .recipes {
+    max-width: @wideMax;
+    margin: 0 auto;
+    padding: 0 @bu;
+  }
+  .letterHeading {
+    width: 100%;
+    max-width: none;
+  }
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(@bu * 19, 1fr));
+    column-gap: @bu;
+    align-items: start;
+    :deep(.recipe) {
+      width: 100%;
+      max-width: none;
+      margin: @bu/2 0;
+    }
+  }
 }
 
 .letterIndex {
