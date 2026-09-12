@@ -37,7 +37,8 @@ const messages = {
     'Login intro': 'Sign in to see the meal planning.',
     'Account not allowed': 'This account does not have access.',
     'Login failed': 'Login failed. Try again.',
-    'No login providers': 'No login method is configured.'
+    'No login providers': 'No login method is configured.',
+    'Image from link': 'This image is attached automatically when you save.'
   },
   se: {
     Planning: 'Planering',
@@ -75,7 +76,8 @@ const messages = {
     'Login intro': 'Logga in för att se matplaneringen.',
     'Account not allowed': 'Det här kontot har inte åtkomst.',
     'Login failed': 'Inloggningen misslyckades. Försök igen.',
-    'No login providers': 'Ingen inloggningsmetod är konfigurerad.'
+    'No login providers': 'Ingen inloggningsmetod är konfigurerad.',
+    'Image from link': 'Bilden läggs till automatiskt när du sparar.'
   }
 }
 

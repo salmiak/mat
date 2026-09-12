@@ -12,6 +12,7 @@ import { eventsRouter } from './routes/events.js'
 import { mcpRouter } from './routes/mcp.js'
 import { sessionUserIdFromRequest } from './auth/session.js'
 import { ChangeBus } from './events.js'
+import { fetchLinkPreview, type LinkPreviewFetcher, type OgImageFetcher } from './ogImage.js'
 
 export interface AppOptions {
   clientDist?: string
@@ -22,6 +23,10 @@ export interface AppOptions {
   bus?: ChangeBus
   /** Base URL the MCP tools use to reach this server's own API. */
   selfBaseUrl?: string
+  /** og:image fetching for link recipes: a fake for tests, or false to disable. */
+  ogImages?: OgImageFetcher | false
+  /** Link-preview fetching (title/image for the recipe form): a fake for tests. */
+  linkPreview?: LinkPreviewFetcher
 }
 
 export function createApp (db: Db, options: AppOptions = {}): Express {
@@ -60,13 +65,28 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
   }
 
   app.use('/api/meals', mealsRouter(db, bus))
-  app.use('/api/recipes', recipesRouter(db, bus))
+  app.use('/api/recipes', recipesRouter(db, bus, options.ogImages === false ? null : options.ogImages))
   app.use('/api/images', imagesRouter(db))
   app.use('/api/votes', votesRouter(db, bus))
   app.use('/api/events', eventsRouter(bus))
 
   app.get('/api/health', (_req, res) => {
     res.json({ ok: true })
+  })
+
+  // Title + og:image URL from a linked page, to prefill the recipe form
+  const previewFetcher = options.linkPreview ?? fetchLinkPreview
+  app.get('/api/link-preview', async (req, res) => {
+    const url = typeof req.query.url === 'string' ? req.query.url : ''
+    if (!/^https?:\/\//.test(url)) {
+      res.status(400).json({ error: 'url must be an http(s) URL' })
+      return
+    }
+    try {
+      res.json(await previewFetcher(url))
+    } catch {
+      res.json({ title: null, imageUrl: null })
+    }
   })
 
   // Remote MCP for Claude on mobile/claude.ai; the path token is the secret

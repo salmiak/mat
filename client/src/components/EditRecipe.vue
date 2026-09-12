@@ -13,7 +13,11 @@
       <image-upload v-else @upload-start="uploading = true" @upload-done="imageAttached" />
     </div>
     <div>
-      <input type="url" name="url" :placeholder="t('Url')" v-model="recipe.url">
+      <input type="url" name="url" :placeholder="t('Url')" v-model="recipe.url" @blur="fetchPreview">
+      <p v-if="previewImageUrl && !recipe.imageUrl" class="preview-hint">
+        <img :src="previewImageUrl" class="recipe-thumbnail" />
+        <span>{{ t('Image from link') }}</span>
+      </p>
     </div>
     <div>
       <growing-textarea :placeholder="t('Comment')" v-model="recipe.comment" />
@@ -27,8 +31,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { api } from '@/services/api'
 import type { NewRecipe } from '@/types'
 import ImageUpload from './ImageUpload.vue'
 import SureButton from './SureButton.vue'
@@ -58,6 +63,34 @@ function freshRecipe (): NewRecipe {
 
 watch(() => props.recipeData, () => { recipe.value = freshRecipe() })
 
+// Paste a URL and the page's title fills in by itself (never over a title
+// the user typed); the og:image is shown as a hint of what save attaches.
+const previewImageUrl = ref<string | null>(null)
+let previewedUrl = ''
+let debounceTimer: ReturnType<typeof setTimeout> | undefined
+
+async function fetchPreview () {
+  const url = recipe.value.url.trim()
+  if (!/^https?:\/\//.test(url) || url === previewedUrl) return
+  previewedUrl = url
+  try {
+    const preview = await api.get<{ title: string | null, imageUrl: string | null }>(
+      `/link-preview?url=${encodeURIComponent(url)}`
+    )
+    if (url !== recipe.value.url.trim()) return // user kept typing
+    if (preview.title && !recipe.value.title.trim()) {
+      recipe.value.title = preview.title
+    }
+    previewImageUrl.value = preview.imageUrl
+  } catch { /* no preview is fine */ }
+}
+
+watch(() => recipe.value.url, () => {
+  clearTimeout(debounceTimer)
+  debounceTimer = setTimeout(fetchPreview, 700)
+})
+onBeforeUnmount(() => clearTimeout(debounceTimer))
+
 function imageAttached (e: { imageUrl: string }) {
   uploading.value = false
   recipe.value.imageUrl = e.imageUrl || null
@@ -86,6 +119,17 @@ function saveRecipe () {
   .recipe-thumbnail {
     max-width: 120px;
     height: auto;
+  }
+  .preview-hint {
+    display: flex;
+    align-items: center;
+    gap: @bu/2;
+    margin: @bu/2 0 0;
+    font-size: 0.8rem;
+    opacity: 0.8;
+    img {
+      border-radius: @radius;
+    }
   }
 }
 </style>

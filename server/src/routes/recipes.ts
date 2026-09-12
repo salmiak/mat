@@ -3,6 +3,7 @@ import { asc, eq, sql } from 'drizzle-orm'
 import type { Db } from '../db/client.js'
 import { mealRecipes, mealVotes, recipes } from '../db/schema.js'
 import type { ChangeBus } from '../events.js'
+import { attachOgImage, type OgImageFetcher } from '../ogImage.js'
 
 interface RecipePayload {
   title?: string
@@ -54,8 +55,14 @@ export function serializeRecipe (recipe: typeof recipes.$inferSelect, score = 0)
   }
 }
 
-export function recipesRouter (db: Db, bus?: ChangeBus): Router {
+export function recipesRouter (db: Db, bus?: ChangeBus, ogFetcher?: OgImageFetcher | null): Router {
   const router = Router()
+
+  // Fire-and-forget og:image fetch for link recipes without a chosen image
+  function scheduleOgImage (recipeId: number) {
+    if (ogFetcher === null) return
+    void attachOgImage(db, bus, recipeId, ogFetcher)
+  }
 
   // GET /api/recipes — all recipes, ordered by title
   router.get('/', async (_req, res) => {
@@ -66,25 +73,46 @@ export function recipesRouter (db: Db, bus?: ChangeBus): Router {
 
   // POST /api/recipes
   router.post('/', async (req, res) => {
-    const [recipe] = await db.insert(recipes).values(recipeFields(req.body)).returning()
+    const fields = recipeFields(req.body)
+    const [recipe] = await db.insert(recipes).values({
+      ...fields,
+      imageSource: fields.imageId !== null || fields.legacyImageUrl ? 'upload' : null
+    }).returning()
     const serialized = serializeRecipe(recipe)
     bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
     res.status(201).json({ recipe: serialized })
+    if (recipe.url && recipe.imageId === null && !recipe.legacyImageUrl) {
+      scheduleOgImage(recipe.id)
+    }
   })
 
   // PUT /api/recipes/:id
   router.put('/:id', async (req, res) => {
-    const [recipe] = await db.update(recipes)
-      .set({ ...recipeFields(req.body), updatedAt: new Date() })
-      .where(eq(recipes.id, Number(req.params.id)))
-      .returning()
-    if (!recipe) {
+    const id = Number(req.params.id)
+    const [current] = await db.select().from(recipes).where(eq(recipes.id, id))
+    if (!current) {
       res.status(404).json({ error: 'Recipe not found' })
       return
     }
+    const fields = recipeFields(req.body)
+    // An unchanged image keeps its source (clients echo imageUrl back on
+    // edits); a new one was chosen by a person; none clears the source.
+    const imageSource =
+      fields.imageId === current.imageId && fields.legacyImageUrl === current.legacyImageUrl
+        ? current.imageSource
+        : fields.imageId !== null || fields.legacyImageUrl ? 'upload' : null
+    const [recipe] = await db.update(recipes)
+      .set({ ...fields, imageSource, updatedAt: new Date() })
+      .where(eq(recipes.id, id))
+      .returning()
     const serialized = serializeRecipe(recipe, (await loadScores(db)).get(recipe.id) ?? 0)
     bus?.publish({ resource: 'recipes', action: 'saved', recipe: serialized })
     res.json({ recipe: serialized })
+    const urlChanged = recipe.url !== current.url
+    if (recipe.url && recipe.imageSource !== 'upload' && !recipe.legacyImageUrl &&
+        (recipe.imageId === null || urlChanged)) {
+      scheduleOgImage(recipe.id)
+    }
   })
 
   // DELETE /api/recipes/:id
