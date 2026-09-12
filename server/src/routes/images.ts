@@ -6,7 +6,7 @@ import { images } from '../db/schema.js'
 
 const MAX_IMAGE_SIZE = '15mb'
 const ALLOWED_TYPES = /^image\//
-const THUMB_WIDTH = 480 // 2x the largest rendered thumbnail size
+const THUMB_WIDTH = 800 // full card width on retina screens
 
 async function makeThumb (data: Buffer): Promise<{ data: Buffer, contentType: string } | null> {
   try {

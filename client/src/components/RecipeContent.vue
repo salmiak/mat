@@ -2,10 +2,10 @@
   <div class="recipeContent">
     <div v-if="!recipe">…</div>
     <div v-else>
-      <div class="head" :class="{ hasThumb: !!recipe.imageUrl }">
-        <a v-if="recipe.imageUrl" class="thumb" :href="recipe.imageUrl" target="_blank">
-          <img :src="recipe.thumbUrl || recipe.imageUrl" loading="lazy" decoding="async" :alt="recipe.title" />
-        </a>
+      <a v-if="recipe.imageUrl" class="hero" :href="recipe.imageUrl" target="_blank">
+        <img :src="recipe.thumbUrl || recipe.imageUrl" loading="lazy" decoding="async" :alt="recipe.title" />
+      </a>
+      <div class="head">
         <div class="headText">
           <h2>
             <a v-if="recipe.url" :href="recipe.url" target="_blank">{{ recipe.title }}</a>
@@ -63,28 +63,23 @@ const sourceHost = computed(() => {
   border-radius: @radius;
   margin: 0;
 
-  .head {
-    margin-bottom: @bu/2;
-    &.hasThumb {
-      display: grid;
-      grid-template-columns: auto 1fr;
-      gap: @bu;
-      align-items: center;
-    }
-  }
-  .thumb {
+  // Full-bleed image on top of the card: cancels the card padding so the
+  // image runs edge to edge, rounded with the card's top corners
+  .hero {
     display: block;
-    width: 4.5rem;
-    height: 4.5rem;
-    border-radius: @radius;
+    margin: -@bu -@bu @bu;
+    border-radius: @radius @radius 0 0;
     overflow: hidden;
     background: darken(@cRecipeBg, 4%);
     img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
       display: block;
+      width: 100%;
+      aspect-ratio: 16 / 7;
+      object-fit: cover;
     }
+  }
+  .head {
+    margin-bottom: @bu/2;
   }
   h2 {
     padding-right: @bu*2 * 3;
@@ -136,10 +131,6 @@ const sourceHost = computed(() => {
     h2 {
       .h3;
       line-height: @bu;
-    }
-    .thumb {
-      width: 3rem;
-      height: 3rem;
     }
     &:last-child {
       margin-bottom: -@bu/2;
