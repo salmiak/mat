@@ -22,6 +22,19 @@ async function makeThumb (data: Buffer): Promise<{ data: Buffer, contentType: st
   }
 }
 
+// Stores an image with its generated thumbnail; returns the new image id
+export async function storeImage (db: Db, data: Buffer, contentType: string, filename: string | null): Promise<number> {
+  const thumb = await makeThumb(data)
+  const [image] = await db.insert(images).values({
+    data,
+    contentType,
+    filename,
+    thumbData: thumb?.data ?? null,
+    thumbContentType: thumb?.contentType ?? null
+  }).returning({ id: images.id })
+  return image.id
+}
+
 export function imagesRouter (db: Db): Router {
   const router = Router()
 
@@ -34,16 +47,9 @@ export function imagesRouter (db: Db): Router {
     }
 
     const filename = typeof req.query.filename === 'string' ? req.query.filename : null
-    const thumb = await makeThumb(req.body)
-    const [image] = await db.insert(images).values({
-      data: req.body,
-      contentType,
-      filename,
-      thumbData: thumb?.data ?? null,
-      thumbContentType: thumb?.contentType ?? null
-    }).returning({ id: images.id })
+    const id = await storeImage(db, req.body, contentType, filename)
 
-    res.status(201).json({ id: image.id, url: `/api/images/${image.id}` })
+    res.status(201).json({ id, url: `/api/images/${id}` })
   })
 
   // GET /api/images/:id — the image; ?size=thumb serves the downscaled version

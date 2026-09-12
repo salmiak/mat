@@ -12,6 +12,7 @@ import { eventsRouter } from './routes/events.js'
 import { mcpRouter } from './routes/mcp.js'
 import { sessionUserIdFromRequest } from './auth/session.js'
 import { ChangeBus } from './events.js'
+import type { OgImageFetcher } from './ogImage.js'
 
 export interface AppOptions {
   clientDist?: string
@@ -22,6 +23,8 @@ export interface AppOptions {
   bus?: ChangeBus
   /** Base URL the MCP tools use to reach this server's own API. */
   selfBaseUrl?: string
+  /** og:image fetching for link recipes: a fake for tests, or false to disable. */
+  ogImages?: OgImageFetcher | false
 }
 
 export function createApp (db: Db, options: AppOptions = {}): Express {
@@ -60,7 +63,7 @@ export function createApp (db: Db, options: AppOptions = {}): Express {
   }
 
   app.use('/api/meals', mealsRouter(db, bus))
-  app.use('/api/recipes', recipesRouter(db, bus))
+  app.use('/api/recipes', recipesRouter(db, bus, options.ogImages === false ? null : options.ogImages))
   app.use('/api/images', imagesRouter(db))
   app.use('/api/votes', votesRouter(db, bus))
   app.use('/api/events', eventsRouter(bus))

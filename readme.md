@@ -60,6 +60,15 @@ I Claude Desktop: motsvarande post under Settings → Developer → MCP servers.
 
 Servern exponerar också samma verktyg som remote MCP på `https://<din-domän>/mcp/<token>` (streamable HTTP, token från `API_TOKENS` i sökvägen eftersom claude.ai:s custom connectors inte kan skicka auth-headers — rotera tokenen vid behov). Lägg till URL:en som **custom connector** på claude.ai (Settings → Connectors → Add custom connector) så funkar den i mobilappen, på webben och i desktop. Bilduppladdning (`imagePath`) finns bara i den lokala MCP:n, men Claude kan läsa ett recept från ett foto i chatten och spara texten.
 
+## og-bilder för länkrecept
+
+Recept som länkar till en extern sida får automatiskt sidans `og:image` som bild (nedskalad till max 1200 px webp, tumnagel genereras som vanligt). Hämtningen sker asynkront efter att receptet sparats och dyker upp live via realtidsuppdateringarna. En manuellt uppladdad bild skrivs aldrig över; byts länken ersätts en tidigare og-bild. För befintliga länkrecept utan bild:
+
+```bash
+cd server
+DATABASE_URL=postgres://... npx tsx scripts/fetch-og-images.mts
+```
+
 ## Migrera data från gamla appen (Mongo)
 
 Engångsjobb när du vill flytta innehållet:

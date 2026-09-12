@@ -59,6 +59,9 @@ export const recipes = pgTable('recipes', {
   comment: text('comment').notNull().default(''),
   url: text('url').notNull().default(''),
   imageId: integer('image_id').references(() => images.id),
+  // 'upload' = set by a person (never auto-replaced), 'og' = fetched from
+  // the linked page's og:image (may be replaced when the link changes)
+  imageSource: text('image_source'),
   // Old S3/volume URLs kept verbatim until the data migration pulls the
   // files into the images table.
   legacyImageUrl: text('legacy_image_url'),
