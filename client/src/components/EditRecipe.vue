@@ -1,6 +1,14 @@
 <template>
   <div class="editRecipe">
-    <recipe-fields :recipe="recipe" @upload-start="uploading = true" @upload-done="uploading = false" />
+    <recipe-fields
+      :recipe="recipe"
+      @upload-start="uploading = true"
+      @upload-done="uploading = false"
+      @existing-recipe="existingRecipe = $event"
+    />
+    <p v-if="existingRecipe" class="duplicate-hint">
+      {{ t('Recipe with this link exists', { title: existingRecipe.title }) }}
+    </p>
     <div class="cardfooter">
       <button @click="cancelEdit">{{ t('Cancel') }}</button>
       <button v-if="!uploading" class="btn-primary pull-right" @click="saveRecipe">{{ t('Save') }}</button>
@@ -12,7 +20,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import type { NewRecipe } from '@/types'
+import type { NewRecipe, Recipe } from '@/types'
 import RecipeFields from './RecipeFields.vue'
 
 const props = defineProps<{ recipeData?: Partial<NewRecipe> }>()
@@ -25,6 +33,9 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const uploading = ref(false)
 const recipe = ref<NewRecipe>(freshRecipe())
+const existingRecipe = ref<Recipe | null>(null)
+
+watch(() => recipe.value.url, () => { existingRecipe.value = null })
 
 function freshRecipe (): NewRecipe {
   return {
@@ -57,6 +68,11 @@ function saveRecipe () {
   }
   p {
     margin: 0 0 @bu/2;
+  }
+  .duplicate-hint {
+    font-size: 0.8rem;
+    color: darken(@cSecondary, 30%);
+    font-weight: 500;
   }
 }
 </style>

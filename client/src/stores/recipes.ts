@@ -4,6 +4,10 @@ import type { NewRecipe, Recipe } from '@/types'
 
 const CACHE_MINUTES = 5
 
+function normalizeUrl (url: string): string {
+  return url.trim().replace(/\/+$/, '')
+}
+
 export const useRecipesStore = defineStore('recipes', {
   state: () => ({
     list: [] as Recipe[],
@@ -13,6 +17,11 @@ export const useRecipesStore = defineStore('recipes', {
   getters: {
     recipeById: (state) => (id: number): Recipe | undefined => {
       return state.list.find((recipe) => recipe.id === id)
+    },
+    recipeByUrl: (state) => (url: string): Recipe | undefined => {
+      const wanted = normalizeUrl(url)
+      if (!wanted) return undefined
+      return state.list.find((recipe) => normalizeUrl(recipe.url) === wanted)
     }
   },
 

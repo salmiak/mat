@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createI18n } from 'vue-i18n'
+import { createPinia, setActivePinia } from 'pinia'
 import EditRecipe from '@/components/EditRecipe.vue'
 import { api } from '@/services/api'
 
@@ -18,6 +19,7 @@ function mountForm () {
 
 describe('EditRecipe link preview', () => {
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks()
     vi.useRealTimers()
   })

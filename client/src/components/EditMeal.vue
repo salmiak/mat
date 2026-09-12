@@ -47,7 +47,13 @@
           <X class="iconBtn pull-right" :size="16" @click="removeNewRecipe(index)" />
         </div>
         <h3>{{ t('Create new recipe') }}</h3>
-        <recipe-fields :recipe="recipe" @upload-start="uploadsInProgress++" @upload-done="uploadsInProgress--" />
+        <recipe-fields
+          :recipe="recipe"
+          @upload-start="uploadsInProgress++"
+          @upload-done="uploadsInProgress--"
+          @title-autofilled="meal.title = meal.title || $event"
+          @existing-recipe="useExistingRecipe(index, $event)"
+        />
       </div>
       <button @click="addNewRecipe"><Plus :size="14" /> {{ t('Create new recipe') }}</button>
     </div>
@@ -156,6 +162,16 @@ function addNewRecipe () {
 
 function removeNewRecipe (index: number) {
   newRecipes.value.splice(index, 1)
+}
+
+// The draft's url turned out to belong to a saved recipe: attach that one
+// to the meal instead of creating a duplicate
+function useExistingRecipe (index: number, recipe: { id: number, title: string }) {
+  newRecipes.value.splice(index, 1)
+  if (!meal.value.recipeIds.includes(recipe.id)) {
+    meal.value.recipeIds.push(recipe.id)
+  }
+  meal.value.title = meal.value.title || recipe.title
 }
 
 function selectRecipe (id: number) {

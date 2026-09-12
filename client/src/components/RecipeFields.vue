@@ -27,7 +27,8 @@
 import { onBeforeUnmount, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { api } from '@/services/api'
-import type { NewRecipe } from '@/types'
+import { useRecipesStore } from '@/stores/recipes'
+import type { NewRecipe, Recipe } from '@/types'
 import ImageUpload from './ImageUpload.vue'
 import SureButton from './SureButton.vue'
 import GrowingTextarea from './GrowingTextarea.vue'
@@ -41,9 +42,14 @@ const props = defineProps<{ recipe: NewRecipe }>()
 const emit = defineEmits<{
   'upload-start': []
   'upload-done': []
+  /** The preview filled in an empty title */
+  'title-autofilled': [string]
+  /** The entered url already belongs to a saved recipe */
+  'existing-recipe': [Recipe]
 }>()
 
 const { t } = useI18n()
+const recipesStore = useRecipesStore()
 
 function imageAttached (e: { imageUrl: string }) {
   emit('upload-done')
@@ -60,6 +66,15 @@ async function fetchPreview () {
   const url = props.recipe.url.trim()
   if (!/^https?:\/\//.test(url) || url === previewedUrl) return
   previewedUrl = url
+
+  // The link may already belong to a saved recipe — offer that instead of
+  // creating a duplicate. The parent decides what "use it" means.
+  const existing = recipesStore.recipeByUrl(url)
+  if (existing) {
+    emit('existing-recipe', existing)
+    return
+  }
+
   try {
     const preview = await api.get<{ title: string | null, imageUrl: string | null }>(
       `/link-preview?url=${encodeURIComponent(url)}`
@@ -67,6 +82,7 @@ async function fetchPreview () {
     if (url !== props.recipe.url.trim()) return // user kept typing
     if (preview.title && !props.recipe.title.trim()) {
       props.recipe.title = preview.title
+      emit('title-autofilled', preview.title)
     }
     previewImageUrl.value = preview.imageUrl
   } catch { /* no preview is fine */ }
