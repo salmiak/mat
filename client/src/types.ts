@@ -27,6 +27,8 @@ export interface Recipe {
   imageUrl: string | null
   /** Downscaled version of imageUrl for lists (falls back to imageUrl) */
   thumbUrl?: string | null
+  /** 'upload' | 'og' | 'ai' | null — how the image came to be */
+  imageSource?: string | null
   /** Sum of thumb votes on meals this recipe belongs to */
   score?: number
 }
