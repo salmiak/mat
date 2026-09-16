@@ -88,20 +88,20 @@ header {
   }
 }
 
-// Wide screens: the meal cards sit side by side in a grid
+// Wide screens: masonry via CSS columns — cards pack tightly under each
+// other regardless of their heights. Order runs down each column.
 @media @wide {
   .meals {
     max-width: @wideMax;
-    margin: 0 auto;
+    margin: @bu/2 auto 0;
     padding: 0 @bu;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(@bu * 19, 1fr));
+    column-width: @bu * 19;
     column-gap: @bu;
-    align-items: start;
     :deep(.meal) {
       width: 100%;
       max-width: none;
-      margin: @bu/2 0;
+      margin: 0 0 @bu;
+      break-inside: avoid;
     }
   }
 }

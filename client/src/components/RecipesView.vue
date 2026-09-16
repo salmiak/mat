@@ -163,15 +163,21 @@ input {
     width: 100%;
     max-width: none;
   }
+  // Masonry via CSS columns — cards pack tightly under each other
+  // regardless of their heights. Order runs down each column, which
+  // suits an alphabetical list.
   .cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(@bu * 19, 1fr));
+    margin-top: @bu/2;
+    column-width: @bu * 19;
     column-gap: @bu;
-    align-items: start;
     :deep(.recipe) {
       width: 100%;
       max-width: none;
-      margin: @bu/2 0;
+      margin: 0 0 @bu;
+      break-inside: avoid;
+      // content-visibility's placeholder sizing makes column balancing
+      // jump around — render everything when the list is multi-column
+      content-visibility: visible;
     }
   }
 }
